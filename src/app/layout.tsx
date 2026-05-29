@@ -1,22 +1,14 @@
 import type { Metadata } from 'next';
-import { Rajdhani, Baloo_2 } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import OneSignalInit from '@/components/OneSignalInit';
 
-// Load Rajdhani and Baloo 2 Google Fonts to perfectly match your theme typography
-const rajdhani = Rajdhani({
-  weight: ['400', '500', '600', '700'],
+// Load Inter Google Font for maximum readability and a clean, premium look
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-rajdhani',
-  display: 'swap',
-});
-
-const baloo = Baloo_2({
-  weight: ['400', '500', '600', '700', '800'],
-  subsets: ['latin'],
-  variable: '--font-baloo',
+  variable: '--font-sans',
   display: 'swap',
 });
 
@@ -37,9 +29,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${rajdhani.variable} ${baloo.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] selection:bg-amber-400 selection:text-slate-900">
+      <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-brand-accent selection:text-brand-dark">
         <OneSignalInit />
         <Navbar />
         <main className="flex-1 w-full flex flex-col">

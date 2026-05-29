@@ -4,395 +4,426 @@ import {
   getPosts, 
   WordPressPost, 
   STATES_LIST, 
-  QUALIFICATIONS_LIST, 
-  CATEGORIES_LIST,
   POST_TYPE_MAP 
 } from '@/lib/wordpress';
 import IndiaMap from '@/components/IndiaMap';
 import FAQAccordion from '@/components/FAQAccordion';
-import JobMatcher from '@/components/JobMatcher';
-import AffiliateShowcase from '@/components/AffiliateShowcase';
+import PushNotificationCard from '@/components/PushNotificationCard';
 
-// Home FAQ items for rich search snippets and organic authority
 const HOME_FAQS = [
   {
-    q: 'How does Get Job Update verify its notifications?',
-    a: 'Every listing on our platform undergoes a rigorous 3-step verification process. Our editors audit official government gazettes, employment news bulletins, and verified department websites before publishing any link. We do not use speculative sources.'
+    q: 'What is Get Job Update and how does it help candidates?',
+    a: 'Get Job Update is a leading portal that aggregates verified government employment opportunities across India. We save you time by organizing chaotic official notifications, admit cards, and results into a single, clean dashboard.'
   },
   {
-    q: 'Can I filter jobs by my educational qualification?',
-    a: 'Yes! Directly below our hero section, you will find the <strong>Qualification Grid</strong>. You can click on cards like 10th Pass, 12th Pass, ITI, Diploma, or Graduate to instantly check active recruitments matched to your qualification level.'
+    q: 'How frequently are job notifications updated?',
+    a: 'We monitor servers of recruitment boards like SSC, RRB, UPSC, State PSCs around the clock. Our database is updated in real-time as soon as an official gazette or link is live.'
   },
   {
-    q: 'Are the results and admit card links updated in real-time?',
-    a: 'Absolutely. We track servers of recruitment boards like SSC, RRB, UPSC, State PSCs, and Board Exams around the clock. Once a result portal is activated, our server updates the direct action link immediately.'
+    q: 'Which government exams and commissions do you cover?',
+    a: 'We cover all major central and state commissions including UPSC, SSC, IBPS, RRB, State Police Boards, and educational testing agencies like NTA.'
   },
   {
-    q: 'How can I search for jobs in my specific state?',
-    a: 'Scroll down to our <strong>Interactive India SVG Map</strong>. You can hover over your region to see live statistics and click to view all updates registered under your state archives.'
+    q: 'Is Get Job Update free to use?',
+    a: 'Absolutely. We believe that access to employment information should be open and free for all candidates preparing for their future.'
   }
 ];
 
-export const revalidate = 300; // Revalidate cache every 5 minutes (ISR)
+// Helper to render feed boxes
+function FeedBox({ title, typeSlug, posts, colorClass, linkColorClass }: { title: string, typeSlug: string, posts: WordPressPost[], colorClass: string, linkColorClass: string }) {
+  return (
+    <div className="bg-white rounded-2xl shadow-[0_4px_20px_-5px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden flex flex-col h-full">
+      {/* Box Header */}
+      <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center gap-2">
+          <div className={`w-3 h-1 rounded-full ${colorClass}`}></div>
+          <h3 className="font-bold text-slate-800 tracking-wide text-sm md:text-base">{title}</h3>
+        </div>
+        <Link href={`/${typeSlug}`} className={`text-[10px] font-bold uppercase tracking-widest hover:underline ${linkColorClass}`}>
+          VIEW ALL →
+        </Link>
+      </div>
+      
+      {/* Box Content List */}
+      <div className="flex flex-col divide-y divide-slate-50 flex-1">
+        {posts.length > 0 ? (
+          posts.map(post => {
+            const loc = post.custom_meta?.aziz_job_location || 'Central';
+            const dept = post.custom_meta?.aziz_department || 'Govt';
+            const isNew = (Date.now() - new Date(post.date).getTime()) < 3 * 24 * 60 * 60 * 1000; // 3 days
+            
+            return (
+              <Link 
+                key={post.id} 
+                href={`/${typeSlug}/${post.slug}`}
+                className="group p-4 hover:bg-slate-50 transition-colors flex flex-col gap-2"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <h4 
+                    className="text-sm font-semibold text-slate-700 leading-snug group-hover:text-[var(--color-brand-primary)] transition-colors line-clamp-2"
+                    dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                  />
+                  {isNew && (
+                    <span className="text-[9px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200 shrink-0">NEW</span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                  <span>{loc}</span>
+                  <span className="text-right truncate max-w-[50%]">{dept}</span>
+                </div>
+              </Link>
+            );
+          })
+        ) : (
+          <div className="p-8 text-center text-xs text-slate-400 font-medium italic">
+            No active updates found.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export const revalidate = 300; 
 
 export default async function HomePage() {
-  // Fetch latest updates across different custom post types in parallel
-  let posts: WordPressPost[] = [];
+  let jobs: WordPressPost[] = [];
+  let results: WordPressPost[] = [];
+  let admits: WordPressPost[] = [];
+  let yojanas: WordPressPost[] = [];
+
   try {
-    const [jobs, results, admits, yojanas] = await Promise.all([
-      getPosts('aziz_job', 15),
-      getPosts('aziz_result', 10),
-      getPosts('aziz_admit', 10),
-      getPosts('aziz_yojana', 5)
+    const data = await Promise.all([
+      getPosts('aziz_job', 6),
+      getPosts('aziz_result', 6),
+      getPosts('aziz_admit', 6),
+      getPosts('aziz_yojana', 6)
     ]);
-    
-    // Merge all posts and sort by date descending
-    posts = [...jobs, ...results, ...admits, ...yojanas]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 30); // Grab the top 30 to perfectly balance the long sidebar
+    jobs = data[0];
+    results = data[1];
+    admits = data[2];
+    yojanas = data[3];
   } catch (err) {
-    console.error('Failed to fetch posts on server, loading fallback mocks', err);
+    console.error('Failed to fetch posts', err);
   }
 
-  // Format category badge styling HSL colors based on key for maximum premium aesthetics
-  const getBadgeStyles = (type: string) => {
-    switch (type) {
-      case 'aziz_job':
-        return { bg: 'bg-blue-500/10 text-blue-500 border-blue-500/20', text: 'Job', emoji: '💼' };
-      case 'aziz_result':
-        return { bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', text: 'Result', emoji: '🏆' };
-      case 'aziz_admit':
-        return { bg: 'bg-amber-500/10 text-amber-500 border-amber-500/20', text: 'Admit Card', emoji: '🎟️' };
-      case 'aziz_yojana':
-        return { bg: 'bg-rose-500/10 text-rose-500 border-rose-500/20', text: 'Yojana', emoji: '🇮🇳' };
-      default:
-        return { bg: 'bg-slate-500/10 text-slate-500 border-slate-500/20', text: 'Update', emoji: '📢' };
-    }
-  };
-
   return (
-    <div className="w-full flex flex-col font-baloo">
-      {/* 1. Modern Glowing Hero Section */}
-      <section className="relative overflow-hidden bg-[#030712] text-white py-20 border-b border-slate-900">
-        {/* Premium animated organic mesh background */}
-        <div className="mesh-gradient-container">
-          <div className="mesh-blob-1"></div>
-          <div className="mesh-blob-2"></div>
-          <div className="mesh-blob-3"></div>
-        </div>
-        
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
-          {/* Quick stats tags */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/15 border border-blue-500/20 px-3.5 py-1 text-xs font-black font-rajdhani uppercase tracking-wider text-blue-400">
-              ⚡ 2,450+ Active Updates
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/20 px-3.5 py-1 text-xs font-black font-rajdhani uppercase tracking-wider text-emerald-400">
-              🛡️ 100% Verified Gazette Info
-            </span>
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-rajdhani leading-none tracking-tight uppercase">
-            SABSE TEJ, BILKUL VERIFIED <br />
-            <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-blue-400 bg-clip-text text-transparent drop-shadow-sm">
-              SARKARI UPDATE CENTER
-            </span>
+    <div className="w-full flex flex-col font-sans bg-[var(--background)]">
+      
+      {/* 1. HERO SECTION (Search & Trending) */}
+      <div className="bg-[#0b1120] w-full pt-16 pb-32 relative">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-white mb-5 leading-[1.1] tracking-tight">
+            Find Your Dream <span className="text-[var(--color-brand-accent)]">Sarkari Job</span>
           </h1>
-
-          <p className="text-slate-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-            Get instant server-side notifications for Government Jobs, Sarkari Results, Admit Cards, and Yojana details directly from verified official gazettes.
+          <p className="text-blue-100 text-sm md:text-base font-medium mb-10 max-w-2xl mx-auto leading-relaxed">
+            Direct access to latest government notifications, results, and welfare schemes across India.
           </p>
-
-          {/* Social links grid strip */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4 max-w-md mx-auto">
-            <a 
-              href="#" 
-              className="flex-1 min-w-[140px] flex items-center justify-center gap-2 rounded-xl bg-[#0088cc] hover:bg-[#0088cc]/90 text-white font-rajdhani font-black tracking-wide text-sm py-3 px-4 shadow-lg shadow-[#0088cc]/20 transition-all hover:scale-102"
-            >
-              <span>✈️</span> JOIN TELEGRAM
-            </a>
-            <a 
-              href="#" 
-              className="flex-1 min-w-[140px] flex items-center justify-center gap-2 rounded-xl bg-[#25d366] hover:bg-[#25d366]/90 text-[#0f172a] font-rajdhani font-black tracking-wide text-sm py-3 px-4 shadow-lg shadow-[#25d366]/20 transition-all hover:scale-102"
-            >
-              <span>💬</span> JOIN WHATSAPP
-            </a>
+          
+          {/* Search Bar Container */}
+          <div className="bg-white rounded-full p-2 flex items-center shadow-2xl mx-auto max-w-3xl">
+            <div className="flex-1 flex items-center pl-4 border-r border-slate-200">
+              <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input type="text" placeholder="Search by job title or organization..." className="w-full px-3 py-2.5 outline-none text-slate-800 bg-transparent text-sm font-medium placeholder:text-slate-400" />
+            </div>
+            <div className="hidden sm:flex items-center px-4 w-44 border-r border-slate-200 cursor-pointer">
+              <svg className="w-4 h-4 text-slate-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <select className="bg-transparent text-slate-700 outline-none w-full text-sm font-bold cursor-pointer appearance-none">
+                <option>All States</option>
+              </select>
+              <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </div>
+            <button className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-7 py-3 font-bold text-sm flex items-center gap-2 transition-colors ml-1 shadow-md">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              Search Jobs
+            </button>
           </div>
+          
+          {/* Trending Links */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
+            <span className="text-white/80 font-medium">Trending:</span>
+            <Link href="#" className="bg-white/10 hover:bg-white/20 text-white rounded-full px-5 py-1.5 text-xs font-semibold border border-white/20 transition-colors">SSC CGL</Link>
+            <Link href="#" className="bg-white/10 hover:bg-white/20 text-white rounded-full px-5 py-1.5 text-xs font-semibold border border-white/20 transition-colors">UPSC CSE</Link>
+            <Link href="#" className="bg-white/10 hover:bg-white/20 text-white rounded-full px-5 py-1.5 text-xs font-semibold border border-white/20 transition-colors">Railway NTPC</Link>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. CATEGORY QUICK LINKS (Overlapping Grid) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-16 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          
+          <Link href="/jobs" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">🏛️</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Sarkari<br/>Naukri</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">NEW OPENINGS</span>
+            </div>
+          </Link>
+          
+          <Link href="/results" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl text-amber-500 drop-shadow-sm group-hover:scale-110 transition-transform">🏆</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Results<br/>2026</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">CHECK SCORES</span>
+            </div>
+          </Link>
+          
+          <Link href="/admit-card" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl text-slate-300 drop-shadow-sm group-hover:scale-110 transition-transform">📄</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Admit<br/>Card</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">HALL TICKETS</span>
+            </div>
+          </Link>
+          
+          <Link href="/syllabus" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">📝</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Syllabus &<br/>Pattern</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">EXAM GUIDE</span>
+            </div>
+          </Link>
+          
+          <Link href="/yojana" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl text-red-500 drop-shadow-sm group-hover:scale-110 transition-transform">📢</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Sarkari<br/>Yojana</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">SCHEMES</span>
+            </div>
+          </Link>
+          
+          <Link href="/exam-guide" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">📚</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Exam<br/>Guide</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">PREPARATION</span>
+            </div>
+          </Link>
+
+        </div>
+      </div>
+
+      {/* 3. CORE SARKARI FEEDS (Multi-Column Layout) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* Latest Jobs Box */}
+          <FeedBox 
+            title="Latest Sarkari Job" 
+            typeSlug="jobs" 
+            posts={jobs} 
+            colorClass="bg-blue-600" 
+            linkColorClass="text-blue-600"
+          />
+
+          {/* Results Box */}
+          <FeedBox 
+            title="Latest Result" 
+            typeSlug="results" 
+            posts={results} 
+            colorClass="bg-emerald-500" 
+            linkColorClass="text-emerald-600"
+          />
+
+          {/* Right Column Stack */}
+          <div className="space-y-6 flex flex-col">
+            {/* Notifications / Updates Style Box */}
+            <div className="bg-white rounded-2xl shadow-[0_4px_20px_-5px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
+              <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-1 rounded-full bg-blue-500"></div>
+                  <h3 className="font-bold text-slate-800 tracking-wide text-sm md:text-base">Notification</h3>
+                </div>
+                <Link href="/jobs" className="text-[10px] font-bold uppercase tracking-widest hover:underline text-blue-600">ALL UPDATES →</Link>
+              </div>
+              <div className="p-4 space-y-4">
+                {[1, 2, 3, 4].map((num) => (
+                  <div key={num} className="flex gap-4 items-start group">
+                    <span className="text-2xl font-black text-slate-100 group-hover:text-blue-100 transition-colors leading-none">{num}</span>
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-700 leading-snug group-hover:text-[var(--color-brand-primary)]">
+                        {num === 1 ? 'NEET UG 2026 Live: NTA Exam Ends, Result Key News' : `Notification Update ${num}: Direct Link Active`}
+                      </h4>
+                      <p className="text-[10px] text-slate-400 font-medium uppercase mt-1 truncate max-w-[200px]">NTA EXAM BOARD</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Community Box */}
+            <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col justify-center">
+              <h3 className="font-bold text-slate-800 text-lg mb-2">Join Community</h3>
+              <p className="text-sm text-slate-500 mb-6">Get lightning-fast alerts on your favorite platforms.</p>
+              <div className="space-y-3">
+                <a href="#" className="flex items-center justify-between px-5 py-3.5 bg-[#0088cc] hover:bg-[#0077b3] text-white rounded-xl text-sm font-bold transition-colors shadow-sm">
+                  <span className="flex items-center gap-2"><span className="text-lg">✈️</span> Telegram Channel</span>
+                  <span>↗</span>
+                </a>
+                <a href="#" className="flex items-center justify-between px-5 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition-colors shadow-sm">
+                  <span className="flex items-center gap-2"><span className="text-lg">💬</span> WhatsApp Channel</span>
+                  <span>↗</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Push Notification Card */}
+            <PushNotificationCard />
+          </div>
+
+          {/* Row 2: Admit Card & Syllabus */}
+          <FeedBox 
+            title="Admit Card" 
+            typeSlug="admit-cards" 
+            posts={admits} 
+            colorClass="bg-rose-500" 
+            linkColorClass="text-rose-600"
+          />
+
+          <FeedBox 
+            title="Sarkari Yojana" 
+            typeSlug="sarkari-yojana" 
+            posts={yojanas} 
+            colorClass="bg-purple-500" 
+            linkColorClass="text-purple-600"
+          />
+          
         </div>
       </section>
 
-      {/* 2. Premium Qualification Selection Cards Grid */}
-      <section id="qualifications-section" className="w-full py-12 bg-slate-50 dark:bg-slate-950/20 border-b border-[var(--border)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-extrabold font-rajdhani text-[var(--foreground)] uppercase tracking-wide">
-              🎯 Apni Qualification Chunein — Jobs Dhundein
+      {/* 4. CAREER PATHWAY DIRECTORY (Resource Center Grid) */}
+      <section className="bg-white border-y border-slate-200 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-[10px] font-bold uppercase tracking-widest mb-4">
+              👨‍🎓 Career Pathway Directory
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+              Sarkari <span className="text-[var(--color-brand-primary)]">Resource</span> Center
             </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Select your academic background to find corresponding active career openings immediately.
+            <p className="text-slate-500 mt-3 font-medium max-w-2xl mx-auto">
+              Your central hub for navigating India&apos;s vast recruitment landscape. We hand-categorize official notifications into definitive, high-growth career pathways.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {QUALIFICATIONS_LIST.map((qual, index) => {
-              // Stable pastel themes for the emoji background box based on index
-              const colorThemes = [
-                'bg-pink-100 dark:bg-pink-950/40 text-pink-700 dark:text-pink-400',
-                'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400',
-                'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400',
-                'bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400',
-                'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400',
-                'bg-teal-100 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400',
-                'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400',
-                'bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400'
-              ];
-              const theme = colorThemes[index % colorThemes.length];
-
-              return (
-                <Link 
-                  key={qual.slug} 
-                  href={`/qualification/${qual.slug}`}
-                  className="glass-card flex flex-col items-center justify-center p-6 text-center rounded-2xl border border-[var(--border)] transition-all duration-300 hover:scale-105 hover:rotate-1 hover:border-amber-400/80 group"
-                >
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-sm mb-3 group-hover:scale-110 transition-transform ${theme}`}>
-                    {qual.emoji}
-                  </div>
-                  <h3 className="font-rajdhani font-black text-lg text-[var(--foreground)] leading-tight uppercase group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors">
-                    {qual.name}
-                  </h3>
-                  <span className="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-wide">
-                    {qual.count} Open Jobs
-                  </span>
-                </Link>
-              );
-            })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { t: 'SSC & Railway', d: 'CGL, CHSL, NTPC, Group D. Complete updates on clerical and non-technical roles.', i: '🚂' },
+              { t: 'UPSC & Civil Services', d: 'CSE, IES, IFS. Official notifications for India\'s top administrative roles.', i: '🏛️' },
+              { t: 'Banking & Insurance', d: 'SBI PO, IBPS Clerk, LIC, NABARD. High-growth finance and banking careers.', i: '🏦' },
+              { t: 'Defence & Police', d: 'Army, Navy, CAPF, State Police. Serve the nation in frontline roles.', i: '🛡️' },
+              { t: 'Teaching & Education', d: 'CTET, KVS, NVS, UGC NET. Verified opportunities for educators.', i: '📖' },
+              { t: 'Medical & Healthcare', d: 'NEET, AIIMS, Nursing Officer. Critical healthcare infrastructure recruitment.', i: '❤️' },
+              { t: 'Engineering & Tech', d: 'GATE, PSU, State AE/JE. Core engineering and technical supervisor vacancies.', i: '🏗️' },
+              { t: 'Law & Judiciary', d: 'Civil Judge, APO, Supreme Court Assistants. Premium legal sector bodies.', i: '⚖️' }
+            ].map((cat, idx) => (
+              <div key={idx} className="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all group cursor-pointer">
+                <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                  {cat.i}
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{cat.t}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{cat.d}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 3. Categories Badges Strip */}
-      <section className="w-full py-6 border-b border-[var(--border)] bg-white dark:bg-[#0b0f19]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 overflow-x-auto scrollbar-none flex gap-3.5 py-1 justify-start md:justify-center items-center">
-          <span className="text-xs font-black font-rajdhani uppercase tracking-wider text-slate-400 flex-shrink-0">
-            📌 QUICK NAV:
-          </span>
-          {CATEGORIES_LIST.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/${cat.slug}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-extrabold font-rajdhani text-[var(--foreground)] bg-slate-50 dark:bg-slate-900/10 hover:bg-amber-400 hover:border-amber-400 hover:text-slate-900 transition-all uppercase whitespace-nowrap"
-            >
-              <span>{cat.emoji}</span>
-              <span>{cat.name}</span>
-            </Link>
-          ))}
+      {/* 5. BROWSE BY STATE (Clean Split Layout) */}
+      <section id="state-map-section" className="w-full py-20 bg-white border-b border-slate-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+            
+            {/* Left Column: Text and Pills */}
+            <div className="lg:col-span-5 space-y-6">
+              <h2 className="text-4xl md:text-[56px] font-black text-slate-900 tracking-tight leading-[1.1]">
+                Browse by <span className="text-[#1d4ed8]">State</span>
+              </h2>
+              <p className="text-slate-600 text-lg md:text-xl leading-relaxed max-w-md font-medium">
+                Find specific government opportunities within your home state or preferred region across India.
+              </p>
+              
+              <div className="flex flex-wrap gap-4 pt-6">
+                <Link href="/state/central" className="flex items-center gap-3 bg-white border border-slate-200 rounded-full py-2.5 px-5 hover:border-blue-400 hover:shadow-md transition-all shadow-sm">
+                  <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center text-[11px] font-black tracking-wider">IN</span>
+                  <span className="text-[15px] font-bold text-slate-800">Central Government</span>
+                </Link>
+                {STATES_LIST.slice(0, 7).map((state) => (
+                  <Link key={state.slug} href={`/state/${state.slug}`} className="flex items-center gap-3 bg-white border border-slate-200 rounded-full py-2.5 px-5 hover:border-blue-400 hover:shadow-md transition-all shadow-sm">
+                    <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center text-[11px] font-black tracking-wider">{state.name.substring(0,2).toUpperCase()}</span>
+                    <span className="text-[15px] font-bold text-slate-800">{state.name}</span>
+                  </Link>
+                ))}
+                <Link href="/states" className="flex items-center gap-2 bg-[#eff6ff] border border-blue-100 rounded-full py-3 px-6 hover:bg-blue-100 transition-all shadow-sm">
+                  <span className="text-[15px] font-bold text-blue-700">View All States <span className="ml-1 text-lg leading-none">→</span></span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: Map */}
+            <div className="lg:col-span-7 relative flex items-center justify-center min-h-[500px]">
+                 <IndiaMap />
+            </div>
+
+          </div>
         </div>
       </section>
 
-      {/* Sarkari Eligibility Personalized Job Matcher */}
-      <JobMatcher />
-
-      {/* 4. Main Timeline Container & Sidebar Workspace */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* Left Block: 30 Stacked Feed Cards (8 Columns) */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="border-b border-[var(--border)] pb-4">
-              <h3 className="text-xl font-bold font-rajdhani tracking-wide text-[var(--foreground)] uppercase flex items-center gap-2">
-                🚀 LATEST BULLETINS & ACTIVE EXAM CARDS
-              </h3>
-              <p className="text-xs text-slate-400">
-                Pre-rendered dynamic catalog. Live updates refresh automatically.
+      {/* 6. TRUST & ABOUT SECTION (Why Choose Us) */}
+      <section className="bg-white py-16 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-[1.1]">
+                Empowering Candidates with <span className="text-[var(--color-brand-primary)]">Verified Information.</span>
+              </h2>
+              <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+                Welcome to Get Job Update, India&apos;s most trusted digital platform dedicated to bringing you the fastest, most verified updates regarding government employment opportunities. Whether you are actively preparing for a competitive examination or tracking multiple recruitment phases, our platform simplifies the complex ecosystem.
+              </p>
+              <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+                We manually verify and aggregate data from official gazettes and top commissions such as UPSC, SSC, and RRB. By eliminating clutter and providing high-fidelity information, candidates save valuable time which they can instead channel into their preparation strategies.
               </p>
             </div>
 
-            {posts.length > 0 ? (
-              <div className="space-y-4">
-                {posts.map((post) => {
-                  const badge = getBadgeStyles(post.type);
-                  const postTypeSlug = POST_TYPE_MAP[post.type] || 'jobs';
-                  const totalPosts = post.custom_meta?.aziz_total_posts;
-                  const deadline = post.custom_meta?.aziz_apply_end;
-                  const department = post.custom_meta?.aziz_department;
-                  
-                  return (
-                    <div 
-                      key={post.id}
-                      className="glass-card flex flex-col md:flex-row gap-4 items-start md:items-center justify-between p-5 rounded-2xl border border-[var(--border)] hover:border-amber-400/40 transition-all duration-300 hover:shadow-md group"
-                    >
-                      <div className="flex-1 space-y-2.5">
-                        {/* Badges and metadata */}
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-black uppercase font-rajdhani ${badge.bg}`}>
-                            <span>{badge.emoji}</span>
-                            <span>{badge.text}</span>
-                          </span>
-                          {department && (
-                            <span className="text-[11px] font-semibold text-slate-400">
-                              🏢 {department}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Title linking to slug */}
-                        <Link 
-                          href={`/${postTypeSlug}/${post.slug}`}
-                          className="block text-base md:text-lg font-bold text-[var(--foreground)] group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors"
-                          dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-                        />
-
-                        {/* Mini statistics strip */}
-                        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-slate-500 font-medium">
-                          {totalPosts && (
-                            <span className="flex items-center gap-1">
-                              <strong>🔢 Posts:</strong> {totalPosts}
-                            </span>
-                          )}
-                          {deadline && (
-                            <span className="flex items-center gap-1">
-                              <strong>📅 Closing:</strong> {deadline}
-                            </span>
-                          )}
-                          <span className="flex items-center gap-1">
-                            <strong>📍 Location:</strong> {post.custom_meta?.aziz_job_location || 'All India'}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Action CTA Button */}
-                      <Link
-                        href={`/${postTypeSlug}/${post.slug}`}
-                        className="w-full md:w-auto flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-amber-400 dark:hover:bg-amber-400 hover:text-slate-900 text-white px-5 py-2.5 text-xs font-black font-rajdhani tracking-wider uppercase transition-colors"
-                      >
-                        Details
-                        <span>→</span>
-                      </Link>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="p-12 text-center border-2 border-dashed border-[var(--border)] rounded-2xl text-slate-400">
-                No bulletins active in the API cache right now. Check back soon.
-              </div>
-            )}
-          </div>
-
-          {/* Right Block: Sidebar Widgets (4 Columns) */}
-          <aside className="lg:col-span-4 space-y-8">
-            
-            {/* Sidebar Telegram & WhatsApp Glow Card */}
-            <div className="rounded-3xl bg-gradient-to-tr from-[#020617] to-[#0f172a] p-6 text-white border border-slate-800 shadow-xl relative overflow-hidden">
-              <div className="absolute -right-8 -bottom-8 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl"></div>
-              
-              <div className="space-y-4 relative z-10">
-                <span className="text-[10px] font-black font-rajdhani tracking-widest text-amber-400 uppercase bg-amber-400/10 rounded px-2.5 py-0.5">
-                  Live Notifications
-                </span>
-                <h4 className="text-xl font-bold font-rajdhani uppercase tracking-wide">
-                  Join Social Update Channels
-                </h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Join 1M+ aspirants receiving real-time government job PDF files and direct portal URLs daily.
-                </p>
-                <div className="space-y-2 pt-2">
-                  <a 
-                    href="#" 
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#0088cc] hover:bg-[#0088cc]/90 text-white font-rajdhani font-black text-xs py-3 tracking-wide transition-all"
-                  >
-                    ✈️ TELEGRAM CHANNEL (FREE)
-                  </a>
-                  <a 
-                    href="#" 
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-[#0f172a] font-rajdhani font-black text-xs py-3 tracking-wide transition-all"
-                  >
-                    💬 WHATSAPP GROUP LINKS
-                  </a>
+            <div className="space-y-4">
+              {[
+                { t: 'Fastest Notification', d: 'Real-time alerts for official results and upcoming recruitment drives across India.', i: '⏱️' },
+                { t: '100% Verified Info', d: 'Every update is cross-verified from official gazettes and government portals.', i: '🛡️' },
+                { t: 'Complete Resources', d: 'Syllabus guides, detailed patterns, and previous papers all in one place.', i: '📚' },
+                { t: 'Welfare Schemes', d: 'Stay updated with central and state welfare programs and scholarship opportunities.', i: '🌟' }
+              ].map((ft, idx) => (
+                <div key={idx} className="flex gap-4 p-5 rounded-2xl border border-slate-200 bg-white shadow-sm hover:border-blue-300 transition-colors">
+                  <div className="w-12 h-12 shrink-0 rounded-full bg-blue-50 flex items-center justify-center text-xl">
+                    {ft.i}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-base">{ft.t}</h4>
+                    <p className="text-sm text-slate-500 mt-1 leading-relaxed">{ft.d}</p>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
 
-            {/* Sidebar Widget 2: Qualification list (Aesthetic 2-column list with truncation) */}
-            <div className="glass-card rounded-2xl border border-[var(--border)] p-6 space-y-4">
-              <h4 className="text-lg font-black font-rajdhani tracking-wider text-[var(--foreground)] uppercase border-b border-[var(--border)] pb-2.5 flex items-center gap-2">
-                🎓 Qualification Filter
-              </h4>
-              <div className="grid grid-cols-2 gap-2 text-xs font-bold font-rajdhani">
-                {QUALIFICATIONS_LIST.map((qual) => (
-                  <Link
-                    key={qual.slug}
-                    href={`/qualification/${qual.slug}`}
-                    className="rounded-lg border border-[var(--border)] bg-slate-50 dark:bg-slate-900/15 p-2.5 hover:border-amber-400 hover:text-amber-500 transition-colors uppercase whitespace-nowrap overflow-hidden text-ellipsis block text-center"
-                    title={qual.name}
-                  >
-                    {qual.emoji} {qual.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Sidebar Widget 3: Jobs by State (Aesthetic 2-column state pills with truncation) */}
-            <div className="glass-card rounded-2xl border border-[var(--border)] p-6 space-y-4">
-              <h4 className="text-lg font-black font-rajdhani tracking-wider text-[var(--foreground)] uppercase border-b border-[var(--border)] pb-2.5 flex items-center gap-2">
-                🗺️ Jobs by State
-              </h4>
-              <div className="grid grid-cols-2 gap-2 text-xs font-bold font-rajdhani">
-                {STATES_LIST.slice(0, 14).map((state) => (
-                  <Link
-                    key={state.slug}
-                    href={`/state/${state.slug}`}
-                    className="rounded-lg border border-[var(--border)] bg-slate-50 dark:bg-slate-900/15 p-2.5 hover:border-amber-400 hover:text-amber-500 transition-colors uppercase whitespace-nowrap overflow-hidden text-ellipsis block text-center"
-                    title={state.name}
-                  >
-                    📍 {state.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-          </aside>
-
+          </div>
         </div>
       </section>
 
-      <AffiliateShowcase />
-
-      {/* 5. SVG India Map Component (Below workspace container) */}
-      <IndiaMap />
-
-      {/* 6. Rich SEO Directory Text folder & FAQ Accordion Section */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 border-t border-[var(--border)]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* SEO Rich Text Section (Left 5 Columns) */}
-          <div className="lg:col-span-5 space-y-5 prose prose-slate dark:prose-invert">
-            <h3 className="text-2xl font-black font-rajdhani text-[var(--foreground)] uppercase tracking-wide">
-              🇮🇳 Sarkari Result & Latest Jobs Portal
-            </h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              Welcome to **Get Job Update**, India&apos;s digital notification center for daily employment news, sarkari updates, competitive results, and exam resources. We understand the value of quick, authentic notifications when you are preparing for central and state-level exams.
-            </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              Our advanced data-parsing engine integrates directly with standard administrative REST configurations to aggregate updates from organizations including **UPSC, SSC, Railway Recruitment Boards (RRB), Public Sector Banks (IBPS)**, and various state-level civil service commissions. From 10th pass recruitments to specialized postgraduate research fellowships, explore fully customized directory listings.
-            </p>
-            <div className="pt-2">
-              <span className="text-[11px] font-black font-rajdhani tracking-widest text-blue-500 dark:text-blue-400 uppercase bg-blue-500/15 border border-blue-500/20 px-3.5 py-1.5 rounded-md">
-                Verified Authority Number: SECURE-GJ-2026
-              </span>
-            </div>
+      {/* 7. FAQs */}
+      <section className="bg-[#f8fafc] py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+              Frequently Asked <span className="text-[var(--color-brand-primary)]">Questions</span>
+            </h2>
           </div>
-
-          {/* High-Fidelity FAQs Section (Right 7 Columns) */}
-          <div className="lg:col-span-7 space-y-6">
-            <h3 className="text-2xl font-black font-rajdhani text-[var(--foreground)] uppercase tracking-wide text-center lg:text-left mb-6">
-              ❓ Frequently Asked Questions
-            </h3>
-            <FAQAccordion items={HOME_FAQS} />
+          <div className="bg-white rounded-3xl p-2 sm:p-6 border border-slate-200 shadow-sm">
+             <FAQAccordion items={HOME_FAQS} />
           </div>
-
         </div>
       </section>
+
     </div>
   );
 }
