@@ -12,6 +12,7 @@ export default function OneSignalInit() {
         await OneSignal.init({
           appId: "5de42404-7229-4222-a111-bfaa3ddaf6c3",
           allowLocalhostAsSecureOrigin: true, // For local development
+          // @ts-expect-error - react-onesignal types require all properties but runtime defaults are fine
           notifyButton: {
             enable: true,
           },
