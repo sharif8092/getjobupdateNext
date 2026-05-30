@@ -8,7 +8,7 @@ interface AgeCalculatorProps {
   department: string;
 }
 
-export default function AgeCalculator({ applyEnd, ageLimitStr, department }: AgeCalculatorProps) {
+export default function AgeCalculator({ applyEnd = '', ageLimitStr = '18-30', department = '' }: Partial<AgeCalculatorProps> = {}) {
   const [dob, setDob] = useState('2000-01-01');
   const [category, setCategory] = useState('General');
   const [calculated, setCalculated] = useState(false);
@@ -109,40 +109,47 @@ export default function AgeCalculator({ applyEnd, ageLimitStr, department }: Age
   };
 
   return (
-    <div className="glass-card rounded-3xl border border-[var(--border)] p-6 space-y-5 shadow-sm font-baloo">
-      <div className="space-y-1">
-        <span className="text-[11px] font-black font-rajdhani tracking-widest text-amber-500 uppercase bg-amber-500/10 px-2.5 py-0.5 rounded">
-          📊 Smart Age Verification
+    <div className="relative bg-white/90 backdrop-blur-xl rounded-[2rem] border border-slate-200/80 p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden font-baloo text-slate-800">
+      {/* Background glowing blobs */}
+      <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 rounded-full bg-orange-500/10 blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 rounded-full bg-amber-500/10 blur-3xl pointer-events-none"></div>
+
+      <div className="relative z-10 space-y-1.5 mb-6 text-center">
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-black font-rajdhani tracking-widest text-orange-600 dark:text-orange-400 uppercase bg-orange-50 dark:bg-orange-900/20 px-3 py-1 rounded-full ring-1 ring-orange-500/20 shadow-sm mb-2">
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          Smart Age Verification
         </span>
-        <h4 className="text-lg font-bold font-rajdhani uppercase tracking-wide text-[var(--foreground)] mt-2">
+        <h4 className="text-2xl font-black font-rajdhani uppercase tracking-wide text-slate-900 dark:text-white">
           Sarkari Age Calculator
         </h4>
         <p className="text-xs text-slate-500 dark:text-slate-400">
-          Check if you fit the age criteria on the cut-off date (<strong>{applyEnd || 'notice date'}</strong>).
+          Check if you fit the age criteria on the official cut-off date (<strong>{applyEnd || 'notice date'}</strong>).
         </p>
       </div>
 
-      <form onSubmit={calculateAgeOnCutOff} className="space-y-3 text-xs font-bold font-rajdhani text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+      <form onSubmit={calculateAgeOnCutOff} className="relative z-10 space-y-4 text-xs font-bold font-rajdhani text-slate-700 dark:text-slate-300 uppercase tracking-wide">
         
         {/* Date of Birth selector */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] text-slate-400">Select Date of Birth</label>
+          <label htmlFor="dob-input" className="text-[11px] font-extrabold text-slate-500 ml-1">📅 Select Date of Birth</label>
           <input
+            id="dob-input"
             required
             type="date"
             value={dob}
             onChange={(e) => setDob(e.target.value)}
-            className="w-full rounded-xl border border-[var(--border)] bg-slate-50 dark:bg-slate-900/40 p-2.5 text-sm text-[var(--foreground)] outline-none focus:border-amber-400"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all shadow-sm"
           />
         </div>
 
         {/* Category selector */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] text-slate-400">Caste Category (For Relaxations)</label>
+          <label htmlFor="category-select" className="text-[11px] font-extrabold text-slate-500 ml-1">🛡️ Caste Category (Relaxations)</label>
           <select
+            id="category-select"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full rounded-xl border border-[var(--border)] bg-slate-50 dark:bg-slate-900/40 p-2.5 text-sm text-[var(--foreground)] outline-none focus:border-amber-400 cursor-pointer"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all shadow-sm cursor-pointer"
           >
             <option value="General">General / UR</option>
             <option value="OBC">OBC (+3 Years Relaxation)</option>
@@ -153,32 +160,35 @@ export default function AgeCalculator({ applyEnd, ageLimitStr, department }: Age
 
         <button
           type="submit"
-          className="w-full rounded-xl bg-slate-950 dark:bg-slate-800 hover:bg-amber-400 dark:hover:bg-amber-400 hover:text-slate-900 text-white font-rajdhani font-black text-xs tracking-wider uppercase py-3 transition-colors cursor-pointer"
+          className="w-full mt-2 rounded-2xl bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-rajdhani font-black text-sm tracking-widest uppercase py-3.5 shadow-lg shadow-orange-500/30 transition-all cursor-pointer flex justify-center items-center gap-2 group"
         >
           Calculate Eligibility
+          <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
         </button>
 
       </form>
 
       {/* Calculated Results panel */}
       {calculated && result && (
-        <div className="pt-3 border-t border-[var(--border)] space-y-3 animate-fade-in text-xs font-baloo">
-          <div className="text-center bg-slate-50 dark:bg-slate-900/20 p-4 rounded-2xl border border-[var(--border)]">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-rajdhani mb-1">
-              Your precise age on Cut-Off Date:
+        <div className="relative z-10 pt-6 mt-6 border-t border-slate-200 dark:border-slate-800 space-y-4 animate-fade-in text-xs font-baloo">
+          <div className="text-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/60 dark:to-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
+            <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest block font-rajdhani mb-2">
+              Your precise age on Cut-Off Date
             </span>
-            <div className="text-xl font-extrabold font-rajdhani text-[var(--foreground)] tracking-wide">
-              {result.years} Yrs, {result.months} Mos, {result.days} Days
+            <div className="text-2xl md:text-3xl font-black font-rajdhani text-slate-900 dark:text-white tracking-wide">
+              <span className="text-orange-600">{result.years}</span> Yrs <span className="text-slate-300 mx-1">|</span> <span className="text-orange-600">{result.months}</span> Mos <span className="text-slate-300 mx-1">|</span> <span className="text-orange-600">{result.days}</span> Days
             </div>
           </div>
 
-          <div className={`rounded-xl p-3 border flex items-start gap-2.5 ${result.isEligible ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/5 border-rose-500/10 text-rose-500'}`}>
-            <span className="text-base">{result.isEligible ? '✅' : '❌'}</span>
-            <div className="space-y-1">
-              <strong className="block font-rajdhani uppercase tracking-wider text-[11px]">
+          <div className={`rounded-2xl p-4 md:p-5 border flex items-start gap-3 shadow-sm ${result.isEligible ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/10 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400'}`}>
+            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-lg ${result.isEligible ? 'bg-emerald-200/50' : 'bg-rose-200/50'}`}>
+              {result.isEligible ? '✅' : '❌'}
+            </div>
+            <div className="space-y-1.5 pt-0.5">
+              <strong className="block font-rajdhani uppercase tracking-widest text-xs font-black">
                 {result.isEligible ? 'ELIGIBLE TO APPLY' : 'NOT ELIGIBLE'}
               </strong>
-              <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 font-medium">
+              <p className="text-[11px] md:text-xs leading-relaxed opacity-90 font-medium">
                 {result.reason}
               </p>
             </div>

@@ -33,7 +33,7 @@ export default function ShareWidget() {
       
       {/* Label and Icon */}
       <div className="flex items-center gap-4 text-center sm:text-left">
-        <div className="w-12 h-12 rounded-full bg-blue-500/5 flex items-center justify-center text-blue-500 border border-blue-500/10 flex-shrink-0">
+        <div className="w-12 h-12 rounded-full bg-orange-500/5 flex items-center justify-center text-orange-500 border border-orange-500/10 flex-shrink-0">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 10.742l4.636-2.318m0 7.152l-4.636-2.318M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>

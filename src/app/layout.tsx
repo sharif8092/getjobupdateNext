@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import OneSignalInit from '@/components/OneSignalInit';
+import LiveTicker from '@/components/LiveTicker';
 
 // Load Inter Google Font for maximum readability and a clean, premium look
 const inter = Inter({
@@ -13,11 +14,25 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Get Job Update – Latest Sarkari Naukri, Result, Admit Card',
-  description: 'Sabhi government jobs, Sarkari results, admit cards, answer keys aur educational schemes ki sabse tej aur verified updates.',
+  title: 'Sarkari Result | Free Job Alert | Latest Sarkari Naukri Updates - Get Job Update',
+  description: 'Get Job Update provides the latest Sarkari Naukri, Free Job Alert, Sarkari Result, Admit Card, Answer Key, and Syllabus updates. Find all upcoming government jobs in India.',
+  keywords: 'Sarkari Result, Sarkari Naukri, Free Job Alert, Sarkari Exam, Government Jobs, Govt Jobs in India, Upcoming Govt Jobs, Rojgar Result, Sarkari Yojana, Admit Card, Answer Key, Syllabus',
   metadataBase: new URL('https://getjobupdate.co.in'),
   alternates: {
     canonical: '/',
+  },
+  openGraph: {
+    title: 'Sarkari Result & Free Job Alerts | Get Job Update',
+    description: 'Sabhi government jobs, Sarkari results, admit cards, answer keys aur educational schemes ki sabse tej aur verified updates. Best site for Sarkari Naukri.',
+    url: 'https://getjobupdate.co.in',
+    siteName: 'Get Job Update',
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Latest Sarkari Naukri & Sarkari Result - Get Job Update',
+    description: 'Find the latest government jobs, results, and admit cards instantly.',
   },
 };
 
@@ -33,6 +48,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-brand-accent selection:text-brand-dark">
         <OneSignalInit />
+        <LiveTicker />
         <Navbar />
         <main className="flex-1 w-full flex flex-col">
           {children}

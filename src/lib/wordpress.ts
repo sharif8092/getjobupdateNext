@@ -533,15 +533,36 @@ export async function getPostsByQualification(qualName: string, count = 30): Pro
 export async function searchPosts(query: string, count = 10): Promise<WordPressPost[]> {
   const allPosts: WordPressPost[] = [];
   const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_yojana'];
+  let apiSuccess = false;
   
   for (const type of targetTypes) {
     try {
       const posts = await fetchWP<WordPressPost[]>(`/wp-json/wp/v2/${type}?search=${encodeURIComponent(query)}&per_page=${Math.ceil(count / 4)}`);
       allPosts.push(...posts);
+      apiSuccess = true;
     } catch (e) {
       // ignore
     }
   }
+
+  // Fallback to local filtering of MOCK_POSTS if API fails or isn't available
+  if (!apiSuccess) {
+    const flatMocks = Object.values(MOCK_POSTS).flat();
+    const lowerQ = query.toLowerCase().trim();
+    let filtered = flatMocks;
+    
+    if (lowerQ) {
+       filtered = flatMocks.filter(post => 
+         post.title.rendered.toLowerCase().includes(lowerQ) || 
+         post.excerpt.rendered.toLowerCase().includes(lowerQ) ||
+         post.custom_meta?.aziz_department?.toLowerCase().includes(lowerQ) ||
+         post.custom_meta?.aziz_job_location?.toLowerCase().includes(lowerQ)
+       );
+    }
+    
+    return filtered.slice(0, count).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
   return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 

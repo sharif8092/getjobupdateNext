@@ -117,20 +117,18 @@ export default function JobMatcher() {
   };
 
   return (
-    <section className="w-full py-12 bg-white dark:bg-[#0b0f19] border-b border-[var(--border)] font-baloo">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        <div className="glass-card rounded-3xl border border-[var(--border)] p-6 md:p-10 shadow-lg relative overflow-hidden">
+    <div className="w-full font-baloo">
+      <div className="bg-white/90 backdrop-blur-xl rounded-3xl border border-slate-200/80 p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden text-slate-800">
           {/* Glowing dynamic badge decoration */}
           <div className="absolute -left-16 -top-16 w-36 h-36 bg-amber-400/5 rounded-full blur-2xl"></div>
-          <div className="absolute -right-16 -bottom-16 w-36 h-36 bg-blue-500/5 rounded-full blur-2xl"></div>
+          <div className="absolute -right-16 -bottom-16 w-36 h-36 bg-orange-500/5 rounded-full blur-2xl"></div>
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
             
             {/* Form Wizard Column (5 Columns) */}
             <div className="lg:col-span-5 space-y-6">
               <div className="space-y-2">
-                <span className="text-[11px] font-black font-rajdhani tracking-widest text-blue-500 dark:text-blue-400 uppercase bg-blue-500/10 px-3 py-1 rounded-md">
+                <span className="text-[11px] font-black font-rajdhani tracking-widest text-orange-500 dark:text-orange-400 uppercase bg-orange-500/10 px-3 py-1 rounded-md">
                   🚀 Premium AI Integration
                 </span>
                 <h3 className="text-2xl font-black font-rajdhani text-[var(--foreground)] uppercase">
@@ -145,8 +143,9 @@ export default function JobMatcher() {
                 
                 {/* 1. Academic Qualification */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold text-slate-500">🎓 Select Academic Background</label>
+                  <label htmlFor="jm-qual" className="text-[11px] font-extrabold text-slate-500">🎓 Select Academic Background</label>
                   <select
+                    id="jm-qual"
                     required
                     value={qual}
                     onChange={(e) => setQual(e.target.value)}
@@ -163,8 +162,9 @@ export default function JobMatcher() {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Category */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-extrabold text-slate-500">🛡️ Caste Category</label>
+                    <label htmlFor="jm-category" className="text-[11px] font-extrabold text-slate-500">🛡️ Caste Category</label>
                     <select
+                      id="jm-category"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                       className="w-full rounded-xl border border-[var(--border)] bg-slate-50 dark:bg-slate-900/40 p-3 text-sm text-[var(--foreground)] outline-none focus:border-amber-400 cursor-pointer"
@@ -178,8 +178,9 @@ export default function JobMatcher() {
 
                   {/* Candidate Age */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-extrabold text-slate-500">📅 Current Age (Years)</label>
+                    <label htmlFor="jm-age" className="text-[11px] font-extrabold text-slate-500">📅 Current Age (Years)</label>
                     <input
+                      id="jm-age"
                       required
                       type="number"
                       min="15"
@@ -193,8 +194,9 @@ export default function JobMatcher() {
 
                 {/* State of Residence */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold text-slate-500">📍 State of Residence</label>
+                  <label htmlFor="jm-state" className="text-[11px] font-extrabold text-slate-500">📍 State of Residence</label>
                   <select
+                    id="jm-state"
                     required
                     value={stateSlug}
                     onChange={(e) => setStateSlug(e.target.value)}
@@ -261,7 +263,7 @@ export default function JobMatcher() {
                       >
                         <div className="flex-1 space-y-1.5">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-[11px] font-black font-rajdhani text-blue-500">
+                            <span className="text-[11px] font-black font-rajdhani text-orange-500">
                               🏢 {post.custom_meta?.aziz_department || 'Govt Board'}
                             </span>
                             <span className={`text-[10px] font-black font-rajdhani px-1.5 py-0.5 rounded ${relaxationApplied ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
@@ -296,12 +298,8 @@ export default function JobMatcher() {
                 </div>
               )}
             </div>
-
           </div>
-
         </div>
-
-      </div>
-    </section>
+    </div>
   );
 }

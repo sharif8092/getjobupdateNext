@@ -61,12 +61,17 @@ export default async function Footer() {
           {/* Column 3: Exam Resources */}
           <div>
             <h4 className="text-white font-extrabold text-[15px] tracking-wider uppercase mb-5 border-l-2 border-[#ffbc00] pl-3">
-              EXAM RESOURCES
+              SMART TOOLS
             </h4>
             <ul className="space-y-3 text-sm font-semibold">
               <li>
-                <Link href="/syllabus" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Latest Syllabus
+                <Link href="/age-calculator" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
+                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Age Calculator
+                </Link>
+              </li>
+              <li>
+                <Link href="/job-matcher" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
+                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> AI Job Matcher
                 </Link>
               </li>
               <li>
@@ -75,13 +80,13 @@ export default async function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/scholarships" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Student Scholarships
+                <Link href="/exams" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
+                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Exam Guide
                 </Link>
               </li>
               <li>
-                <Link href="/exams" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Admissions & Exams
+                <Link href="/syllabus" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
+                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Exam Syllabus
                 </Link>
               </li>
             </ul>
@@ -157,22 +162,22 @@ export default async function Footer() {
             </p>
             {/* Social Media SVG Links */}
             <div className="flex justify-center md:justify-start gap-4 pt-2">
-              <a href="#" className="text-slate-500 hover:text-white transition-colors" title="Facebook">
+              <a href="#" className="text-slate-500 hover:text-white transition-colors" title="Facebook" aria-label="Visit our Facebook page">
                 <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
                   <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
                 </svg>
               </a>
-              <a href="#" className="text-slate-500 hover:text-white transition-colors" title="X (Twitter)">
+              <a href="#" className="text-slate-500 hover:text-white transition-colors" title="X (Twitter)" aria-label="Visit our Twitter page">
                 <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
               </a>
-              <a href="#" className="text-slate-500 hover:text-white transition-colors" title="Telegram">
+              <a href="#" className="text-slate-500 hover:text-white transition-colors" title="Telegram" aria-label="Join our Telegram channel">
                 <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.94-4.22 2.78-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.37.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"/>
                 </svg>
               </a>
-              <a href="#" className="text-slate-500 hover:text-white transition-colors" title="YouTube">
+              <a href="#" className="text-slate-500 hover:text-white transition-colors" title="YouTube" aria-label="Subscribe to our YouTube channel">
                 <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
                   <path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                 </svg>
@@ -182,10 +187,14 @@ export default async function Footer() {
 
           {/* Trusted Platform Badge */}
           <div className="flex-shrink-0">
-            <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 px-4 py-2.5 rounded-2xl shadow-xl hover:border-blue-500/50 transition-colors">
-              <span className="text-2xl">⚡</span>
+            <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 px-4 py-2.5 rounded-2xl shadow-xl hover:border-orange-500/50 transition-colors">
+              <div className="w-8 h-8 flex items-center justify-center shrink-0 text-orange-500">
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+              </div>
               <div>
-                <div className="text-[12px] font-black tracking-wider text-blue-400 leading-none">
+                <div className="text-[12px] font-black tracking-wider text-orange-400 leading-none">
                   FAST & RELIABLE
                 </div>
                 <div className="text-[10px] text-slate-400 font-bold tracking-wide mt-1">

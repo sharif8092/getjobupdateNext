@@ -16,9 +16,23 @@ const PASTEL_COLORS = [
   { fill: '#dbeafe', hover: '#bfdbfe', stroke: '#2563eb', text: '#1d4ed8', name: 'blue' }
 ];
 
-export default function IndiaMap() {
+export default function IndiaMap({ 
+  externalHoverSlug = null, 
+  onStateHover 
+}: { 
+  externalHoverSlug?: string | null;
+  onStateHover?: (slug: string | null) => void;
+}) {
   const router = useRouter();
-  const [hoveredState, setHoveredState] = useState<{ name: string; slug: string; count: number } | null>(null);
+  const [internalHoveredState, setInternalHoveredState] = useState<{ name: string; slug: string; count: number } | null>(null);
+
+  // Use external slug if provided (for highlighting from outside), otherwise use internal hover logic for map badge
+  const activeSlug = externalHoverSlug || internalHoveredState?.slug;
+  const displayHoveredState = activeSlug ? { 
+    name: STATES_LIST.find(s => s.slug === activeSlug)?.name || internalHoveredState?.name || '', 
+    slug: activeSlug, 
+    count: STATES_LIST.find(s => s.slug === activeSlug)?.count || internalHoveredState?.count || 5 
+  } : null;
 
   const getStateJobCount = (slug: string) => {
     const matched = STATES_LIST.find((s) => s.slug === slug);
@@ -41,7 +55,7 @@ export default function IndiaMap() {
           {INDIA_MAP_PATHS.map((statePath, idx) => {
             const count = getStateJobCount(statePath.slug);
             const colors = getStateColor(statePath.slug, idx);
-            const isHovered = hoveredState?.slug === statePath.slug;
+            const isHovered = activeSlug === statePath.slug;
 
             return (
               <path
@@ -55,8 +69,14 @@ export default function IndiaMap() {
                   cursor: 'pointer',
                   transition: 'all 0.2s ease-in-out'
                 }}
-                onMouseEnter={() => setHoveredState({ name: statePath.name, slug: statePath.slug, count })}
-                onMouseLeave={() => setHoveredState(null)}
+                onMouseEnter={() => {
+                  setInternalHoveredState({ name: statePath.name, slug: statePath.slug, count });
+                  onStateHover?.(statePath.slug);
+                }}
+                onMouseLeave={() => {
+                  setInternalHoveredState(null);
+                  onStateHover?.(null);
+                }}
                 onClick={() => router.push(`/state/${statePath.slug}`)}
               />
             );
@@ -73,10 +93,10 @@ export default function IndiaMap() {
           </svg>
         </div>
         
-        {hoveredState ? (
+        {displayHoveredState ? (
           <div className="flex flex-col pr-2 animate-fade-in min-w-[120px]">
-            <div className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-0.5">{hoveredState.count} Live Posts</div>
-            <div className="text-[17px] font-black text-slate-900 tracking-tight">{hoveredState.name}</div>
+            <div className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-0.5">{displayHoveredState.count} Live Posts</div>
+            <div className="text-[17px] font-black text-slate-900 tracking-tight">{displayHoveredState.name}</div>
           </div>
         ) : (
           <div className="flex flex-col pr-2 min-w-[120px]">
@@ -86,7 +106,7 @@ export default function IndiaMap() {
         )}
 
         <div 
-          onClick={() => hoveredState ? router.push(`/state/${hoveredState.slug}`) : router.push('/states')}
+          onClick={() => displayHoveredState ? router.push(`/state/${displayHoveredState.slug}`) : router.push('/states')}
           className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center ml-2 hover:bg-slate-800 cursor-pointer transition-colors shadow-md text-white"
         >
           <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
