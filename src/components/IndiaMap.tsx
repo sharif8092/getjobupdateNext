@@ -65,31 +65,29 @@ export default function IndiaMap() {
       </div>
 
       {/* Live Status Floating Badge */}
-      <div className="relative mt-6 md:mt-0 md:absolute md:bottom-0 md:right-4 lg:right-12 z-20 bg-white rounded-2xl md:rounded-full p-2 pr-3 flex items-center justify-between md:justify-start gap-3 md:gap-5 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 backdrop-blur-sm transition-all duration-300 w-full md:w-auto">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1d4ed8] flex items-center justify-center shadow-inner shrink-0">
-            <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          
-          {hoveredState ? (
-            <div className="flex flex-col animate-fade-in min-w-[120px]">
-              <div className="text-[10px] md:text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-0.5 leading-none">{hoveredState.count} Live Posts</div>
-              <div className="text-[15px] md:text-[17px] font-black text-slate-900 tracking-tight leading-tight">{hoveredState.name}</div>
-            </div>
-          ) : (
-            <div className="flex flex-col min-w-[120px]">
-              <div className="text-[10px] md:text-[11px] font-black text-[#1d4ed8] uppercase tracking-[0.2em] mb-0.5 leading-none">LIVE STATUS</div>
-              <div className="text-[15px] md:text-[17px] font-black text-slate-900 tracking-tight leading-tight">38 Active Regions</div>
-            </div>
-          )}
+      <div className="absolute bottom-0 right-4 lg:right-12 z-20 bg-white rounded-full p-2 pr-3 flex items-center gap-5 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 backdrop-blur-sm transition-all duration-300">
+        <div className="w-12 h-12 rounded-full bg-[#1d4ed8] flex items-center justify-center shadow-inner">
+          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
         </div>
+        
+        {hoveredState ? (
+          <div className="flex flex-col pr-2 animate-fade-in min-w-[120px]">
+            <div className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-0.5">{hoveredState.count} Live Posts</div>
+            <div className="text-[17px] font-black text-slate-900 tracking-tight">{hoveredState.name}</div>
+          </div>
+        ) : (
+          <div className="flex flex-col pr-2 min-w-[120px]">
+            <div className="text-[11px] font-black text-[#1d4ed8] uppercase tracking-[0.2em] mb-0.5">LIVE STATUS</div>
+            <div className="text-[17px] font-black text-slate-900 tracking-tight">38 Active Regions</div>
+          </div>
+        )}
 
         <div 
           onClick={() => hoveredState ? router.push(`/state/${hoveredState.slug}`) : router.push('/states')}
-          className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-slate-800 cursor-pointer transition-colors shadow-md text-white shrink-0"
+          className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center ml-2 hover:bg-slate-800 cursor-pointer transition-colors shadow-md text-white"
         >
           <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />

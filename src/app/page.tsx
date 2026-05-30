@@ -121,19 +121,19 @@ export default async function HomePage() {
           </p>
           
           {/* Search Bar Container */}
-          <div className="bg-white rounded-2xl md:rounded-full p-2 flex flex-col md:flex-row items-center shadow-2xl mx-auto max-w-3xl gap-2 md:gap-0">
-            <div className="w-full md:flex-1 flex items-center px-4 py-1 md:border-r border-slate-200">
-              <svg className="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              <input type="text" placeholder="Search job title or organization..." className="w-full px-3 py-2.5 outline-none text-slate-800 bg-transparent text-sm font-medium placeholder:text-slate-400" />
+          <div className="bg-white rounded-full p-2 flex items-center shadow-2xl mx-auto max-w-3xl">
+            <div className="flex-1 flex items-center pl-4 border-r border-slate-200">
+              <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input type="text" placeholder="Search by job title or organization..." className="w-full px-3 py-2.5 outline-none text-slate-800 bg-transparent text-sm font-medium placeholder:text-slate-400" />
             </div>
             <div className="hidden sm:flex items-center px-4 w-44 border-r border-slate-200 cursor-pointer">
-              <svg className="w-4 h-4 text-slate-400 mr-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <svg className="w-4 h-4 text-slate-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
               <select className="bg-transparent text-slate-700 outline-none w-full text-sm font-bold cursor-pointer appearance-none">
                 <option>All States</option>
               </select>
-              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             </div>
-            <button className="w-full md:w-auto bg-blue-700 hover:bg-blue-800 text-white rounded-xl md:rounded-full px-7 py-3 font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-md">
+            <button className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-7 py-3 font-bold text-sm flex items-center gap-2 transition-colors ml-1 shadow-md">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               Search Jobs
             </button>
@@ -153,51 +153,51 @@ export default async function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-16 mb-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           
-          <Link href="/jobs" className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-2 md:gap-3 hover:-translate-y-1 transition-transform group">
-            <div className="text-3xl md:text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">🏛️</div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-slate-900 font-bold text-xs md:text-sm leading-tight truncate">Sarkari<br/>Naukri</span>
-              <span className="text-slate-400 font-black text-[9px] md:text-[10px] uppercase mt-1 tracking-wider truncate">NEW OPENINGS</span>
+          <Link href="/jobs" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">🏛️</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Sarkari<br/>Naukri</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">NEW OPENINGS</span>
             </div>
           </Link>
           
-          <Link href="/results" className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-2 md:gap-3 hover:-translate-y-1 transition-transform group">
-            <div className="text-3xl md:text-4xl text-amber-500 drop-shadow-sm group-hover:scale-110 transition-transform">🏆</div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-slate-900 font-bold text-xs md:text-sm leading-tight truncate">Results<br/>2026</span>
-              <span className="text-slate-400 font-black text-[9px] md:text-[10px] uppercase mt-1 tracking-wider truncate">CHECK SCORES</span>
+          <Link href="/results" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl text-amber-500 drop-shadow-sm group-hover:scale-110 transition-transform">🏆</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Results<br/>2026</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">CHECK SCORES</span>
             </div>
           </Link>
           
-          <Link href="/admit-card" className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-2 md:gap-3 hover:-translate-y-1 transition-transform group">
-            <div className="text-3xl md:text-4xl text-slate-300 drop-shadow-sm group-hover:scale-110 transition-transform">📄</div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-slate-900 font-bold text-xs md:text-sm leading-tight truncate">Admit<br/>Card</span>
-              <span className="text-slate-400 font-black text-[9px] md:text-[10px] uppercase mt-1 tracking-wider truncate">HALL TICKETS</span>
+          <Link href="/admit-card" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl text-slate-300 drop-shadow-sm group-hover:scale-110 transition-transform">📄</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Admit<br/>Card</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">HALL TICKETS</span>
             </div>
           </Link>
           
-          <Link href="/syllabus" className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-2 md:gap-3 hover:-translate-y-1 transition-transform group">
-            <div className="text-3xl md:text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">📝</div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-slate-900 font-bold text-xs md:text-sm leading-tight truncate">Syllabus &<br/>Pattern</span>
-              <span className="text-slate-400 font-black text-[9px] md:text-[10px] uppercase mt-1 tracking-wider truncate">EXAM GUIDE</span>
+          <Link href="/syllabus" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">📝</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Syllabus &<br/>Pattern</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">EXAM GUIDE</span>
             </div>
           </Link>
           
-          <Link href="/yojana" className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-2 md:gap-3 hover:-translate-y-1 transition-transform group">
-            <div className="text-3xl md:text-4xl text-red-500 drop-shadow-sm group-hover:scale-110 transition-transform">📢</div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-slate-900 font-bold text-xs md:text-sm leading-tight truncate">Sarkari<br/>Yojana</span>
-              <span className="text-slate-400 font-black text-[9px] md:text-[10px] uppercase mt-1 tracking-wider truncate">SCHEMES</span>
+          <Link href="/yojana" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl text-red-500 drop-shadow-sm group-hover:scale-110 transition-transform">📢</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Sarkari<br/>Yojana</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">SCHEMES</span>
             </div>
           </Link>
           
-          <Link href="/exam-guide" className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-2 md:gap-3 hover:-translate-y-1 transition-transform group">
-            <div className="text-3xl md:text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">📚</div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-slate-900 font-bold text-xs md:text-sm leading-tight truncate">Exam<br/>Guide</span>
-              <span className="text-slate-400 font-black text-[9px] md:text-[10px] uppercase mt-1 tracking-wider truncate">PREPARATION</span>
+          <Link href="/exam-guide" className="bg-white rounded-3xl p-5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform group">
+            <div className="text-4xl drop-shadow-sm group-hover:scale-110 transition-transform">📚</div>
+            <div className="flex flex-col">
+              <span className="text-slate-900 font-bold text-sm leading-tight">Exam<br/>Guide</span>
+              <span className="text-slate-400 font-black text-[10px] uppercase mt-1 tracking-wider">PREPARATION</span>
             </div>
           </Link>
 
