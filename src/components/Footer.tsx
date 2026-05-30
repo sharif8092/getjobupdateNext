@@ -23,13 +23,6 @@ export default async function Footer() {
             <p className="text-sm leading-relaxed text-slate-400">
               Get Job Update is India&apos;s leading platform providing 100% verified, ultra-fast notifications for latest government jobs, results, admit cards, and schemes directly from official gazettes.
             </p>
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </span>
-              REAL-TIME DATABASE ACTIVE
-            </div>
             <div className="pt-2 text-xs text-slate-500 border-t border-slate-800">
               <strong className="block text-slate-400 mb-1 uppercase tracking-wider">📍 REGIONAL OFFICE:</strong>
               Sector 62, Noida, Uttar Pradesh, India - 201301
@@ -160,10 +153,7 @@ export default async function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center md:text-left">
             <p className="text-xs text-slate-500 font-medium">
-              © {currentYear} Get Job Update. All rights reserved. Built with premium Next.js 16 Server-Side Rendering (SSR).
-            </p>
-            <p className="text-[10px] text-slate-600 font-mono">
-              Database Sync Stamp: {new Date().toISOString().split('T')[0]} | Authority Verification Key: GJ-SECURE-2026
+              © {currentYear} Get Job Update. All rights reserved.
             </p>
             {/* Social Media SVG Links */}
             <div className="flex justify-center md:justify-start gap-4 pt-2">
@@ -190,16 +180,16 @@ export default async function Footer() {
             </div>
           </div>
 
-          {/* Expert Editor verified Badge */}
+          {/* Trusted Platform Badge */}
           <div className="flex-shrink-0">
-            <div className="flex items-center gap-3 bg-slate-900/50 border-2 border-[#ffbc00]/80 px-4 py-2.5 rounded-2xl shadow-xl">
-              <span className="text-2xl">🛡️</span>
+            <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 px-4 py-2.5 rounded-2xl shadow-xl hover:border-blue-500/50 transition-colors">
+              <span className="text-2xl">⚡</span>
               <div>
-                <div className="text-[12px] font-black tracking-wider text-[#ffbc00] leading-none">
-                  VERIFIED & ACCURATE
+                <div className="text-[12px] font-black tracking-wider text-blue-400 leading-none">
+                  FAST & RELIABLE
                 </div>
                 <div className="text-[10px] text-slate-400 font-bold tracking-wide mt-1">
-                  100% GOVERNMENT GAZETTE APPROVED
+                  LATEST JOB UPDATES 24/7
                 </div>
               </div>
             </div>
