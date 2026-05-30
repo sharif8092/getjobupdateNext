@@ -4,7 +4,8 @@ import {
   getPosts,
   WordPressPost,
   STATES_LIST,
-  POST_TYPE_MAP
+  POST_TYPE_MAP,
+  extractPostMeta
 } from '@/lib/wordpress';
 import InteractiveStateBrowser from '@/components/InteractiveStateBrowser';
 import FAQAccordion from '@/components/FAQAccordion';
@@ -44,9 +45,7 @@ function FeedCard({
       {/* List */}
       <div className="flex flex-col flex-1 divide-y divide-slate-50">
         {posts.length > 0 ? posts.slice(0, 5).map(post => {
-          const totalPosts = post.custom_meta?.aziz_total_posts?.replace(/posts?/i, '').trim();
-          const qual = post.custom_meta?.aziz_qualification;
-          const lastDate = post.custom_meta?.aziz_apply_end;
+          const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
           const isNew = (Date.now() - new Date(post.date).getTime()) < 3 * 24 * 60 * 60 * 1000;
           return (
             <Link key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
@@ -54,16 +53,14 @@ function FeedCard({
                 <h4 className={`text-[13px] font-semibold text-slate-800 leading-snug ${hoverText} transition-colors line-clamp-2 flex-1`} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                 {isNew && <span className="text-[9px] font-black text-white bg-rose-500 px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide">New</span>}
               </div>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-slate-400">
-                {totalPosts && <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0"></span>{totalPosts} Posts</span>}
-                {qual && <span className="flex items-center gap-1 truncate max-w-[120px]"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>{qual}</span>}
-                {lastDate && (
-                  <span className="flex items-center gap-1 text-amber-600 ml-auto font-semibold">
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    {lastDate}
-                  </span>
-                )}
-              </div>
+              {(dept || totalPosts || qual || lastDate) && (
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-1.5 text-[10px] font-medium text-slate-500 bg-slate-50/50 group-hover:bg-white p-2.5 rounded-lg border border-slate-100 group-hover:border-slate-200 transition-colors">
+                  {dept && <div className="col-span-2 flex items-start gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 font-semibold truncate">{dept}</span></div>}
+                  {totalPosts && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 font-semibold truncate">{totalPosts}</span></div>}
+                  {qual && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 font-semibold truncate">{qual}</span></div>}
+                  {lastDate && <div className="col-span-2 flex items-center gap-1 mt-0.5 pt-1.5 border-t border-slate-200/50 group-hover:border-slate-200"><span className="text-amber-600/70 font-bold shrink-0">Deadline:</span> <span className="text-amber-700 font-bold">{lastDate}</span></div>}
+                </div>
+              )}
             </Link>
           );
         }) : (
@@ -96,14 +93,16 @@ export default async function HomePage() {
   let yojanas: WordPressPost[] = [];
   let syllabus: WordPressPost[] = [];
   let exams: WordPressPost[] = [];
+  let answerkeys: WordPressPost[] = [];
 
   try {
     const data = await Promise.all([
       getPosts('aziz_job', 6), getPosts('aziz_result', 6),
       getPosts('aziz_admit', 6), getPosts('aziz_yojana', 6),
-      getPosts('aziz_syllabus', 4), getPosts('aziz_exam', 4)
+      getPosts('aziz_syllabus', 6), getPosts('aziz_exam', 4),
+      getPosts('aziz_answerkey', 6)
     ]);
-    [jobs, results, admits, yojanas, syllabus, exams] = data;
+    [jobs, results, admits, yojanas, syllabus, exams, answerkeys] = data;
   } catch (err) { console.error('Failed to fetch posts', err); }
 
   const latestNotifications = [...jobs, ...results, ...admits, ...yojanas]
@@ -111,7 +110,7 @@ export default async function HomePage() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 6);
 
-  const examSyllabusUpdates = [...syllabus, ...exams]
+  const examGuideUpdates = [...exams]
     .map(p => ({ ...p, routePrefix: POST_TYPE_MAP[p.type] || 'blog' }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
@@ -120,14 +119,14 @@ export default async function HomePage() {
     { href: '/jobs', label: 'NEW OPENINGS', name: 'Sarkari Naukri', iconBg: 'bg-orange-100 text-orange-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg> },
     { href: '/results', label: 'CHECK SCORES', name: 'Results 2026', iconBg: 'bg-emerald-100 text-emerald-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" /></svg> },
     { href: '/admit-card', label: 'HALL TICKETS', name: 'Admit Card', iconBg: 'bg-rose-100 text-rose-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" /></svg> },
-    { href: '/syllabus', label: 'EXAM GUIDE', name: 'Syllabus', iconBg: 'bg-indigo-100 text-indigo-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.56 2.25h-3.12a2.25 2.25 0 00-2.104 1.638m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184m-7.332 0h7.332M8.25 8.25h7.5m-7.5 4.5h7.5m-7.5 4.5h7.5" /></svg> },
+    { href: '/syllabus', label: 'EXAM GUIDE', name: 'Syllabus', iconBg: 'bg-indigo-100 text-[var(--color-brand-blue)]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.56 2.25h-3.12a2.25 2.25 0 00-2.104 1.638m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184m-7.332 0h7.332M8.25 8.25h7.5m-7.5 4.5h7.5m-7.5 4.5h7.5" /></svg> },
     { href: '/sarkari-yojana', label: 'SCHEMES', name: 'Sarkari Yojana', iconBg: 'bg-amber-100 text-amber-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg> },
     { href: '/exams', label: 'PREPARATION', name: 'Exam Guide', iconBg: 'bg-purple-100 text-purple-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg> },
   ];
 
   const pathways = [
     { t: 'SSC & Railway', d: 'CGL, CHSL, NTPC, Group D. Complete updates on clerical and non-technical roles.', iconBg: 'bg-orange-100 text-orange-600', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6.75h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" /></svg> },
-    { t: 'UPSC & Civil Services', d: 'CSE, IES, IFS. Official notifications for India\'s top administrative roles.', iconBg: 'bg-indigo-100 text-indigo-600', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg> },
+    { t: 'UPSC & Civil Services', d: 'CSE, IES, IFS. Official notifications for India\'s top administrative roles.', iconBg: 'bg-indigo-100 text-[var(--color-brand-blue)]', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg> },
     { t: 'Banking & Insurance', d: 'SBI PO, IBPS Clerk, LIC, NABARD. High-growth finance and banking careers.', iconBg: 'bg-emerald-100 text-emerald-600', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
     { t: 'Defence & Police', d: 'Army, Navy, CAPF, State Police. Serve the nation in frontline roles.', iconBg: 'bg-amber-100 text-amber-600', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg> },
     { t: 'Teaching & Education', d: 'CTET, KVS, NVS, UGC NET. Verified opportunities for educators.', iconBg: 'bg-fuchsia-100 text-fuchsia-600', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" /></svg> },
@@ -139,7 +138,7 @@ export default async function HomePage() {
   const trustPoints = [
     { t: 'Fastest Free Job Alert', d: 'Real-time alerts for official Sarkari results and upcoming recruitment drives across India.', iconBg: 'bg-orange-100 text-orange-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
     { t: '100% Verified Govt Info', d: 'Every update is cross-verified from official gazettes and government portals for authenticity.', iconBg: 'bg-emerald-100 text-emerald-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg> },
-    { t: 'Complete Exam Resources', d: 'Syllabus guides, detailed exam patterns, answer keys, and previous papers all in one place.', iconBg: 'bg-indigo-100 text-indigo-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg> },
+    { t: 'Complete Exam Resources', d: 'Syllabus guides, detailed exam patterns, answer keys, and previous papers all in one place.', iconBg: 'bg-indigo-100 text-[var(--color-brand-blue)]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg> },
     { t: 'Yojana & Welfare Schemes', d: 'Stay updated with central and state welfare programs, sarkari yojana, and scholarship opportunities.', iconBg: 'bg-amber-100 text-amber-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg> },
   ];
 
@@ -223,8 +222,11 @@ export default async function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-          {/* Left: 2x2 Feed Grid */}
-          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          {/* Left Column */}
+          <div className="lg:col-span-8 space-y-6">
+            
+            {/* 3x2 Feed Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             <FeedCard title="Latest Sarkari Job" typeSlug="jobs" posts={jobs} accentColor="text-orange-400"
               iconBg="bg-orange-500" hoverText="group-hover:text-orange-600"
               icon={<svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg>}
@@ -241,6 +243,21 @@ export default async function HomePage() {
               iconBg="bg-purple-500" hoverText="group-hover:text-purple-600"
               icon={<svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>}
             />
+            <FeedCard title="Answer Keys" typeSlug="answer-keys" posts={answerkeys} accentColor="text-cyan-400"
+              iconBg="bg-cyan-500" hoverText="group-hover:text-cyan-600"
+              icon={<svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>}
+            />
+            <FeedCard title="Syllabus" typeSlug="syllabus" posts={syllabus} accentColor="text-[var(--color-brand-blue)]"
+              iconBg="bg-indigo-500" hoverText="group-hover:text-indigo-600"
+              icon={<svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>}
+            />
+            </div>
+
+            {/* Smart Age Calculator Tool to balance left column space */}
+            <div className="mt-8">
+              <AgeCalculator />
+            </div>
+
           </div>
 
           {/* Right column */}
@@ -261,13 +278,20 @@ export default async function HomePage() {
               </div>
               <div className="p-4 space-y-1">
                 {latestNotifications.length > 0 ? latestNotifications.map((post, idx) => {
-                  const dept = post.custom_meta?.aziz_department || 'General Update';
+                  const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
                   return (
                     <Link key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-slate-50 px-3 py-3 -mx-1 rounded-xl transition-colors">
                       <span className="text-lg font-black text-slate-100 group-hover:text-orange-200 transition-colors leading-none w-6 shrink-0 text-center">{idx + 1}</span>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <h4 className="text-[13px] font-semibold text-slate-700 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                        <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-wide truncate">{dept}</p>
+                        {(dept || totalPosts || qual || lastDate) && (
+                          <div className="mt-2 text-[9px] font-medium text-slate-500 bg-white group-hover:bg-slate-50 p-2 rounded border border-slate-100 transition-colors space-y-1">
+                            {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
+                            {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
+                            {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
+                            {lastDate && <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100"><span className="text-amber-600/80 font-bold shrink-0">Deadline:</span> <span className="text-amber-700 font-bold">{lastDate}</span></div>}
+                          </div>
+                        )}
                       </div>
                     </Link>
                   );
@@ -275,29 +299,41 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Exam & Syllabus */}
+            {/* Exam Guide */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
               <div className="flex items-center justify-between px-5 py-3.5 bg-slate-900">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
                     <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
                   </div>
-                  <h3 className="font-black text-white text-sm">Exam Guide & Syllabus</h3>
+                  <h3 className="font-black text-white text-sm">Exam Guide</h3>
                 </div>
-                <Link href="/syllabus" className="text-[10px] font-black text-indigo-400 uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors">
+                <Link href="/exams" className="text-[10px] font-black text-orange-400 uppercase tracking-widest flex items-center gap-1 hover:text-orange-300 transition-colors">
                   All <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                 </Link>
               </div>
               <div className="p-4 space-y-1">
-                {examSyllabusUpdates.length > 0 ? examSyllabusUpdates.map((post, idx) => (
-                  <Link key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-indigo-50/50 px-3 py-3 -mx-1 rounded-xl transition-colors">
-                    <span className="text-lg font-black text-slate-100 group-hover:text-indigo-200 transition-colors leading-none w-6 shrink-0 text-center">{idx + 1}</span>
-                    <div className="min-w-0">
-                      <h4 className="text-[13px] font-semibold text-slate-700 leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                      <span className="text-[9px] font-black text-indigo-500 bg-indigo-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider mt-1 inline-block">{post.type === 'aziz_syllabus' ? 'Syllabus' : 'Exam Guide'}</span>
+                {examGuideUpdates.length > 0 ? examGuideUpdates.map((post, idx) => {
+                  const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
+                  return (
+                  <Link key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-orange-50/80 px-3 py-3 -mx-1 rounded-xl transition-colors">
+                    <span className="text-lg font-black text-slate-100 group-hover:text-orange-200 transition-colors leading-none w-6 shrink-0 text-center">{idx + 1}</span>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-[13px] font-semibold text-slate-700 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                      <div className="flex gap-2 items-center mt-1.5 mb-1.5">
+                        <span className="text-[9px] font-black text-orange-700 bg-orange-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider inline-block">Exam Guide</span>
+                      </div>
+                      {(dept || totalPosts || qual || lastDate) && (
+                        <div className="text-[9px] font-medium text-slate-500 bg-white group-hover:bg-orange-50/50 p-2 rounded border border-slate-100 transition-colors space-y-1">
+                            {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
+                            {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
+                            {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
+                            {lastDate && <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100"><span className="text-amber-600/80 font-bold shrink-0">Deadline:</span> <span className="text-amber-700 font-bold">{lastDate}</span></div>}
+                        </div>
+                      )}
                     </div>
                   </Link>
-                )) : <div className="text-xs text-slate-400 italic text-center py-4">No recent updates.</div>}
+                )}) : <div className="text-xs text-slate-400 italic text-center py-4">No recent updates.</div>}
               </div>
             </div>
 
@@ -400,25 +436,20 @@ export default async function HomePage() {
           <SectionHeader label="Smart Tools" title={<>Candidate <span className="text-orange-600">Utility Tools</span></>} sub="Use our free smart tools to calculate your exact age for form submissions and find matching jobs instantly." />
           <div className="mb-16"><JobMatcher /></div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            <div className="lg:col-span-7">
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
-                <div className="px-5 py-4 bg-slate-900 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Common Queries</p>
-                    <h3 className="text-sm font-black text-white">Frequently Asked Questions</h3>
-                  </div>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden">
+              <div className="px-6 py-5 bg-slate-900 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center shadow-inner">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
                 </div>
-                <div className="p-5 md:p-6">
-                  <FAQAccordion items={HOME_FAQS} />
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Common Queries</p>
+                  <h3 className="text-lg font-black text-white">Frequently Asked Questions</h3>
                 </div>
               </div>
-            </div>
-            <div className="lg:col-span-5 sticky top-24">
-              <AgeCalculator />
+              <div className="p-6 md:p-8 bg-slate-50/30">
+                <FAQAccordion items={HOME_FAQS} />
+              </div>
             </div>
           </div>
         </div>

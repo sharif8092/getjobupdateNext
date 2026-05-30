@@ -38,8 +38,8 @@ export default function InteractiveStateBrowser() {
                 onMouseLeave={() => setActiveSlug(null)}
                 className={`flex items-center gap-3 backdrop-blur-xl border rounded-full py-2.5 px-5 transition-all shadow-sm group ${
                   isHovered 
-                            ? 'bg-orange-50 border-orange-500 shadow-[0_8px_20px_rgb(17,64,176,0.12)] -translate-y-0.5' 
-                    : 'bg-slate-100/90 border-slate-200/80 hover:border-orange-500 hover:shadow-[0_8px_20px_rgb(17,64,176,0.12)] hover:-translate-y-0.5'
+                            ? 'bg-orange-50 border-orange-500 shadow-[0_8px_20px_rgba(255,188,0,0.18)] -translate-y-0.5' 
+                    : 'bg-slate-100/90 border-slate-200/80 hover:border-orange-500 hover:shadow-[0_8px_20px_rgba(255,188,0,0.14)] hover:-translate-y-0.5'
                 }`}
               >
                 <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black tracking-wider transition-colors ${

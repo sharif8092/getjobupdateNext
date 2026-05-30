@@ -16,7 +16,7 @@ interface SearchProps {
 const getBadgeStyles = (postType: string) => {
   switch (postType) {
     case 'aziz_job':
-      return { bg: 'bg-blue-500/10 text-blue-500 border-blue-500/20', text: 'Job', emoji: '💼' };
+      return { bg: 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-[var(--color-brand-blue)]/20', text: 'Job', emoji: '💼' };
     case 'aziz_result':
       return { bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', text: 'Result', emoji: '🏆' };
     case 'aziz_admit':
@@ -55,17 +55,17 @@ export default async function SearchPage({ searchParams }: SearchProps) {
         
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-1.5 text-xs font-bold font-rajdhani uppercase text-slate-400 mb-6 tracking-wide">
-          <Link href="/" className="hover:text-blue-500">HOME</Link>
+          <Link href="/" className="hover:text-[var(--color-brand-blue)]">HOME</Link>
           <span>›</span>
           <span className="text-slate-500">Search Results</span>
         </nav>
 
         {/* Header Hero card */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#030712] text-white p-8 md:p-12 border border-slate-900 shadow-sm mb-10">
-          <div className="absolute right-0 top-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+          <div className="absolute right-0 top-0 w-64 h-64 bg-[var(--color-brand-blue)]/10 rounded-full blur-3xl animate-pulse-slow"></div>
           
           <div className="space-y-4 relative z-10 max-w-2xl">
-            <span className="text-xs font-black font-rajdhani tracking-widest text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full uppercase">
+            <span className="text-xs font-black font-rajdhani tracking-widest text-[var(--color-brand-blue)] bg-[var(--color-brand-blue)]/10 px-3 py-1 rounded-full uppercase">
               Global Search
             </span>
             <h1 className="text-3xl md:text-5xl font-black font-rajdhani uppercase tracking-tight leading-none">
@@ -94,7 +94,7 @@ export default async function SearchPage({ searchParams }: SearchProps) {
                 return (
                   <div 
                     key={post.id}
-                    className="glass-card flex flex-col md:flex-row gap-4 items-start md:items-center justify-between p-5 rounded-2xl border border-[var(--border)] hover:border-blue-400/40 transition-all duration-300 hover:shadow-md group bg-white dark:bg-slate-900/50"
+                    className="glass-card flex flex-col md:flex-row gap-4 items-start md:items-center justify-between p-5 rounded-2xl border border-[var(--border)] hover:border-[var(--color-brand-blue)] transition-all duration-300 hover:shadow-md group bg-white dark:bg-slate-900/50"
                   >
                     <div className="flex-1 space-y-2.5">
                       <div className="flex flex-wrap items-center gap-2">
@@ -111,7 +111,7 @@ export default async function SearchPage({ searchParams }: SearchProps) {
 
                       <Link 
                         href={`/${postTypeSlug}/${post.slug}`}
-                        className="block text-base md:text-lg font-bold text-[var(--foreground)] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                        className="block text-base md:text-lg font-bold text-[var(--foreground)] group-hover:text-[var(--color-brand-blue)] dark:group-hover:text-[var(--color-brand-blue)] transition-colors"
                         dangerouslySetInnerHTML={{ __html: post.title.rendered }}
                       />
 
@@ -134,7 +134,7 @@ export default async function SearchPage({ searchParams }: SearchProps) {
 
                     <Link
                       href={`/${postTypeSlug}/${post.slug}`}
-                      className="w-full md:w-auto flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white text-white px-5 py-2.5 text-xs font-black font-rajdhani tracking-wider uppercase transition-colors shadow-sm"
+                      className="w-full md:w-auto flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-[var(--color-brand-blue)] dark:hover:bg-[var(--color-brand-blue)] hover:text-white text-white px-5 py-2.5 text-xs font-black font-rajdhani tracking-wider uppercase transition-colors shadow-sm"
                     >
                       Details
                       <span>→</span>
@@ -162,13 +162,13 @@ export default async function SearchPage({ searchParams }: SearchProps) {
                   <Link
                     key={cat.slug}
                     href={`/${cat.slug}`}
-                    className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-slate-50 dark:bg-slate-900/10 p-3 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all group"
+                    className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-slate-50 dark:bg-slate-900/10 p-3 hover:border-[var(--color-brand-blue)] hover:text-[var(--color-brand-blue)] dark:hover:text-[var(--color-brand-blue)] transition-all group"
                   >
                     <span className="flex items-center gap-2">
                       <span>{cat.emoji}</span>
                       <span>{cat.name}</span>
                     </span>
-                    <span className="text-xs text-slate-400 group-hover:text-blue-500 font-mono">→</span>
+                    <span className="text-xs text-slate-400 group-hover:text-[var(--color-brand-blue)] font-mono">→</span>
                   </Link>
                 ))}
               </div>
@@ -176,7 +176,7 @@ export default async function SearchPage({ searchParams }: SearchProps) {
 
             {/* Quick Support strip */}
             <div className="rounded-2xl bg-gradient-to-tr from-[#020617] to-[#0f172a] p-5 text-white border border-slate-800 shadow-md">
-              <h5 className="font-rajdhani font-black tracking-wide uppercase text-sm mb-2 text-blue-400">
+              <h5 className="font-rajdhani font-black tracking-wide uppercase text-sm mb-2 text-[var(--color-brand-blue)]">
                 📩 Real-Time Bulletins
               </h5>
               <p className="text-xs text-slate-400 leading-relaxed mb-4">

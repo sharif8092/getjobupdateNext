@@ -45,7 +45,7 @@ export default async function QualificationArchivePage({ params }: QualArchivePr
   const getBadgeStyles = (postType: string) => {
     switch (postType) {
       case 'aziz_job':
-        return { bg: 'bg-blue-500/10 text-blue-500 border-blue-500/20', text: 'Job', emoji: '💼' };
+        return { bg: 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-[var(--color-brand-blue)]/20', text: 'Job', emoji: '💼' };
       case 'aziz_result':
         return { bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', text: 'Result', emoji: '🏆' };
       case 'aziz_admit':

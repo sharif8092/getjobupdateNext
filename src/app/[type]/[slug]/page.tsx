@@ -1,4 +1,5 @@
 import React from 'react';
+import parse from 'html-react-parser';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -107,8 +108,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
         </svg>
       ),
-      iconBg: 'bg-indigo-100 text-indigo-600',
-      valColor: 'text-indigo-700',
+      iconBg: 'bg-indigo-100 text-[var(--color-brand-blue)]',
+      valColor: 'text-[var(--color-brand-blue)]',
     },
     {
       label: dateLabel,
@@ -208,7 +209,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
           {/* ════ LEFT: TOC Sidebar ════ */}
-          <aside className="hidden lg:flex lg:col-span-2 flex-col gap-4 lg:sticky lg:top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto sidebar-scroll pr-1">
+          <aside className="hidden lg:block lg:col-span-2 lg:sticky lg:top-24 self-start">
+            <div className="flex flex-col gap-4 max-h-[calc(100vh-7rem)] overflow-y-auto sidebar-scroll pr-1">
 
             {/* Table of Contents */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
@@ -275,6 +277,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                 </div>
               </div>
             )}
+            </div>
           </aside>
 
           {/* ════ CENTER: Article ════ */}
@@ -307,6 +310,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                 <SyllabusTracker keySlug={post.slug} />
               </div>
             )}
+
+
 
             {/* ── Recruitment Summary Table ── */}
             <div id="summary-table-section" className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
@@ -360,78 +365,94 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               <div
                 id="full-article-content"
                 className="post-content prose prose-slate max-w-none text-slate-700"
-                dangerouslySetInnerHTML={{ __html: processedHtml }}
-              />
+              >
+                {parse(processedHtml, {
+                  replace: (domNode: any) => {
+                    if (domNode.type === 'tag' && domNode.attribs && domNode.attribs.class) {
+                      const className = domNode.attribs.class;
+                      
+                      // Inject HowTo Component exactly where the WP HowTo block was
+                      if (className.includes('premium-howto-section') && howtos.length > 0) {
+                        return (
+                          <div id="howto-instructions-section" className="my-10 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
+                            <div className="px-5 py-4 bg-slate-900 flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center flex-shrink-0">
+                                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                </svg>
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Application Process</p>
+                                <h3 className="text-sm font-black text-white">Step-by-Step Guide</h3>
+                              </div>
+                            </div>
+                            <div className="p-6 md:p-8 space-y-8">
+                              {howtos.map((howto, idx) => (
+                                <div key={idx} className="space-y-4">
+                                  {howto.title && (
+                                    <p className="text-xs font-black text-orange-600 uppercase tracking-widest border-b border-orange-100 pb-2">{howto.title}</p>
+                                  )}
+                                  <div className="space-y-3">
+                                    {howto.parsed?.map((step: { title: string; desc?: string }, sIdx: number) => (
+                                      <div key={sIdx} className="flex gap-4 group">
+                                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center shadow-md shadow-slate-900/20 group-hover:scale-105 transition-transform duration-200">
+                                          <span className="text-sm font-black text-white">{sIdx + 1}</span>
+                                        </div>
+                                        <div className="flex-1 bg-slate-50 rounded-xl border border-slate-100 p-4 group-hover:border-orange-200 group-hover:bg-orange-50/40 transition-all duration-200">
+                                          <div className="text-[0.95rem] font-bold text-slate-800 leading-relaxed">
+                                            {step.title && <span className="text-slate-900 font-black uppercase tracking-wide mr-2">{step.title}</span>}
+                                            {step.desc && <span dangerouslySetInnerHTML={{ __html: step.desc }} />}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      // Inject FAQ Component exactly where the WP FAQ block was
+                      if (className.includes('premium-faq-section') && faqs.length > 0) {
+                        return (
+                          <div id="article-faq-section" className="my-10 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
+                            <div className="px-5 py-4 bg-amber-500 flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                                </svg>
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-bold text-amber-100 uppercase tracking-widest">Common Queries</p>
+                                <h3 className="text-sm font-black text-white">Frequently Asked Questions</h3>
+                              </div>
+                            </div>
+                            <div className="p-5 space-y-3">
+                              {faqs.map((faqGroup, idx) => (
+                                <FAQAccordion key={idx} items={faqGroup.parsed || []} />
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
+                    }
+                  }
+                })}
+              </div>
             </div>
 
             <ShareWidget />
 
-            {/* ── How-To Guide ── */}
-            {howtos.length > 0 && (
-              <div id="howto-instructions-section" className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
-                <div className="px-5 py-4 bg-indigo-600 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-indigo-200 uppercase tracking-widest">Application Process</p>
-                    <h3 className="text-sm font-black text-white">Step-by-Step Guide</h3>
-                  </div>
-                </div>
-                <div className="p-6 md:p-8 space-y-8">
-                  {howtos.map((howto, idx) => (
-                    <div key={idx} className="space-y-4">
-                      {howto.title && (
-                        <p className="text-xs font-black text-indigo-600 uppercase tracking-widest border-b border-indigo-100 pb-2">{howto.title}</p>
-                      )}
-                      <div className="space-y-3">
-                        {howto.parsed?.map((step: { title: string; desc?: string }, sIdx: number) => (
-                          <div key={sIdx} className="flex gap-4 group">
-                            <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-200/60 group-hover:scale-110 transition-transform duration-200">
-                              <span className="text-xs font-black text-white">{sIdx + 1}</span>
-                            </div>
-                            <div className="flex-1 bg-slate-50 rounded-xl border border-slate-100 p-4 group-hover:border-indigo-200 group-hover:bg-indigo-50/40 transition-all duration-200">
-                              <strong className="block text-sm font-black text-slate-800 mb-1 uppercase tracking-wide">{step.title}</strong>
-                              {step.desc && (
-                                <p className="text-sm text-slate-500 leading-relaxed m-0" dangerouslySetInnerHTML={{ __html: step.desc }} />
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {/* ── FAQ ── */}
-            {faqs.length > 0 && (
-              <div id="article-faq-section" className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
-                <div className="px-5 py-4 bg-amber-500 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-amber-100 uppercase tracking-widest">Common Queries</p>
-                    <h3 className="text-sm font-black text-white">Frequently Asked Questions</h3>
-                  </div>
-                </div>
-                <div className="p-5 space-y-3">
-                  {faqs.map((faqGroup, idx) => (
-                    <FAQAccordion key={idx} items={faqGroup.parsed || []} />
-                  ))}
-                </div>
-              </div>
-            )}
+
+
           </article>
 
           {/* ════ RIGHT: Action Sidebar ════ */}
-          <aside className="lg:col-span-3 lg:sticky lg:top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto sidebar-scroll pr-1 flex flex-col gap-5">
+          <aside className="lg:col-span-3 lg:sticky lg:top-24 self-start">
+            <div className="flex flex-col gap-5 max-h-[calc(100vh-7rem)] overflow-y-auto sidebar-scroll pr-1">
 
             {/* Action Buttons */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
@@ -548,6 +569,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               </div>
             </div>
 
+            </div>
           </aside>
         </div>
       </div>

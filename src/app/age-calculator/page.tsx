@@ -19,7 +19,7 @@ export default function AgeCalculatorPage() {
         
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-1.5 text-xs font-bold font-rajdhani uppercase text-slate-400 mb-6 tracking-wide">
-          <Link href="/" className="hover:text-blue-500">HOME</Link>
+          <Link href="/" className="hover:text-[var(--color-brand-blue)]">HOME</Link>
           <span>›</span>
           <span className="text-slate-500">Age Calculator</span>
         </nav>
@@ -27,7 +27,7 @@ export default function AgeCalculatorPage() {
         {/* SEO Optimized Header */}
         <div className="mb-10 text-center">
           <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
-            Sarkari <span className="text-blue-600">Age Calculator</span>
+            Sarkari <span className="text-[var(--color-brand-blue)]">Age Calculator</span>
           </h1>
           <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
             Welcome to the most accurate age calculator designed specifically for Indian Government job aspirants. Enter your Date of Birth and Category to instantly check your eligibility with relaxations applied.

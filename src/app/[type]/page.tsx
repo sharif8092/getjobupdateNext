@@ -53,7 +53,7 @@ export default async function ArchivePage({ params }: ArchiveProps) {
   const getBadgeStyles = (postType: string) => {
     switch (postType) {
       case 'aziz_job':
-        return { bg: 'bg-blue-500/10 text-blue-500 border-blue-500/20', text: 'Job', emoji: '💼' };
+        return { bg: 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-[var(--color-brand-blue)]/20', text: 'Job', emoji: '💼' };
       case 'aziz_result':
         return { bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', text: 'Result', emoji: '🏆' };
       case 'aziz_admit':
@@ -78,7 +78,7 @@ export default async function ArchivePage({ params }: ArchiveProps) {
 
         {/* Header Hero card */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#030712] text-white p-8 md:p-12 border border-slate-900 shadow-sm mb-10">
-          <div className="absolute right-0 top-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+          <div className="absolute right-0 top-0 w-64 h-64 bg-[var(--color-brand-blue)]/10 rounded-full blur-3xl animate-pulse-slow"></div>
           
           <div className="space-y-4 relative z-10 max-w-2xl">
             <span className="text-xs font-black font-rajdhani tracking-widest text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full uppercase">

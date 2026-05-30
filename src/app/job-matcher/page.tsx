@@ -19,7 +19,7 @@ export default function JobMatcherPage() {
         
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-1.5 text-xs font-bold font-rajdhani uppercase text-slate-400 mb-6 tracking-wide">
-          <Link href="/" className="hover:text-blue-500">HOME</Link>
+          <Link href="/" className="hover:text-[var(--color-brand-blue)]">HOME</Link>
           <span>›</span>
           <span className="text-slate-500">Job Matcher</span>
         </nav>
@@ -27,7 +27,7 @@ export default function JobMatcherPage() {
         {/* SEO Optimized Header */}
         <div className="mb-10 text-center">
           <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
-            Smart <span className="text-blue-600">Job Matcher</span> AI
+            Smart <span className="text-[var(--color-brand-blue)]">Job Matcher</span> AI
           </h1>
           <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
             Stop scrolling through hundreds of irrelevant notifications. Tell us your academic background, age, and location, and our engine will instantly filter out the perfect Sarkari job opportunities tailored for you.

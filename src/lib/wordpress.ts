@@ -76,6 +76,54 @@ export interface WordPressTerm {
 
 const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://api.getjobupdate.co.in';
 
+export function extractPostMeta(post: WordPressPost) {
+  let dept = post.custom_meta?.aziz_department;
+  let totalPosts = post.custom_meta?.aziz_total_posts?.replace(/posts?/i, '').trim();
+  let qual = post.custom_meta?.aziz_qualification;
+  let lastDate = post.custom_meta?.aziz_apply_end;
+
+  const title = post.title?.rendered || '';
+  const excerpt = post.excerpt?.rendered || '';
+  const textContent = `${title} ${excerpt}`.replace(/<[^>]+>/g, '').replace(/&#\d+;/g, ' ');
+
+  if (!dept) {
+    const deptMatch = title.match(/^(.+?)(?:\s+(?:Recruitment|Online Form|Admit Card|Result|Vacancy|Bharti|Notification|-|&#))/i);
+    if (deptMatch && deptMatch[1]) {
+      dept = deptMatch[1].trim();
+    }
+  }
+
+  if (!totalPosts) {
+    const postMatch = textContent.match(/(\d+(?:,\d+)*)\s*(?:Posts|Vacancies|Vacancy|पदों)/i);
+    if (postMatch && postMatch[1]) {
+      totalPosts = postMatch[1] + (textContent.toLowerCase().includes('vacan') ? ' Vacancies' : ' Posts');
+    }
+  }
+
+  if (!qual) {
+    const quals = [];
+    if (/(?:10th|10वीं|दसवीं)/i.test(textContent)) quals.push('10th');
+    if (/(?:12th|12वीं|बारहवीं|Intermediate)/i.test(textContent)) quals.push('12th');
+    if (/ITI/i.test(textContent)) quals.push('ITI');
+    if (/(?:Degree|Graduate|Graduation|Bachelor)/i.test(textContent)) quals.push('Graduate');
+    if (/Diploma/i.test(textContent)) quals.push('Diploma');
+    if (/(?:B\.?Tech|B\.?E\.?)/i.test(textContent)) quals.push('B.Tech');
+    
+    if (quals.length > 0) {
+      qual = quals.join(' / ');
+    }
+  }
+
+  if (!lastDate) {
+    const dateMatch = textContent.match(/(?:last date|apply(?: online)? (?:till|before)|deadline)[^0-9]*(\d{1,2}(?:st|nd|rd|th)?\s+[a-z]{3,}\s+\d{4}|\d{4}-\d{2}-\d{2})/i);
+    if (dateMatch && dateMatch[1]) {
+      lastDate = dateMatch[1].replace(/(?:st|nd|rd|th)/i, '');
+    }
+  }
+
+  return { dept, totalPosts, qual, lastDate };
+}
+
 // Mapping of custom post types to their rewrite slugs for Next.js routing
 export const POST_TYPE_MAP: Record<string, string> = {
   aziz_job: 'jobs',
@@ -453,17 +501,31 @@ export async function getPostsByState(stateSlug: string, count = 30): Promise<Wo
     // First fetch the state term ID
     const termEndpoint = `/wp-json/wp/v2/job_state?slug=${stateSlug}`;
     const terms = await fetchWP<WordPressTerm[]>(termEndpoint);
-    if (terms.length === 0) return [];
     
-    const stateId = terms[0].id;
-    // Query jobs, results, and admit cards associated with this state
+    // Also fetch the 'all-india' term ID
+    const allIndiaEndpoint = `/wp-json/wp/v2/job_state?slug=all-india`;
+    let allIndiaTerms: WordPressTerm[] = [];
+    try {
+      allIndiaTerms = await fetchWP<WordPressTerm[]>(allIndiaEndpoint);
+    } catch (e) {
+      // ignore if all-india fails
+    }
+
+    if (terms.length === 0 && allIndiaTerms.length === 0) return [];
+    
+    const stateIds = [];
+    if (terms.length > 0) stateIds.push(terms[0].id);
+    if (allIndiaTerms.length > 0 && stateSlug !== 'all-india') stateIds.push(allIndiaTerms[0].id);
+
+    const idString = stateIds.join(',');
+    
     const allPosts: WordPressPost[] = [];
     const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit'];
     
     for (const type of targetTypes) {
       try {
         const posts = await fetchWP<WordPressPost[]>(
-          `/wp-json/wp/v2/${type}?job_state=${stateId}&per_page=${Math.ceil(count / 3)}`
+          `/wp-json/wp/v2/${type}?job_state=${idString}&per_page=${Math.ceil(count / 3)}`
         );
         allPosts.push(...posts);
       } catch (e) {
@@ -474,9 +536,16 @@ export async function getPostsByState(stateSlug: string, count = 30): Promise<Wo
     return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (err) {
     console.warn(`Failed fetching state archive for ${stateSlug}, returning mock data`);
-    // Return all mock posts that match the state string
+    // Return mock posts that match the state string or 'All India'
     const allMocks = Object.values(MOCK_POSTS).flat();
-    return allMocks;
+    const stateObj = STATES_LIST.find(s => s.slug === stateSlug);
+    const allIndiaObj = STATES_LIST.find(s => s.slug === 'all-india');
+    
+    return allMocks.filter(post => {
+      const hasState = stateObj && post.job_state?.includes(stateObj.id);
+      const hasAllIndia = allIndiaObj && post.job_state?.includes(allIndiaObj.id);
+      return hasState || hasAllIndia;
+    });
   }
 }
 
@@ -545,25 +614,24 @@ export async function searchPosts(query: string, count = 10): Promise<WordPressP
     }
   }
 
-  // Fallback to local filtering of MOCK_POSTS if API fails or isn't available
-  if (!apiSuccess) {
-    const flatMocks = Object.values(MOCK_POSTS).flat();
-    const lowerQ = query.toLowerCase().trim();
-    let filtered = flatMocks;
-    
-    if (lowerQ) {
-       filtered = flatMocks.filter(post => 
-         post.title.rendered.toLowerCase().includes(lowerQ) || 
-         post.excerpt.rendered.toLowerCase().includes(lowerQ) ||
-         post.custom_meta?.aziz_department?.toLowerCase().includes(lowerQ) ||
-         post.custom_meta?.aziz_job_location?.toLowerCase().includes(lowerQ)
-       );
-    }
-    
-    return filtered.slice(0, count).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }
+  // We always apply a strict client-side filter to improve accuracy,
+  // because WordPress default search is too broad (searches entire content body).
+  const lowerQ = query.toLowerCase().trim();
+  let resultsToFilter = apiSuccess ? allPosts : Object.values(MOCK_POSTS).flat();
 
-  return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  if (lowerQ) {
+    resultsToFilter = resultsToFilter.filter(post => 
+      post.title.rendered.toLowerCase().includes(lowerQ) || 
+      post.excerpt.rendered.toLowerCase().includes(lowerQ) ||
+      post.custom_meta?.aziz_department?.toLowerCase().includes(lowerQ) ||
+      post.custom_meta?.aziz_job_location?.toLowerCase().includes(lowerQ)
+    );
+  }
+  
+  // Remove duplicates just in case
+  const uniqueResults = Array.from(new Map(resultsToFilter.map(item => [item.id, item])).values());
+
+  return uniqueResults.slice(0, count).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export interface HeadingItem {
