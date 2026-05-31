@@ -7,6 +7,7 @@ import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPos
 import FAQAccordion from '@/components/FAQAccordion';
 import SyllabusTracker from '@/components/SyllabusTracker';
 import AffiliateSlot from '@/components/AffiliateSlot';
+import AffiliateAd from '@/components/AffiliateAd';
 import RecentPosts from '@/components/RecentPosts';
 import ShareWidget from '@/components/ShareWidget';
 import MobileStickyCTA from '@/components/MobileStickyCTA';

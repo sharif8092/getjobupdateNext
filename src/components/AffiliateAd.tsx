@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { getRecommendedProducts } from '@/lib/affiliate';
 
 interface AffiliateAdProps {
@@ -41,9 +42,20 @@ export default function AffiliateAd({ tags, customProduct }: AffiliateAdProps) {
             key={book.id}
             className="flex gap-4 p-4 bg-slate-50/50 dark:bg-slate-950/40 border border-[var(--border)] rounded-2xl items-center hover:border-amber-400/30 transition-all duration-300 group"
           >
-            {/* Visual Icon representation of Book Cover */}
-            <div className="w-16 h-16 rounded-xl bg-white dark:bg-[#0b0f19] border border-[var(--border)] flex items-center justify-center text-3xl shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform">
-              {book.image}
+            {/* Visual representation of Product */}
+            <div className="w-16 h-16 rounded-xl bg-white dark:bg-[#0b0f19] border border-[var(--border)] flex items-center justify-center text-3xl shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform overflow-hidden relative">
+              {book.image?.startsWith('http') || book.image?.startsWith('/') ? (
+                <Image 
+                  src={book.image} 
+                  alt={book.title} 
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-contain p-1.5"
+                  unoptimized={true}
+                />
+              ) : (
+                book.image
+              )}
             </div>
 
             <div className="flex-1 space-y-1.5 min-w-0">
