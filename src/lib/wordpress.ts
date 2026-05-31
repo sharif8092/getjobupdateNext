@@ -36,6 +36,16 @@ export interface WordPressPost {
     aziz_salary: string;
     aziz_badge_type: string;
     aziz_dept_emoji: string;
+    faq_position?: 'before_content' | 'after_content' | 'before_related_posts' | 'after_related_posts' | 'sidebar' | 'hidden';
+    howto_position?: 'before_content' | 'after_content' | 'before_faq' | 'after_faq' | 'before_related_posts' | 'hidden';
+    rank_math_toc_html?: string;
+    highlight_text?: string;
+    job_type?: string;
+    application_mode?: string;
+    affiliate_slots?: Array<{
+      position: string;
+      tags: string[];
+    }>;
     faqs: Array<{
       id?: string;
       title: string;

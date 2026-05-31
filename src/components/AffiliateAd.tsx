@@ -4,12 +4,13 @@ import React from 'react';
 import { getRecommendedProducts } from '@/lib/affiliate';
 
 interface AffiliateAdProps {
-  tags: string[];
+  tags?: string[];
+  customProduct?: any;
 }
 
-export default function AffiliateAd({ tags }: AffiliateAdProps) {
-  // Dynamically query 2 best books matching the post's context tags
-  const matchedBooks = getRecommendedProducts(tags, 2);
+export default function AffiliateAd({ tags, customProduct }: AffiliateAdProps) {
+  // Use custom product if provided, otherwise dynamically query 2 best books
+  const matchedBooks = customProduct ? [customProduct] : (tags ? getRecommendedProducts(tags, 2) : []);
 
   if (matchedBooks.length === 0) return null;
 

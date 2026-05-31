@@ -336,22 +336,22 @@ body {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05) !important;
 }
 .post-content thead tr {
-  background: #0b1120 !important;
+  background: #1e3a8a !important; /* slate-900 / blue-900 */
 }
 .post-content th {
-  background: #0b1120 !important;
+  background: #1e3a8a !important;
   color: #ffffff !important;
   font-family: var(--font-sans) !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
-  font-size: 0.8rem !important;
-  letter-spacing: 0.08em !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.05em !important;
   padding: 14px 20px !important;
   text-align: left !important;
   border: none !important;
 }
 .post-content th:first-child {
-  border-left: 4px solid #ea580c !important;
+  border-left: 4px solid #3b82f6 !important; /* blue-500 */
 }
 .post-content td {
   padding: 12px 20px !important;

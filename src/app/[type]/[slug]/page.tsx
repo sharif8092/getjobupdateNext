@@ -1,12 +1,12 @@
 import React from 'react';
-import parse, { domToReact, HTMLReactParserOptions, Element } from 'html-react-parser';
+import parse from 'html-react-parser';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts } from '@/lib/wordpress';
 import FAQAccordion from '@/components/FAQAccordion';
 import SyllabusTracker from '@/components/SyllabusTracker';
-import AffiliateAd from '@/components/AffiliateAd';
+import AffiliateSlot from '@/components/AffiliateSlot';
 import RecentPosts from '@/components/RecentPosts';
 import ShareWidget from '@/components/ShareWidget';
 import MobileStickyCTA from '@/components/MobileStickyCTA';
@@ -62,74 +62,133 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const meta = post.custom_meta || {};
   const faqs = meta.faqs || [];
   const howtos = meta.howtos || [];
+  
+  const hasRankMathToc = !!meta.rank_math_toc_html;
   const { headings, content: processedHtml } = processContentAndHeadings(post.content.rendered);
 
   const rawContentLower = post.content.rendered.toLowerCase();
-  const hasFAQInContent = /frequently asked questions|faq|how to check/i.test(rawContentLower);
-  const hasHowToInContent = /how to apply|how to check/i.test(rawContentLower);
+  const hasFAQShortcode = /\[smart_faq[^\]]*\]/i.test(post.content.rendered);
+  const hasHowToShortcode = /\[smart_howto[^\]]*\]/i.test(post.content.rendered);
 
+  // Replace shortcodes with temporary HTML placeholders
+  let finalHtml = processedHtml;
+  finalHtml = finalHtml.replace(/\[smart_faq[^\]]*\]/gi, '<div id="react-faq-placeholder"></div>');
+  finalHtml = finalHtml.replace(/\[smart_howto[^\]]*\]/gi, '<div id="react-howto-placeholder"></div>');
 
+  const isResult = post.type === 'aziz_result';
 
-  // ─── Labels per post type ────────────────────────────────────────────────
-  let orgLabel = 'Department'; let postLabel = 'Vacancies'; let qualLabel = 'Eligibility'; let dateLabel = 'Last Date';
-  if (post.type === 'aziz_result')    { orgLabel = 'Board'; postLabel = 'Exam'; qualLabel = 'Status'; dateLabel = 'Result Date'; }
-  else if (post.type === 'aziz_admit') { orgLabel = 'Board'; postLabel = 'Post'; qualLabel = 'Status'; dateLabel = 'Exam Date'; }
-  else if (post.type === 'aziz_syllabus' || post.type === 'aziz_exam') { orgLabel = 'Board'; postLabel = 'Subject'; qualLabel = 'Level'; dateLabel = 'Updated'; }
-  else if (post.type === 'aziz_scholarship') { orgLabel = 'Provider'; postLabel = 'Amount'; qualLabel = 'Eligibility'; dateLabel = 'End Date'; }
-  else if (post.type === 'aziz_yojana') { orgLabel = 'Dept'; postLabel = 'Scheme'; qualLabel = 'Region'; dateLabel = 'Benefits'; }
+  // ─── Dynamic Layout Positions ────────────────────────────────────────────
+  const faqPosition = meta.faq_position || 'after_content';
+  const howtoPosition = meta.howto_position || 'after_content';
+  const affiliateSlots = meta.affiliate_slots || [];
 
+  // ─── Dates ──────────────────────────────────────────────────────────────
   const publishedDate = new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
   const modifiedDate  = new Date(post.modified).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
-  // ─── Summary table rows ──────────────────────────────────────────────────
-  const summaryRows = [
-    { label: orgLabel,       val: meta.aziz_department    },
-    { label: postLabel,      val: meta.aziz_total_posts   },
-    { label: qualLabel,      val: meta.aziz_qualification },
-    { label: 'Parent Body',  val: meta.aziz_department    },
-    { label: 'Job Location', val: meta.aziz_job_location || 'All India' },
-    { label: 'Age Limit',    val: meta.aziz_age_limit     },
-    { label: 'Pay Scale',    val: meta.aziz_salary        },
-    { label: 'Official Web', val: meta.aziz_official_site },
-  ].filter(r => r.val);
+  // Helper to clean up corrupted text fields (e.g. RankMath JSON leaking into strings)
+  const cleanText = (text: any) => {
+    if (typeof text !== 'string') return text;
+    if (text.includes('","level":')) {
+      return text.split('","level":')[0].replace(/["{}]/g, '');
+    }
+    return text;
+  };
+
+  // ─── Render Functions for Dynamic Placement ──────────────────────────────
+  // Function to render an inline affiliate ad from custom plugin data
+  const renderInlineAffiliate = (data: any) => {
+    if (!data.title || !data.link) return null;
+    
+    const product = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: data.title,
+      price: data.price || '',
+      originalPrice: data.originalprice || '',
+      rating: parseFloat(data.rating) || 4.5,
+      buyLink: data.link,
+      image: data.image || '📚',
+      discountBadge: data.discount || '',
+      categoryTags: [],
+      author: '',
+      description: ''
+    };
+
+    return (
+      <div className="my-8 not-prose">
+        <AffiliateAd customProduct={product} />
+      </div>
+    );
+  };
+
+  const renderFaq = (isInline = false) => {
+    if (faqs.length === 0) return null;
+    // If the shortcode is in the content, ONLY render inline, not in layout zones
+    if (!isInline && hasFAQShortcode) return null;
+
+    return (
+      <div id="article-faq-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
+        <AffiliateSlot position="before_faq" slots={affiliateSlots} fallbackTags={['laptop', 'study-table']} department={meta.aziz_department} postType={post.type} />
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">People Also Ask</p>
+            <p className="text-xl font-black text-slate-800">Frequently Asked Questions</p>
+          </div>
+        </div>
+        <div className="p-6 md:p-8 space-y-2">
+          {faqs.map((faqGroup: any, idx: number) => (
+            <FAQAccordion key={idx} items={faqGroup.parsed || []} />
+          ))}
+        </div>
+        <AffiliateSlot position="after_faq" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
+      </div>
+    );
+  };
+
+  const renderHowTo = (isInline = false) => {
+    if (howtos.length === 0) return null;
+    // If the shortcode is in the content, ONLY render inline, not in layout zones
+    if (!isInline && hasHowToShortcode) return null;
+
+    return (
+      <div id="howto-instructions-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75z"/></svg>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">How To Apply</p>
+            <p className="text-xl font-black text-slate-800">Step-by-Step Guide</p>
+          </div>
+        </div>
+        <div className="p-6 md:p-8 space-y-4">
+          {howtos.map((howto: any, idx: number) => (
+            <div key={idx} className="space-y-4">
+              {howto.title && <p className="text-sm font-black text-orange-600 uppercase tracking-widest border-b border-slate-100 pb-2">{howto.title}</p>}
+              <div className="space-y-3">
+                {howto.parsed?.map((step: { title: string; desc?: string }, sIdx: number) => (
+                  <div key={sIdx} className="flex gap-4 group">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-orange-500 group-hover:text-white flex items-center justify-center transition-colors text-slate-600">
+                      <span className="text-sm font-black">{sIdx+1}</span>
+                    </div>
+                    <div className="flex-1 bg-slate-50 rounded-xl border border-slate-200 px-5 py-4 group-hover:border-orange-200 group-hover:bg-orange-50/50 transition-all text-[15px] text-slate-700 leading-relaxed">
+                      {step.title && <div className="font-black text-slate-900 uppercase text-xs tracking-wider mb-1">{step.title}</div>}
+                      {step.desc  && <div dangerouslySetInnerHTML={{ __html: step.desc }} />}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   // ─── Schemas ──────────────────────────────────────────────────
-  const jobSchema = post.type === 'aziz_job' ? {
-    "@context": "https://schema.org/",
-    "@type": "JobPosting",
-    "title": post.seo_meta?.title || post.title.rendered,
-    "description": meta.aziz_seo_desc || post.title.rendered,
-    "datePosted": post.date,
-    "validThrough": meta.aziz_apply_end || new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
-    "employmentType": "FULL_TIME",
-    "hiringOrganization": {
-      "@type": "Organization",
-      "name": meta.aziz_department || "Government of India",
-      "sameAs": meta.aziz_official_site || "https://getjobupdate.co.in"
-    },
-    "jobLocation": {
-      "@type": "Place",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "IN",
-        "addressRegion": meta.aziz_job_location || "All India"
-      }
-    }
-  } : null;
-
-  const faqSchema = (faqs.length > 0 && !hasFAQInContent) ? {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map((f: any) => f.parsed?.map((p: any) => ({
-      "@type": "Question",
-      "name": p.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": p.answer
-      }
-    }))).flat().filter(Boolean)
-  } : null;
-
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -144,79 +203,82 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     }]
   };
 
-  const parseOptions: HTMLReactParserOptions = {}; // Content injection is now done externally
-
-  const isResult = post.type === 'aziz_result';
-
   return (
     <div className="w-full font-sans min-h-screen bg-slate-50">
       
-      {jobSchema && <Script id="job-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jobSchema) }} />}
-      {faqSchema && <Script id="faq-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
       <Script id="article-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
 
       {/* ══════════════════════════════════════════════
-          HERO — Conversion Focused
+          PREMIUM HERO SECTION
       ══════════════════════════════════════════════ */}
-      <div className="bg-[#0b1120] w-full py-6 md:py-8 relative overflow-hidden">
+      <div className="bg-[#0b1120] w-full py-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.035] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle at 1px 1px,white 1px,transparent 0)`, backgroundSize: '28px 28px' }} />
-        <div className="absolute -top-20 -left-20 w-72 h-72 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-20 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-60 h-60 bg-indigo-600/8 rounded-full blur-3xl pointer-events-none" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
           {/* Breadcrumb */}
-          <nav aria-label="breadcrumb" className="flex items-center flex-wrap gap-1.5 text-[11px] font-medium text-slate-500 mb-4">
-            <Link href="/" className="hover:text-orange-400 transition-colors">Home</Link>
+          <nav aria-label="breadcrumb" className="flex items-center flex-wrap gap-1.5 text-[11px] font-medium text-slate-500 mb-5">
+            <Link href="/" className="hover:text-blue-400 transition-colors">Home</Link>
             <span className="text-slate-700">›</span>
-            <Link href={`/${type}`} className="hover:text-orange-400 transition-colors capitalize">{type.replace(/-/g,' ')}</Link>
+            <Link href={`/${type}`} className="hover:text-blue-400 transition-colors capitalize">{type.replace(/-/g,' ')}</Link>
             <span className="text-slate-700">›</span>
             <span className="text-slate-400 line-clamp-1 max-w-xs sm:max-w-md" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
           </nav>
 
-          {/* Category badge & Views */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-black text-white uppercase tracking-widest shadow-lg ${isResult ? 'bg-green-600 shadow-green-600/30' : 'bg-orange-500 shadow-orange-500/30'}`}>
-                {isResult ? 'RESULT' : (meta.aziz_badge_type || type.replace(/-/g,' '))}
+          {/* Highlight Badge & Verification */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-black text-white uppercase tracking-widest shadow-lg ${isResult ? 'bg-green-600 shadow-green-600/30' : 'bg-blue-600 shadow-blue-600/30'}`}>
+                {meta.highlight_text || (isResult ? 'RESULT DECLARED' : (meta.aziz_badge_type || type.replace(/-/g,' ')))}
               </span>
-              <div className="flex items-center gap-1.5 text-[10px] font-black text-emerald-400 uppercase tracking-wider">
-                <span className="relative flex h-1.5 w-1.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-black text-emerald-400 uppercase tracking-wider">
+                <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
                 </span>
                 Verified Source
               </div>
             </div>
             <div className="flex items-center gap-4 text-xs font-bold text-slate-400">
-               <span className="flex items-center gap-1"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg> {Math.floor(Math.random() * 50 + 10)}K Views</span>
                <span className="flex items-center gap-1 hidden sm:flex"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Updated: {modifiedDate}</span>
             </div>
           </div>
 
-          {/* H1 */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-[1.15] tracking-tight mb-5 max-w-4xl"
+          {/* H1 Title */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.15] tracking-tight mb-6 max-w-4xl"
             dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
 
-          {/* Quick Stats inside Hero */}
-          <div className="flex flex-wrap gap-5 md:gap-10 mb-6 p-4 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
+          {/* Hero Quick Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
              <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">🏢 {orgLabel}</span>
-               <span className="text-white font-black text-sm md:text-base">{meta.aziz_department || '-'}</span>
-             </div>
-             {isResult && (
-               <div className="flex flex-col">
-                 <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">📍 Zone</span>
-                 <span className="text-emerald-400 font-black text-sm md:text-base">Zone Wise Available</span>
-               </div>
-             )}
-             <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">📋 {postLabel}</span>
-               <span className="text-orange-400 font-black text-sm md:text-base">{meta.aziz_total_posts || '-'}</span>
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">🏢 Department</span>
+               <span className="text-white font-black text-sm">{cleanText(meta.aziz_department) || '-'}</span>
              </div>
              <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">📅 {dateLabel}</span>
-               <span className="text-rose-400 font-black text-sm md:text-base">{isResult ? meta.aziz_apply_start || modifiedDate : meta.aziz_apply_end || '-'}</span>
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">📋 Vacancy</span>
+               <span className="text-orange-400 font-black text-sm">{cleanText(meta.aziz_total_posts) || '-'}</span>
+             </div>
+             <div className="flex flex-col">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">🎓 Qualification</span>
+               <span className="text-blue-400 font-black text-sm">{cleanText(meta.aziz_qualification) || '-'}</span>
+             </div>
+             <div className="flex flex-col">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">💰 Salary</span>
+               <span className="text-emerald-400 font-black text-sm">{cleanText(meta.aziz_salary) || '-'}</span>
+             </div>
+             <div className="flex flex-col">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">⚡ Job Type</span>
+               <span className="text-indigo-400 font-black text-sm">{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
+             </div>
+             <div className="flex flex-col">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">💻 App Mode</span>
+               <span className="text-purple-400 font-black text-sm">{cleanText(meta.application_mode) || 'Online Form'}</span>
+             </div>
+             <div className="flex flex-col col-span-2 md:col-span-2">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">📅 Last Date / Status</span>
+               <span className="text-rose-400 font-black text-sm">{isResult ? 'Result Declared' : cleanText(meta.aziz_apply_end) || '-'}</span>
              </div>
           </div>
 
@@ -224,14 +286,19 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           <div className="flex flex-wrap gap-3 items-center">
              {meta.aziz_apply_link && (
                 <a href={meta.aziz_apply_link} target="_blank" rel="noopener noreferrer" 
-                   className={`${isResult ? 'bg-green-600 hover:bg-green-700 shadow-green-600/30 w-full sm:w-auto text-base' : 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/30 text-sm'} text-white font-black px-8 py-3.5 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2`}>
-                  {isResult ? '🚀 Check Zone Wise Result' : 'Apply Now Online'}
+                   className={`${isResult ? 'bg-green-600 hover:bg-green-700 shadow-green-600/30 w-full sm:w-auto text-base' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/30 text-base'} text-white font-black px-8 py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2`}>
+                  {isResult ? '🚀 Check Result Online' : 'Apply Now Online'}
                 </a>
              )}
              {meta.aziz_notification && (
-                <a href={meta.aziz_notification} target="_blank" rel="noopener noreferrer" className="bg-slate-800 text-white font-bold px-6 py-3.5 rounded-xl hover:bg-slate-700 transition-all border border-slate-700 flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
+                <a href={meta.aziz_notification} target="_blank" rel="noopener noreferrer" className="bg-slate-800 text-white font-bold px-6 py-4 rounded-xl hover:bg-slate-700 transition-all border border-slate-700 flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-                  Download PDF
+                  Download Notification
+                </a>
+             )}
+             {meta.aziz_official_site && (
+                <a href={meta.aziz_official_site} target="_blank" rel="noopener noreferrer" className="bg-transparent text-slate-300 font-bold px-6 py-4 rounded-xl hover:bg-white/5 hover:text-white transition-all border border-slate-700 flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
+                  Official Website
                 </a>
              )}
           </div>
@@ -242,7 +309,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
       {/* ══════════════════════════════════════════════
           MAIN 8-4 LAYOUT
       ══════════════════════════════════════════════ */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 relative z-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
           {/* ══ CENTER ARTICLE [col-span-8] ══ */}
@@ -251,10 +318,57 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             {/* Share Widget */}
             <div className="mb-6"><ShareWidget /></div>
 
-            {/* Table of Contents */}
-            <div className="mb-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-              <TableOfContents headings={headings} />
+            {/* Quick Overview Card (Premium Summary) */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+              <div className="px-5 py-4 bg-slate-900 flex items-center gap-3">
+                 <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest leading-none">Quick Overview</p>
+                    <p className="text-base font-black text-white leading-tight mt-0.5">Recruitment Summary</p>
+                  </div>
+              </div>
+              <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div className="flex flex-col border-b sm:border-b-0 border-slate-100 pb-3 sm:pb-0">
+                  <span className="text-slate-500 font-semibold mb-1">Organization</span>
+                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_department) || '-'}</span>
+                </div>
+                <div className="flex flex-col border-b sm:border-b-0 border-slate-100 pb-3 sm:pb-0">
+                  <span className="text-slate-500 font-semibold mb-1">Vacancy</span>
+                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_total_posts) || '-'}</span>
+                </div>
+                <div className="flex flex-col border-b border-slate-100 pb-3">
+                  <span className="text-slate-500 font-semibold mb-1">Qualification</span>
+                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_qualification) || '-'}</span>
+                </div>
+                <div className="flex flex-col border-b border-slate-100 pb-3">
+                  <span className="text-slate-500 font-semibold mb-1">Age Limit</span>
+                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_age_limit) || '-'}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-slate-500 font-semibold mb-1">Salary</span>
+                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_salary) || '-'}</span>
+                </div>
+                <div className="flex flex-col bg-rose-50 rounded-lg p-2.5 border border-rose-100 items-start justify-center">
+                  <span className="text-rose-700 font-semibold text-xs uppercase tracking-wider mb-1">Last Date</span>
+                  <span className="font-black text-rose-700 text-base">{cleanText(meta.aziz_apply_end) || '-'}</span>
+                </div>
+              </div>
             </div>
+
+            <AffiliateSlot position="after_summary" slots={affiliateSlots} fallbackTags={['books', 'exam-prep']} department={meta.aziz_department} postType={post.type} />
+
+            {/* Table of Contents (Rank Math Fallback) */}
+            {hasRankMathToc ? (
+              <div className="mb-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200 toc-container" dangerouslySetInnerHTML={{ __html: meta.rank_math_toc_html! }} />
+            ) : (
+              <div className="mb-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <TableOfContents headings={headings} />
+              </div>
+            )}
 
             {/* Syllabus tracker */}
             {type === 'syllabus' && (
@@ -263,132 +377,89 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               </div>
             )}
 
-            {/* Recruitment Summary Table */}
-            {summaryRows.length > 0 && (
-              <div id="summary-table-section" className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
-                <div className="px-5 py-4 bg-blue-600 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-blue-200 uppercase tracking-widest leading-none">{isResult ? 'Result Details' : 'Recruitment Summary'}</p>
-                    <p className="text-base font-black text-white leading-tight mt-0.5">{meta.aziz_department || 'Official Notification'}</p>
-                  </div>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <tbody>
-                      {summaryRows.map((row, i) => (
-                        <tr key={i} className="border-b border-slate-100 transition-colors hover:bg-slate-50 bg-white">
-                          <td className="px-5 py-3.5 text-slate-500 font-semibold w-[42%] text-sm">{row.label}</td>
-                          <td className="px-5 py-3.5 text-slate-800 font-bold text-sm">{row.val}</td>
-                        </tr>
-                      ))}
-                      {/* Last date / Result date row */}
-                      <tr className="bg-rose-50 hover:bg-rose-100/60 transition-colors">
-                        <td className="px-5 py-4 text-rose-700 font-black text-sm">📅 {dateLabel}</td>
-                        <td className="px-5 py-4">
-                          <span className="inline-flex items-center gap-2 font-black text-rose-700 bg-rose-100 border border-rose-200 rounded-lg px-3 py-1 text-sm">
-                            {isResult ? meta.aziz_apply_start || modifiedDate : meta.aziz_apply_end || 'Check Notification'}
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Affiliate Injection after Summary Table (Books/Prep) */}
-            <div className="mb-6"><AffiliateAd tags={[type, meta.aziz_department||'', 'books']} /></div>
+            {/* Dynamic Zone: Before Content */}
+            <AffiliateSlot position="before_content" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
+            {faqPosition === 'before_content' && renderFaq()}
+            {howtoPosition === 'before_content' && renderHowTo()}
 
             {/* Full Article Body */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
               <div className="px-6 py-6 md:px-8 md:py-8">
                 <div id="full-article-content" className="post-content prose prose-slate max-w-none text-slate-700 text-[17px] leading-8 prose-headings:font-bold prose-h2:text-2xl">
-                  {parse(processedHtml, parseOptions)}
+                  {parse(finalHtml, {
+                    replace: (domNode: any) => {
+                      if (domNode.attribs && domNode.attribs.id === 'react-faq-placeholder') {
+                        return renderFaq(true);
+                      }
+                      if (domNode.attribs && domNode.attribs.id === 'react-howto-placeholder') {
+                        return renderHowTo(true);
+                      }
+                      if (domNode.attribs && domNode.attribs.class && domNode.attribs.class.includes('react-affiliate-placeholder')) {
+                        return renderInlineAffiliate(domNode.attribs);
+                      }
+                    }
+                  })}
                 </div>
               </div>
             </div>
 
-            {/* How-To conditionally */}
-            {howtos.length > 0 && !hasHowToInContent && (
-              <div id="howto-instructions-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
-                <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75z"/></svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">How To Apply</p>
-                    <p className="text-xl font-black text-slate-800">Step-by-Step Guide</p>
-                  </div>
-                </div>
-                <div className="p-6 md:p-8 space-y-4">
-                  {howtos.map((howto: any, idx: number) => (
-                    <div key={idx} className="space-y-4">
-                      {howto.title && <p className="text-sm font-black text-orange-600 uppercase tracking-widest border-b border-slate-100 pb-2">{howto.title}</p>}
-                      <div className="space-y-3">
-                        {howto.parsed?.map((step: { title: string; desc?: string }, sIdx: number) => (
-                          <div key={sIdx} className="flex gap-4 group">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-orange-500 group-hover:text-white flex items-center justify-center transition-colors text-slate-600">
-                              <span className="text-sm font-black">{sIdx+1}</span>
-                            </div>
-                            <div className="flex-1 bg-slate-50 rounded-xl border border-slate-200 px-5 py-4 group-hover:border-orange-200 group-hover:bg-orange-50/50 transition-all text-[15px] text-slate-700 leading-relaxed">
-                              {step.title && <div className="font-black text-slate-900 uppercase text-xs tracking-wider mb-1">{step.title}</div>}
-                              {step.desc  && <div dangerouslySetInnerHTML={{ __html: step.desc }} />}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Dynamic Zone: After Content */}
+            <AffiliateSlot position="after_content" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
+            {faqPosition === 'after_content' && renderFaq()}
+            {howtoPosition === 'after_content' && renderHowTo()}
 
-            {/* Affiliate Injection before FAQ (Accessories) */}
-            {(faqs.length > 0 && !hasFAQInContent) && (
-              <div className="mb-6"><AffiliateAd tags={['laptop', 'study-table']} /></div>
-            )}
-
-            {/* FAQ conditionally */}
-            {faqs.length > 0 && !hasFAQInContent && (
-              <div id="article-faq-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
-                <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">People Also Ask</p>
-                    <p className="text-xl font-black text-slate-800">Frequently Asked Questions</p>
-                  </div>
-                </div>
-                <div className="p-6 md:p-8 space-y-2">
-                  {faqs.map((faqGroup: any, idx: number) => (
-                    <FAQAccordion key={idx} items={faqGroup.parsed || []} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* EEAT: Author & Trust Box */}
+            {/* Trust Signals & Premium Author Box */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6 p-6 md:p-8">
-              <div className="flex items-start gap-5">
-                <div className="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-white font-black text-xl flex-shrink-0 shadow-md shadow-orange-500/25">G</div>
+              <div className="flex flex-wrap md:flex-nowrap items-start gap-6">
+                <div className="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-slate-900/20">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                  </svg>
+                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base font-black text-slate-900">Get Job Update Editorial Team</p>
-                  <p className="text-xs text-slate-500 mt-1 font-medium">Verified Government Job Analysts · Updated {modifiedDate}</p>
-                  <p className="text-[15px] text-slate-600 mt-3 leading-relaxed">
-                    This article is researched and verified by the Get Job Update editorial team. All information is sourced directly from official government gazettes, recruitment portals, and press releases. We cross-check all dates, vacancies, and eligibility criteria before publishing.
-                  </p>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-emerald-600 mb-1">Reviewed By</p>
+                  <p className="text-xl font-black text-slate-900">Get Job Update Editorial Team</p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-4 pb-4 border-b border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                      </div>
+                      <span className="text-xs font-bold text-slate-600">Official Notification Verified</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                      </div>
+                      <span className="text-xs font-bold text-slate-600">Official Link Verified</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 flex items-center gap-4">
+                    <div className="text-xs font-medium text-slate-500">
+                      <span className="block text-[10px] uppercase font-bold text-slate-400 mb-0.5">Published On</span>
+                      {publishedDate}
+                    </div>
+                    <div className="w-px h-8 bg-slate-200"></div>
+                    <div className="text-xs font-medium text-slate-500">
+                      <span className="block text-[10px] uppercase font-bold text-slate-400 mb-0.5">Last Updated</span>
+                      {modifiedDate}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* Dynamic Zone: Before Related Posts */}
+            <AffiliateSlot position="before_related_posts" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
+            {faqPosition === 'before_related_posts' && renderFaq()}
+            {howtoPosition === 'before_related_posts' && renderHowTo()}
 
             {/* Related Jobs / Results */}
             <RelatedJobs department={meta.aziz_department} qualification={meta.aziz_qualification} postType={post.type} />
+
+            {/* Dynamic Zone: After Related Posts */}
+            {faqPosition === 'after_related_posts' && renderFaq()}
 
           </article>
 
@@ -400,7 +471,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               <div className="space-y-4">
                   {meta.aziz_apply_link && (
                     <a href={meta.aziz_apply_link} target="_blank" rel="noopener noreferrer"
-                      className={`w-full flex items-center justify-center gap-2 rounded-xl text-white px-5 py-4 font-black text-base transition-all shadow-md hover:-translate-y-0.5 border-b-[5px] active:border-b-0 active:translate-y-1 ${isResult ? 'bg-green-600 border-green-800 hover:bg-green-500 shadow-green-600/30' : 'bg-orange-500 border-orange-700 hover:bg-orange-400 shadow-orange-500/30'}`}>
+                      className={`w-full flex items-center justify-center gap-2 rounded-xl text-white px-5 py-4 font-black text-base transition-all shadow-md hover:-translate-y-0.5 border-b-[5px] active:border-b-0 active:translate-y-1 ${isResult ? 'bg-green-600 border-green-800 hover:bg-green-500 shadow-green-600/30' : 'bg-blue-600 border-blue-800 hover:bg-blue-500 shadow-blue-600/30'}`}>
                       {isResult ? 'Check Result Now' : 'Apply Now Online'}
                     </a>
                   )}
@@ -421,16 +492,16 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               </div>
             )}
 
-            {/* Sidebar Ordering: Results -> Jobs -> Admits */}
-            <RecentPosts posts={recentResults} title="Latest Results" icon="🏆" />
-            <RecentPosts posts={recentJobs} title="Latest Jobs" />
-            <RecentPosts posts={recentAdmitCards} title="Admit Cards" icon="🎫" />
+            {/* Sidebar Ordering: Jobs -> Results -> Admits */}
+            {recentJobs.length > 0 && <RecentPosts posts={recentJobs} title="Latest Jobs" />}
+            {recentResults.length > 0 && <RecentPosts posts={recentResults} title="Latest Results" icon="🏆" />}
+            {recentAdmitCards.length > 0 && <RecentPosts posts={recentAdmitCards} title="Admit Cards" icon="🎫" />}
 
             {/* Community Channels */}
             <div className="rounded-xl bg-slate-900 border border-slate-800 p-5 text-white relative overflow-hidden">
-              <div className="absolute -top-6 -right-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
               <div className="relative z-10">
-                <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1.5">Stay Ahead</p>
+                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1.5">Stay Ahead</p>
                 <p className="text-base font-black text-white mb-1.5">Get Instant Alerts</p>
                 <p className="text-[13px] text-slate-400 mb-4 leading-relaxed">Join our channels for real-time govt job & result updates.</p>
                 <div className="space-y-3">
@@ -455,10 +526,11 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             </div>
 
             {/* Affiliate Ad (Sidebar Placement) */}
-            <AffiliateAd tags={[type, post.type, meta.aziz_department||'', meta.aziz_qualification||'']} />
+            <AffiliateSlot position="sidebar" slots={affiliateSlots} fallbackTags={[type, post.type, meta.aziz_department||'', meta.aziz_qualification||'']} department={meta.aziz_department} postType={post.type} />
+            {faqPosition === 'sidebar' && renderFaq()}
 
             {/* Disclaimer note */}
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 text-xs text-amber-800 leading-relaxed">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 text-xs text-amber-800 leading-relaxed mt-6">
               <p className="font-black text-amber-900 mb-1.5 flex items-center gap-1.5 text-sm">⚠️ Disclaimer</p>
               <p>Get Job Update is an independent educational portal. We are not affiliated with any government body. Always verify details from the official website before applying.</p>
             </div>
