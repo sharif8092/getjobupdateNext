@@ -61,8 +61,64 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const recentAdmitCards = await getPosts('aziz_admit', 5);
 
   const meta = post.custom_meta || {};
-  const faqs = meta.faqs || [];
-  const howtos = meta.howtos || [];
+  
+  // ─── Position Validation Helper ──────────────────────────────────────────
+  // Validate and return position with fallback protection
+  const validatePosition = (
+    position: string | undefined,
+    defaultPosition: string,
+    validPositions: string[]
+  ): string => {
+    if (!position) return defaultPosition;
+    if (validPositions.includes(position)) return position;
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Invalid position "${position}". Using default "${defaultPosition}"`);
+    }
+    return defaultPosition;
+  };
+
+  // Valid positions for FAQ and HowTo
+  const FAQ_VALID_POSITIONS = [
+    'before_content',
+    'after_content',
+    'before_related_posts',
+    'after_related_posts',
+    'before_faq',
+    'after_faq',
+    'sidebar',
+    'hidden',
+    'inline'
+  ];
+
+  const HOWTO_VALID_POSITIONS = [
+    'before_content',
+    'after_content',
+    'before_related_posts',
+    'after_related_posts',
+    'before_faq',
+    'after_faq',
+    'sidebar',
+    'hidden',
+    'inline'
+  ];
+
+  // ─── FAQ & HowTo Data Extraction with Fallback Support ─────────────────────
+  // Support BOTH data sources:
+  // 1. New API structure: post.faq?.blocks, post.howto?.blocks (Array of block objects with IDs)
+  // 2. Old API structure: post.faq?.items (Array of questions)
+  // 3. Custom meta properties: post.custom_meta.faqs, post.custom_meta.howtos
+  
+  const faqs = ((post.faq as any)?.blocks && Array.isArray((post.faq as any).blocks) && (post.faq as any).blocks.length > 0)
+    ? (post.faq as any).blocks
+    : ((post.faq?.items && Array.isArray(post.faq.items) && post.faq.items.length > 0)
+      ? [{ parsed: post.faq.items }]
+      : (Array.isArray(meta.faqs) && meta.faqs.length > 0 ? [{ parsed: meta.faqs }] : []));
+  
+  const howtos = ((post.howto as any)?.blocks && Array.isArray((post.howto as any).blocks) && (post.howto as any).blocks.length > 0)
+    ? (post.howto as any).blocks
+    : (((post.howto as any)?.items && Array.isArray((post.howto as any).items) && (post.howto as any).items.length > 0)
+      ? [{ parsed: (post.howto as any).items }]
+      : (meta.howtos || []));
   
   const hasRankMathToc = !!meta.rank_math_toc_html;
   const { headings, content: processedHtml } = processContentAndHeadings(post.content.rendered);
@@ -73,19 +129,50 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
   let finalHtml = processedHtml;
   
-  if (/\[smart_faq[^\]]*\]/gi.test(finalHtml) || /wp-block-yoast-faq-block|schema-faq|rank-math-faq/i.test(finalHtml)) {
+  if (/\[smart_faq[^\]]*\]/gi.test(finalHtml)) {
     contentHasInlineFaq = true;
     finalHtml = finalHtml.replace(/\[smart_faq[^\]]*\]/gi, '<div id="react-faq-placeholder"></div>');
+  } else if (/<div[^>]*data-schema="faq"[^>]*>/gi.test(finalHtml) || /wp-block-yoast-faq-block|schema-faq|rank-math-faq/i.test(finalHtml)) {
+    contentHasInlineFaq = true;
   }
   
-  if (/\[smart_howto[^\]]*\]/gi.test(finalHtml) || /schema-how-to|rank-math-howto-block|wp-block-yoast-how-to-block/i.test(finalHtml)) {
+  if (/\[smart_howto[^\]]*\]/gi.test(finalHtml)) {
     contentHasInlineHowTo = true;
     finalHtml = finalHtml.replace(/\[smart_howto[^\]]*\]/gi, '<div id="react-howto-placeholder"></div>');
+  } else if (/<div[^>]*data-schema="howto"[^>]*>/gi.test(finalHtml) || /schema-how-to|rank-math-howto-block|wp-block-yoast-how-to-block/i.test(finalHtml)) {
+    contentHasInlineHowTo = true;
   }
 
-  // ACF Positioning (with override if inline shortcode is detected)
-  const faqPosition = contentHasInlineFaq ? 'inline' : (meta.faq_position || 'before_related_posts');
-  const howtoPosition = contentHasInlineHowTo ? 'inline' : (meta.howto_position || 'after_content');
+  // ─── Position Extraction with Fallback Support & Debug Logging ──────────────
+  // Support BOTH data sources with comprehensive fallback chain:
+  // 1. Inline shortcodes (highest priority)
+  // 2. Root-level properties: post.faq?.position, post.howto?.position
+  // 3. Custom meta properties: post.custom_meta.faq_position, post.custom_meta.howto_position
+  // 4. Default positions (lowest priority) with fallback protection
+  
+  let rawFaqPosition = contentHasInlineFaq 
+    ? 'inline' 
+    : (post.faq?.position || meta.faq_position || 'before_related_posts');
+  
+  let rawHowtoPosition = contentHasInlineHowTo 
+    ? 'inline' 
+    : (post.howto?.position || meta.howto_position || 'after_content');
+
+  // Apply position validation with fallback protection
+  const faqPosition = validatePosition(rawFaqPosition, 'before_related_posts', FAQ_VALID_POSITIONS);
+  const howtoPosition = validatePosition(rawHowtoPosition, 'after_content', HOWTO_VALID_POSITIONS);
+
+  // Development debugging
+  if (process.env.NODE_ENV === 'development') {
+    console.log('═══ FAQ/HowTo Position Debug ═══');
+    console.log('FAQ Position:', { raw: rawFaqPosition, validated: faqPosition, hasData: faqs.length > 0, inlineDetected: contentHasInlineFaq });
+    console.log('HowTo Position:', { raw: rawHowtoPosition, validated: howtoPosition, hasData: howtos.length > 0, inlineDetected: contentHasInlineHowTo });
+    console.log('FAQ Data Source:', post.faq?.position ? 'post.faq.position' : (meta.faq_position ? 'meta.faq_position' : 'default'));
+    console.log('HowTo Data Source:', post.howto?.position ? 'post.howto.position' : (meta.howto_position ? 'meta.howto_position' : 'default'));
+    console.log('Post FAQ:', post.faq);
+    console.log('Post HowTo:', post.howto);
+    console.log('═════════════════════════════════');
+  }
 
   const isResult = post.type === 'aziz_result';
 
@@ -138,51 +225,60 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     );
   };
 
-  const renderFaq = (isInline = false) => {
-    if (faqs.length === 0) return null;
+  const renderFaq = (isInline = false, id: string | null = null) => {
+    const currentFaqs = id ? faqs.filter((f: any) => f.id === id) : faqs;
+    
+    // DEBUG: If faqs is empty, show a debug block instead of returning null
+    if (currentFaqs.length === 0) {
+      if (!isInline && contentHasInlineFaq) return null;
+      return (
+        <div className="p-4 bg-red-100 text-red-800 rounded-lg border border-red-300 my-4 not-prose">
+          <p className="font-bold">Next.js Debug: FAQ Intercepted but Data is Empty!</p>
+          <p>Please provide FAQ data via the WordPress meta field.</p>
+        </div>
+      );
+    }
+
     // If the shortcode is in the content, ONLY render inline, not in layout zones
     if (!isInline && contentHasInlineFaq) return null;
 
     return (
-      <div id="article-faq-section" className={`mb-6 overflow-hidden not-prose ${isInline ? 'mt-8 pt-6 border-t border-slate-100' : 'bg-white rounded-xl border border-slate-200 shadow-sm'}`}>
+      <div id="article-faq-section" className={`mb-8 overflow-hidden not-prose ${isInline ? 'mt-8' : ''}`}>
         <AffiliateSlot position="before_faq" slots={affiliateSlots} fallbackTags={['laptop', 'study-table']} department={meta.aziz_department} postType={post.type} />
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
+        
+        <div className="pb-6 border-b border-slate-100 flex items-start gap-4 mb-8">
+          <div className="w-11 h-11 rounded-lg bg-[#eef2ff] flex items-center justify-center flex-shrink-0 mt-1">
+            <svg className="w-5 h-5 text-[#4f46e5]" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">People Also Ask</p>
-            <p className="text-xl font-black text-slate-800">Frequently Asked Questions</p>
+            <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">People Also Ask</p>
+            <h2 className="text-[28px] font-black text-[#0f172a] leading-none tracking-tight">Frequently Asked Questions</h2>
           </div>
         </div>
-        <div className="p-6 md:p-8 space-y-2">
-          {faqs.map((faqGroup: any, idx: number) => (
+
+        <div className="space-y-4">
+          {currentFaqs.map((faqGroup: any, idx: number) => (
             <FAQAccordion key={idx} items={faqGroup.parsed || []} />
           ))}
         </div>
+        
         <AffiliateSlot position="after_faq" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
       </div>
     );
   };
 
-  const renderHowTo = (isInline = false) => {
-    if (howtos.length === 0) return null;
+  const renderHowTo = (isInline = false, id: string | null = null) => {
+    const currentHowtos = id ? howtos.filter((h: any) => h.id === id) : howtos;
+    if (currentHowtos.length === 0) return null;
     // If shortcode in content, ONLY render inline
     if (!isInline && contentHasInlineHowTo) return null;
 
     return (
-      <div id="howto-instructions-section" className={`mb-6 overflow-hidden not-prose ${isInline ? 'mt-8 pt-6 border-t border-slate-100' : 'bg-white rounded-xl border border-slate-200 shadow-sm'}`}>
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-            <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75z"/></svg>
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">How To Apply</p>
-            <p className="text-xl font-black text-slate-800">Step-by-Step Guide</p>
-          </div>
-        </div>
+      <div id="howto-instructions-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
         <div className="p-6 md:p-8 space-y-4">
-          {howtos.map((howto: any, idx: number) => (
+          {currentHowtos.map((howto: any, idx: number) => (
             <div key={idx} className="space-y-4">
               {howto.title && <p className="text-sm font-black text-orange-600 uppercase tracking-widest border-b border-slate-100 pb-2">{howto.title}</p>}
               <div className="space-y-3">
@@ -418,6 +514,12 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                 <div id="full-article-content" className="post-content prose prose-slate max-w-none text-slate-700 text-[17px] leading-8 prose-headings:font-bold prose-h2:text-2xl">
                   {parse(finalHtml, {
                     replace: (domNode: any) => {
+                      if (domNode.attribs && domNode.attribs['data-schema'] === 'faq') {
+                        return renderFaq(true, domNode.attribs['data-id']);
+                      }
+                      if (domNode.attribs && domNode.attribs['data-schema'] === 'howto') {
+                        return renderHowTo(true, domNode.attribs['data-id']);
+                      }
                       if (domNode.attribs && domNode.attribs.id === 'react-faq-placeholder') {
                         return renderFaq(true);
                       }
@@ -495,10 +597,18 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               </div>
             </div>
 
+            {/* Dynamic Zone: Before FAQ */}
+            {faqPosition === 'before_faq' && renderFaq()}
+            {howtoPosition === 'before_faq' && renderHowTo()}
+
             {/* Dynamic Zone: Before Related Posts */}
             <AffiliateSlot position="before_related_posts" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
             {faqPosition === 'before_related_posts' && renderFaq()}
             {howtoPosition === 'before_related_posts' && renderHowTo()}
+
+            {/* Dynamic Zone: After FAQ */}
+            {faqPosition === 'after_faq' && renderFaq()}
+            {howtoPosition === 'after_faq' && renderHowTo()}
 
             {/* Related Jobs / Results */}
             <RelatedJobs department={meta.aziz_department} qualification={meta.aziz_qualification} postType={post.type} />
@@ -573,6 +683,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             {/* Affiliate Ad (Sidebar Placement) */}
             <AffiliateSlot position="sidebar" slots={affiliateSlots} fallbackTags={[type, post.type, meta.aziz_department||'', meta.aziz_qualification||'']} department={meta.aziz_department} postType={post.type} />
             {faqPosition === 'sidebar' && renderFaq()}
+            {howtoPosition === 'sidebar' && renderHowTo()}
 
             {/* Disclaimer note */}
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 text-xs text-amber-800 leading-relaxed mt-6">

@@ -36,6 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
+import Script from 'next/script';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -47,6 +49,17 @@ export default function RootLayout({
       className={`${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-brand-accent selection:text-brand-dark">
+        {/* Google Analytics Tag */}
+        <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-XD4FQTDP9X" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XD4FQTDP9X');
+          `}
+        </Script>
+        
         <OneSignalInit />
         <LiveTicker />
         <Navbar />
