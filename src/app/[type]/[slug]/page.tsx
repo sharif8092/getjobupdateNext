@@ -124,7 +124,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
       : (meta.howtos || []));
   
   const hasRankMathToc = !!meta.rank_math_toc_html;
-  const { headings, content: processedHtml } = processContentAndHeadings(post.content.rendered);
+  const { headings, content: processedHtml } = processContentAndHeadings(post.content.rendered, post.title.rendered.replace(/<[^>]*>?/gm, ''));
 
   // Check if user manually placed shortcodes inside the content
   let contentHasInlineFaq = false;
@@ -582,6 +582,9 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             {/* Share Widget */}
             <div className="mb-6"><ShareWidget /></div>
 
+            {/* Top Affiliate Slot */}
+            <AffiliateSlot position="before_content" slots={affiliateSlots} fallbackTags={['laptop', 'study-table', 'printer']} department={meta.aziz_department} postType={post.type} />
+
             {/* Quick Overview Card (Premium Summary) */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
               <div className="px-5 py-4 bg-slate-900 flex items-center gap-3">
@@ -623,7 +626,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               </div>
             </div>
 
-            <AffiliateSlot position="after_summary" slots={affiliateSlots} fallbackTags={['books', 'exam-prep']} department={meta.aziz_department} postType={post.type} />
+
 
             {/* Table of Contents (Rank Math Fallback) */}
             {hasRankMathToc ? (
@@ -642,7 +645,6 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             )}
 
             {/* Dynamic Zone: Before Content */}
-            <AffiliateSlot position="before_content" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
             {faqPosition === 'before_content' && renderFaq()}
             {howtoPosition === 'before_content' && renderHowTo()}
 
@@ -765,7 +767,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             {howtoPosition === 'before_faq' && renderHowTo()}
 
             {/* Dynamic Zone: Before Related Posts */}
-            <AffiliateSlot position="before_related_posts" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
+            <AffiliateSlot position="before_related_posts" slots={affiliateSlots} fallbackTags={['study table', 'laptop']} department={meta.aziz_department} postType={post.type} />
             {faqPosition === 'before_related_posts' && renderFaq()}
             {howtoPosition === 'before_related_posts' && renderHowTo()}
 

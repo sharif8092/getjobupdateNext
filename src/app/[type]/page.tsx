@@ -2,12 +2,15 @@ import React from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPosts, CATEGORIES_LIST, POST_TYPE_MAP, REVERSE_POST_TYPE_MAP, WordPressPost } from '@/lib/wordpress';
+import { getPosts, CATEGORIES_LIST, POST_TYPE_MAP, REVERSE_POST_TYPE_MAP, WordPressPost, extractPostMeta } from '@/lib/wordpress';
+import PushNotificationCard from '@/components/PushNotificationCard';
+import AffiliateSlot from '@/components/AffiliateSlot';
 
 interface ArchiveProps {
   params: Promise<{
     type: string;
   }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export async function generateMetadata({ params }: ArchiveProps): Promise<Metadata> {
@@ -29,13 +32,17 @@ export async function generateMetadata({ params }: ArchiveProps): Promise<Metada
 
 export const revalidate = 300; // Cache archive pages for 5 minutes
 
-export default async function ArchivePage({ params }: ArchiveProps) {
+export default async function ArchivePage({ params, searchParams }: ArchiveProps) {
   const { type } = await params;
   const wpType = REVERSE_POST_TYPE_MAP[type];
 
   if (!wpType) {
     return notFound();
   }
+
+  const sp = searchParams ? await searchParams : undefined;
+  const pageParam = sp?.page;
+  const page = pageParam ? parseInt(pageParam as string, 10) : 1;
 
   const cat = CATEGORIES_LIST.find((c) => c.slug === type);
   const categoryTitle = cat ? cat.name : type.replace('-', ' ');
@@ -44,172 +51,250 @@ export default async function ArchivePage({ params }: ArchiveProps) {
   // Fetch up to 40 posts to fill out the archive view beautifully
   let posts: WordPressPost[] = [];
   try {
-    posts = await getPosts(type, 40);
+    posts = await getPosts(type, 40, page);
   } catch (err) {
     console.error(`Failed to fetch archives for CPT type: ${type}`, err);
   }
 
-  // Format category badge styling
-  const getBadgeStyles = (postType: string) => {
-    switch (postType) {
-      case 'aziz_job':
-        return { bg: 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-[var(--color-brand-blue)]/20', text: 'Job', emoji: '💼' };
-      case 'aziz_result':
-        return { bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', text: 'Result', emoji: '🏆' };
-      case 'aziz_admit':
-        return { bg: 'bg-amber-500/10 text-amber-500 border-amber-500/20', text: 'Admit Card', emoji: '🎟️' };
-      case 'aziz_yojana':
-        return { bg: 'bg-rose-500/10 text-rose-500 border-rose-500/20', text: 'Yojana', emoji: '🇮🇳' };
-      default:
-        return { bg: 'bg-slate-500/10 text-slate-500 border-slate-500/20', text: 'Update', emoji: '📢' };
+  const schemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": `Latest ${categoryTitle} 2026`,
+      "description": `Sabhi verified ${categoryTitle} details direct official sources se. Real-time updates check karein.`,
+      "url": `https://getjobupdate.co.in/${type}`,
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": posts.map((post, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "url": `https://getjobupdate.co.in/${POST_TYPE_MAP[post.type] || 'jobs'}/${post.slug}`,
+          "name": post.title.rendered.replace(/(<([^>]+)>)/gi, "")
+        }))
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://getjobupdate.co.in/" },
+        { "@type": "ListItem", "position": 2, "name": categoryTitle, "item": `https://getjobupdate.co.in/${type}` }
+      ]
     }
-  };
+  ];
 
   return (
-    <div className="w-full bg-[#f8fafc] dark:bg-[#030712] py-10 font-baloo">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* Breadcrumbs */}
-        <nav className="flex items-center gap-1.5 text-xs font-bold font-rajdhani uppercase text-slate-400 mb-6 tracking-wide">
-          <Link href="/" className="hover:text-amber-500">HOME</Link>
-          <span>›</span>
-          <span className="text-slate-500">{categoryTitle}</span>
-        </nav>
-
-        {/* Header Hero card */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#030712] text-white p-8 md:p-12 border border-slate-900 shadow-sm mb-10">
-          <div className="absolute right-0 top-0 w-64 h-64 bg-[var(--color-brand-blue)]/10 rounded-full blur-3xl animate-pulse-slow"></div>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }} />
+      <div className="w-full bg-slate-50 min-h-screen py-8 font-sans">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
-          <div className="space-y-4 relative z-10 max-w-2xl">
-            <span className="text-xs font-black font-rajdhani tracking-widest text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full uppercase">
-              Official Archive Feed
-            </span>
-            <h1 className="text-3xl md:text-5xl font-black font-rajdhani uppercase tracking-tight leading-none">
-              {categoryEmoji} Latest {categoryTitle} 2026
+          {/* Breadcrumbs */}
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm mb-6">
+            <Link href="/" className="text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+              Home
+            </Link>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="m9 18 6-6-6-6"></path></svg>
+            <span className="text-slate-900 font-medium">{categoryTitle}</span>
+          </nav>
+
+          {/* Header Section */}
+          <div className="mb-10 max-w-3xl">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl flex items-center gap-3">
+              <span className="text-4xl">{categoryEmoji}</span>
+              {categoryTitle}
             </h1>
-            <p className="text-slate-400 text-sm md:text-base leading-relaxed">
-              Find all verified, latest bulletins relating to {categoryTitle.toLowerCase()} under this index directory. Data synchronizes live with public recruitment databases.
-            </p>
-          </div>
-        </div>
-
-        {/* 2-Column Responsive Archive View */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Left Main list Feed (8 Columns) */}
-          <div className="lg:col-span-8 space-y-4">
-            {posts.length > 0 ? (
-              posts.map((post) => {
-                const badge = getBadgeStyles(post.type);
-                const postTypeSlug = POST_TYPE_MAP[post.type] || 'jobs';
-                const totalPosts = post.custom_meta?.aziz_total_posts;
-                const deadline = post.custom_meta?.aziz_apply_end;
-                const department = post.custom_meta?.aziz_department;
-                
-                return (
-                  <div 
-                    key={post.id}
-                    className="glass-card flex flex-col md:flex-row gap-4 items-start md:items-center justify-between p-5 rounded-2xl border border-[var(--border)] hover:border-amber-400/40 transition-all duration-300 hover:shadow-md group"
-                  >
-                    <div className="flex-1 space-y-2.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-black uppercase font-rajdhani ${badge.bg}`}>
-                          <span>{badge.emoji}</span>
-                          <span>{badge.text}</span>
-                        </span>
-                        {department && (
-                          <span className="text-[11px] font-semibold text-slate-400">
-                            🏢 {department}
-                          </span>
-                        )}
-                      </div>
-
-                      <Link 
-                        href={`/${postTypeSlug}/${post.slug}`}
-                        className="block text-base md:text-lg font-bold text-[var(--foreground)] group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors"
-                        dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-                      />
-
-                      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-slate-500 font-medium">
-                        {totalPosts && (
-                          <span className="flex items-center gap-1">
-                            <strong>🔢 Posts:</strong> {totalPosts}
-                          </span>
-                        )}
-                        {deadline && (
-                          <span className="flex items-center gap-1">
-                            <strong>📅 Last Date:</strong> {deadline}
-                          </span>
-                        )}
-                        <span className="flex items-center gap-1">
-                          <strong>📍 Location:</strong> {post.custom_meta?.aziz_job_location || 'All India'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <Link
-                      href={`/${postTypeSlug}/${post.slug}`}
-                      className="w-full md:w-auto flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-amber-400 dark:hover:bg-amber-400 hover:text-slate-900 text-white px-5 py-2.5 text-xs font-black font-rajdhani tracking-wider uppercase transition-colors"
-                    >
-                      Details
-                      <span>→</span>
-                    </Link>
-                  </div>
-                )
-              })
-            ) : (
-              <div className="p-12 text-center border-2 border-dashed border-[var(--border)] rounded-2xl text-slate-400">
-                No active postings available in the `{categoryTitle}` catalog right now.
-              </div>
-            )}
-          </div>
-
-          {/* Right Sidebar navigation support (4 Columns) */}
-          <aside className="lg:col-span-4 space-y-6">
-            
-            {/* Quick Browse Badge directory */}
-            <div className="glass-card rounded-2xl border border-[var(--border)] p-6 space-y-4">
-              <h4 className="text-lg font-black font-rajdhani tracking-wider text-[var(--foreground)] uppercase border-b border-[var(--border)] pb-2.5">
-                📁 Other Categories
-              </h4>
-              <div className="flex flex-col gap-2 font-rajdhani font-black text-sm uppercase">
-                {CATEGORIES_LIST.filter((c) => c.slug !== type).map((cat) => (
-                  <Link
-                    key={cat.slug}
-                    href={`/${cat.slug}`}
-                    className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-slate-50 dark:bg-slate-900/10 p-3 hover:border-amber-400 hover:text-amber-500 transition-all group"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span>{cat.emoji}</span>
-                      <span>{cat.name}</span>
-                    </span>
-                    <span className="text-xs text-slate-400 group-hover:text-amber-500 font-mono">→</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Support strip */}
-            <div className="rounded-2xl bg-gradient-to-tr from-[#020617] to-[#0f172a] p-5 text-white border border-slate-800 shadow-md">
-              <h5 className="font-rajdhani font-black tracking-wide uppercase text-sm mb-2 text-amber-400">
-                📩 Real-Time Bulletins
-              </h5>
-              <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                We push verified recruitment drives via social alert services. Register below to save your seats.
+            <div className="mt-4 flex flex-col gap-3">
+              <p className="text-lg font-medium text-slate-600 leading-relaxed">
+                Find the best {categoryTitle} for 2026. We list active vacancies and updates with clear details on age, qualifications, and how to apply. Browse daily verified updates from official sources.
               </p>
-              <a 
-                href="#" 
-                className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-rajdhani font-black text-xs py-2.5 transition-all"
-              >
-                💬 JOIN WHATSAPP DISCUSSIONS
-              </a>
+              <p className="text-base text-slate-500">
+                Latest {categoryTitle.toLowerCase()} notifications. Updated daily.
+              </p>
             </div>
+          </div>
 
-          </aside>
+          {/* Layout Grid */}
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
+            
+            {/* Left Sidebar */}
+            <aside className="hidden lg:block space-y-6">
+              <div className="sticky top-24 space-y-6">
+                
+                {/* Explore Categories */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                  <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 font-bold text-slate-900 text-sm">
+                    Explore Directories
+                  </div>
+                  <div className="flex flex-col">
+                    {CATEGORIES_LIST.filter((c) => c.slug !== type).map((cat) => (
+                      <Link
+                        key={cat.slug}
+                        href={`/${cat.slug}`}
+                        className="px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 text-slate-600 hover:text-blue-600 text-sm font-medium transition-colors flex items-center gap-3"
+                      >
+                        <span className="text-lg">{cat.emoji}</span>
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <PushNotificationCard />
+                
+                <AffiliateSlot position="sidebar" fallbackTags={['study table', 'laptop']} />
+
+              </div>
+            </aside>
+
+            {/* Right Main Content */}
+            <div className="space-y-6">
+              
+              {/* Toolbar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <p className="text-sm font-medium text-slate-600">
+                  Showing <span className="font-bold text-slate-900">{posts.length}</span> active records
+                </p>
+                <div className="flex items-center gap-2">
+                  <select className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
+                    <option>Latest Updates</option>
+                    <option>Expiring Soon</option>
+                    <option>Highest Vacancies</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Grid of Posts */}
+              {posts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {posts.map((post) => {
+                    const postTypeSlug = POST_TYPE_MAP[post.type] || 'jobs';
+                    const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
+                    const isNew = (Date.now() - new Date(post.date).getTime()) < 3 * 24 * 60 * 60 * 1000;
+                    
+                    return (
+                      <Link 
+                        key={post.id}
+                        href={`/${postTypeSlug}/${post.slug}`}
+                        className="group flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all overflow-hidden h-full"
+                      >
+                        {/* Colored Top Banner (Instead of Image) */}
+                        <div className="h-2 w-full bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                        
+                        <div className="p-5 flex flex-col flex-1">
+                          
+                          <div className="flex items-start justify-between gap-2 mb-3">
+                            <span className="inline-flex items-center gap-1.5 rounded bg-blue-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-700">
+                              {categoryTitle}
+                            </span>
+                            {isNew && (
+                              <span className="inline-flex items-center rounded bg-rose-500 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white">
+                                New
+                              </span>
+                            )}
+                          </div>
+
+                          <h3 
+                            className="text-[15px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug line-clamp-3 mb-4"
+                            dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                          />
+
+                          <div className="mt-auto space-y-2.5 pt-4 border-t border-slate-100">
+                            {dept && (
+                              <div className="flex items-start gap-2 text-xs">
+                                <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                                <span className="font-medium text-slate-700 line-clamp-1">{dept}</span>
+                              </div>
+                            )}
+                            {totalPosts && (
+                              <div className="flex items-start gap-2 text-xs">
+                                <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                <span className="font-medium text-slate-700">{totalPosts} Posts</span>
+                              </div>
+                            )}
+                            {qual && (
+                              <div className="flex items-start gap-2 text-xs">
+                                <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14v6" /></svg>
+                                <span className="font-medium text-slate-700 line-clamp-1">{qual}</span>
+                              </div>
+                            )}
+                            {lastDate && (
+                              <div className="flex items-start gap-2 text-xs text-rose-600 bg-rose-50 px-2 py-1.5 rounded mt-2">
+                                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span className="font-bold">Deadline: {lastDate}</span>
+                              </div>
+                            )}
+                          </div>
+                          
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="p-16 flex flex-col items-center justify-center text-center bg-white border border-dashed border-slate-300 rounded-2xl">
+                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-2xl mb-4">📭</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">No Active Records Found</h3>
+                  <p className="text-slate-500 text-sm max-w-sm">
+                    We currently don't have any active postings under this catalog. Please check back later or subscribe to notifications.
+                  </p>
+                </div>
+              )}
+
+              {/* Pagination */}
+              {posts.length > 0 && (
+                <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm mt-8">
+                  {page > 1 ? (
+                    <Link href={`/${type}?page=${page - 1}`} className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+                      &larr; Previous
+                    </Link>
+                  ) : (
+                    <div className="px-4 py-2 border border-slate-100 rounded-lg text-sm font-medium text-slate-300 cursor-not-allowed">
+                      &larr; Previous
+                    </div>
+                  )}
+                  
+                  <span className="text-sm font-bold text-slate-600">Page {page}</span>
+                  
+                  {posts.length === 40 ? (
+                    <Link href={`/${type}?page=${page + 1}`} className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+                      Next &rarr;
+                    </Link>
+                  ) : (
+                    <div className="px-4 py-2 border border-slate-100 rounded-lg text-sm font-medium text-slate-300 cursor-not-allowed">
+                      Next &rarr;
+                    </div>
+                  )}
+                </div>
+              )}
+
+            </div>
+          </div>
+
+          {/* Aspirant Guide Footer */}
+          <div className="mt-16 bg-white p-8 md:p-12 rounded-2xl border border-slate-200 shadow-sm mb-12">
+            <h2 className="text-2xl font-bold text-slate-900 mb-8 border-b border-slate-100 pb-4">
+              Aspirant Guide for {categoryTitle}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-3">How to stay updated?</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  We track official portals like SSC, UPSC, and State Boards daily. Bookmark this page to get the fastest updates on {categoryTitle.toLowerCase()} notifications. Every link we provide is cross-verified for accuracy.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-3">Why choose Get Job Update?</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Our platform simplifies complex government notifications. We provide direct apply links, simplified eligibility summaries, and important dates in a clean dashboard format, helping you focus on your exam preparation.
+                </p>
+              </div>
+            </div>
+          </div>
 
         </div>
-
       </div>
-    </div>
+    </>
   );
 }

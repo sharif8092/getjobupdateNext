@@ -443,8 +443,8 @@ export const QUALIFICATIONS_LIST = [
 ];
 
 export const CATEGORIES_LIST = [
-  { name: 'Latest Jobs', slug: 'jobs', color: 'blue', type: 'aziz_job', emoji: '💼' },
-  { name: 'Sarkari Result', slug: 'results', color: 'green', type: 'aziz_result', emoji: '🏆' },
+  { name: 'Government Job', slug: 'jobs', color: 'blue', type: 'aziz_job', emoji: '💼' },
+  { name: 'Exam Result', slug: 'results', color: 'green', type: 'aziz_result', emoji: '🏆' },
   { name: 'Admit Card', slug: 'admit-cards', color: 'amber', type: 'aziz_admit', emoji: '🎟️' },
   { name: 'Answer Key', slug: 'answer-keys', color: 'teal', type: 'aziz_answerkey', emoji: '🔑' },
   { name: 'Syllabus', slug: 'syllabus', color: 'indigo', type: 'aziz_syllabus', emoji: '📖' },
@@ -667,9 +667,19 @@ export interface HeadingItem {
   level: number; // 2 for h2, 3 for h3
 }
 
-export function processContentAndHeadings(html: string): { headings: HeadingItem[], content: string } {
+export function processContentAndHeadings(html: string, postTitle: string = ''): { headings: HeadingItem[], content: string } {
   const headings: HeadingItem[] = [];
   let modifiedHtml = html || '';
+
+  if (postTitle) {
+    modifiedHtml = modifiedHtml.replace(/<img([^>]*)>/gi, (match, attrs) => {
+      if (!/alt=["']([^"']+)["']/i.test(attrs)) {
+        attrs = attrs.replace(/\s*alt=["'][^"']*["']/i, '');
+        return `<img${attrs} alt="${postTitle.replace(/"/g, '&quot;')}">`;
+      }
+      return match;
+    });
+  }
 
   if (!modifiedHtml) return { headings, content: modifiedHtml };
 

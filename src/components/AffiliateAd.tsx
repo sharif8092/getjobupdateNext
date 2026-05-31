@@ -8,9 +8,10 @@ interface AffiliateAdProps {
   tags?: string[];
   customProduct?: any;
   globalAmazonId?: string;
+  variant?: 'list' | 'highlight';
 }
 
-export default function AffiliateAd({ tags, customProduct, globalAmazonId }: AffiliateAdProps) {
+export default function AffiliateAd({ tags, customProduct, globalAmazonId, variant = 'list' }: AffiliateAdProps) {
   // Use custom product if provided, otherwise dynamically query 2 best books
   let matchedBooks = customProduct ? [customProduct] : (tags ? getRecommendedProducts(tags, 2) : []);
 
@@ -19,11 +20,8 @@ export default function AffiliateAd({ tags, customProduct, globalAmazonId }: Aff
     matchedBooks = matchedBooks.map((book: any) => {
       let finalLink = book.buyLink || '';
       if (finalLink.includes('amazon.') || finalLink.includes('amzn.to')) {
-        // Strip out any existing tag
         finalLink = finalLink.replace(/([?&])tag=[^&]+(&|$)/, '$1');
-        // Clean trailing ? or & if tag was the last parameter
         finalLink = finalLink.replace(/[?&]$/, '');
-        // Append new tag
         finalLink += (finalLink.includes('?') ? '&' : '?') + 'tag=' + encodeURIComponent(globalAmazonId);
       }
       return { ...book, buyLink: finalLink };
@@ -32,88 +30,97 @@ export default function AffiliateAd({ tags, customProduct, globalAmazonId }: Aff
 
   if (matchedBooks.length === 0) return null;
 
-  return (
-    <div className="glass-card rounded-3xl border border-dashed border-amber-400/30 p-6 md:p-8 space-y-6 shadow-sm font-baloo relative overflow-hidden my-8">
-      {/* Background soft aura */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/5 rounded-full blur-2xl"></div>
+  // Determine section title based on tags
+  const tagsString = (tags || []).join(' ').toLowerCase();
+  let sectionTitle = 'RECOMMENDED BOOKS';
+  if (tagsString.includes('laptop') || tagsString.includes('headphones') || tagsString.includes('printer')) {
+    sectionTitle = 'STUDY GADGETS';
+  } else if (tagsString.includes('study-table') || tagsString.includes('furniture')) {
+    sectionTitle = 'STATIONERY PICKS';
+  }
 
-      {/* Header */}
-      <div className="flex items-start md:items-center justify-between gap-3 flex-wrap border-b border-[var(--border)] pb-4">
-        <div className="space-y-1">
-          <span className="inline-flex items-center gap-1 text-[10px] font-black font-rajdhani tracking-widest text-slate-900 dark:text-amber-500 bg-amber-400 dark:bg-amber-400/10 px-2.5 py-0.5 rounded uppercase font-mono shadow-sm">
-            ⭐ Recommended Prep Kit
-          </span>
-          <h4 className="text-lg font-bold font-rajdhani uppercase tracking-wide text-[var(--foreground)] mt-2">
-            Supercharge Your Selection Preparation
-          </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Aspirants who cracked this exam highly recommend starting with these expert-approved study guides:
-          </p>
-        </div>
-      </div>
-
-      {/* Grid listing the recommended books */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {matchedBooks.map((book) => (
-          <div 
-            key={book.id}
-            className="flex gap-4 p-4 bg-slate-50/50 dark:bg-slate-950/40 border border-[var(--border)] rounded-2xl items-center hover:border-amber-400/30 transition-all duration-300 group"
-          >
-            {/* Visual representation of Product */}
-            <div className="w-16 h-16 rounded-xl bg-white dark:bg-[#0b0f19] border border-[var(--border)] flex items-center justify-center text-3xl shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform overflow-hidden relative">
-              {book.image?.startsWith('http') || book.image?.startsWith('/') ? (
-                <Image 
-                  src={book.image} 
-                  alt={book.title} 
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-contain p-1.5"
-                  unoptimized={true}
-                />
-              ) : (
-                book.image
-              )}
+  if (variant === 'highlight') {
+    return (
+      <div className="w-full my-6 font-sans flex flex-col gap-6">
+        {matchedBooks.slice(0, 1).map((book) => (
+          <div key={book.id} className="w-full bg-[#f8faff] border border-blue-100/60 rounded-[32px] p-6 sm:p-8 flex flex-col md:flex-row gap-8 items-center shadow-sm">
+            {/* Left Image */}
+            <div className="w-[160px] h-[160px] sm:w-[180px] sm:h-[180px] rounded-[32px] bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] flex-shrink-0 flex items-center justify-center p-3 relative">
+              <Image src={book.image} alt={book.title} fill className="object-contain p-4" unoptimized />
             </div>
-
-            <div className="flex-1 space-y-1.5 min-w-0">
-              {/* Rating and Badges */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[9px] font-bold text-amber-500 bg-amber-500/5 px-2 py-0.5 rounded font-mono">
-                  ★ {book.rating} Rating
-                </span>
-                {book.discountBadge && (
-                  <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/5 px-2 py-0.5 rounded font-mono">
-                    {book.discountBadge}
-                  </span>
-                )}
+            {/* Right Content */}
+            <div className="flex-1 flex flex-col justify-center w-full min-w-0">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                </svg>
+                <span className="text-[10px] font-black tracking-widest uppercase text-blue-700">Top Recommended Book</span>
               </div>
-
-              {/* Title & Price */}
-              <h5 className="font-rajdhani font-black text-sm text-[var(--foreground)] uppercase leading-snug line-clamp-1 truncate group-hover:text-amber-500 transition-colors" title={book.title}>
+              <h3 className="text-[18px] sm:text-[20px] font-black text-slate-900 leading-[1.2] mb-3 tracking-tight">
                 {book.title}
-              </h5>
+              </h3>
+              <p className="text-[13px] sm:text-[14px] font-medium text-slate-600 mb-6 leading-relaxed">
+                {book.description || "This guide is highly recommended for complete syllabus coverage."}
+              </p>
               
-              <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="text-sm font-black font-rajdhani text-emerald-600 dark:text-emerald-400">
-                  {book.price} <span className="text-[10px] text-slate-400 line-through font-normal">{book.originalPrice}</span>
-                </span>
-                
-                <a 
-                  href={book.buyLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[10px] font-black font-rajdhani text-slate-900 hover:text-amber-500 bg-amber-400 hover:bg-slate-950 hover:text-amber-400 px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors shadow-sm"
-                >
-                  Buy Now
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mt-auto">
+                <div>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Our Price</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-black text-slate-900 tracking-tight leading-none">{book.price}</span>
+                    {book.originalPrice && <span className="text-[12px] font-bold text-slate-400 line-through">{book.originalPrice}</span>}
+                  </div>
+                </div>
+                <a href={book.buyLink} target="_blank" rel="noopener noreferrer" className="bg-[#1849d6] hover:bg-blue-800 text-white px-6 py-3 rounded-[12px] font-black text-[12px] tracking-wide uppercase transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2.5 group">
+                  View on Store
+                  <svg className="w-4 h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                  </svg>
                 </a>
               </div>
             </div>
           </div>
         ))}
       </div>
+    );
+  }
 
-      <div className="text-[10px] text-slate-400 dark:text-slate-500 text-center italic border-t border-[var(--border)] pt-3 font-mono">
-        Disclaimer: Recommending third-party study references may yield referral commission to sustain server costs.
+  return (
+    <div className="w-full my-6 font-sans">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-[2px] bg-blue-400 rounded-full"></div>
+        <h3 className="text-[11px] font-black tracking-[0.15em] text-slate-500 uppercase">
+          {sectionTitle}
+        </h3>
+      </div>
+
+      <div className="flex flex-col gap-6 w-full">
+        {matchedBooks.map((book) => (
+          <a href={book.buyLink} target="_blank" rel="noopener noreferrer" key={book.id} className="flex gap-4 sm:gap-5 items-center w-full group">
+            {/* Image Container */}
+            <div className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-[24px] bg-white border border-slate-100 shadow-[0_8px_24px_rgb(0,0,0,0.04)] flex-shrink-0 flex items-center justify-center relative overflow-hidden group-hover:shadow-[0_12px_30px_rgb(0,0,0,0.08)] transition-all duration-300 p-2">
+              <Image 
+                src={book.image} 
+                alt={book.title} 
+                fill 
+                className="object-contain p-3 group-hover:scale-110 transition-transform duration-500 ease-out" 
+                unoptimized 
+              />
+            </div>
+            {/* Text Container */}
+            <div className="flex-1 flex flex-col justify-center py-2 min-w-0">
+              <h4 className="text-[12px] sm:text-[13px] font-black uppercase text-slate-900 leading-[1.4] line-clamp-2 mb-2.5 group-hover:text-blue-600 transition-colors" title={book.title}>
+                {book.title}
+              </h4>
+              <div className="flex items-center gap-2">
+                <span className="text-[15px] sm:text-[17px] font-black text-slate-900">{book.price}</span>
+                {book.originalPrice && (
+                  <span className="text-[11px] sm:text-[12px] font-bold text-slate-400 line-through">{book.originalPrice}</span>
+                )}
+              </div>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   );

@@ -147,6 +147,11 @@ export default async function Footer() {
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Terms & Conditions
                 </Link>
               </li>
+              <li>
+                <Link href="/sitemap.xml" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group" target="_blank" prefetch={false}>
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> XML Sitemap
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
