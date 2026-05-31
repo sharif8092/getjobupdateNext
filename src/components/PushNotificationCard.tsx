@@ -21,13 +21,23 @@ export default function PushNotificationCard() {
             alert('Aap pehle se hi notifications ke liye subscribed hain! (You are already subscribed)');
             return;
           }
+
+          // Check if explicitly blocked
+          if (OneSignal.Notifications && OneSignal.Notifications.permission === false) {
+            alert('Aapne is website ke liye Notifications "Block" ki hui hain! Kripya URL bar me Taale (Lock) icon par click karein aur Notifications ko "Allow" ya "Ask" par set karein.');
+            return;
+          }
           
-          if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-            await OneSignal.Notifications.requestPermission();
-          } else if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
-            await OneSignal.Slidedown.promptPush();
-          } else {
-            alert('Aapke browser ne Notification popup ko block kar diya hai. Kripya URL bar me notification icon check karein.');
+          try {
+            if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+              await OneSignal.Slidedown.promptPush();
+            } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+              await OneSignal.Notifications.requestPermission();
+            } else {
+              alert('Aapke browser ne Notification popup ko block kar diya hai. Kripya URL bar me notification icon check karein.');
+            }
+          } catch(e) {
+            alert('Aapke browser ne permission block kar di hai (Notifications Blocked). Kripya browser settings check karein.');
           }
         });
 
