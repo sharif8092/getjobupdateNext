@@ -7,6 +7,12 @@ export default function PushNotificationCard() {
     try {
       if (typeof window !== 'undefined') {
         // @ts-ignore
+        if (typeof window.OneSignal === 'undefined' && !document.querySelector('script[src*="onesignal"]')) {
+           alert('Aapke browser ya Adblocker ne Notification system ko block kar diya hai. Kripya Tracking Prevention / Adblocker band karein.');
+           return;
+        }
+
+        // @ts-ignore
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         // @ts-ignore
         window.OneSignalDeferred.push(async function(OneSignal) {
@@ -21,9 +27,17 @@ export default function PushNotificationCard() {
           } else if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
             await OneSignal.Slidedown.promptPush();
           } else {
-            alert('OneSignal abhi load ho raha hai. Kripya 2 second wait karein.');
+            alert('Aapke browser ne Notification popup ko block kar diya hai. Kripya URL bar me notification icon check karein.');
           }
         });
+
+        // Fallback alert if OneSignal never executes the deferred function
+        setTimeout(() => {
+          // @ts-ignore
+          if (!window.OneSignal || !window.OneSignal.Notifications) {
+             alert('Aapke browser (Edge Tracking Prevention) ya Adblocker ne Notification system ko load hone se rok diya hai. Kripya ise disable karein.');
+          }
+        }, 1500);
       }
     } catch (error) {
       console.error('OneSignal prompt error:', error);
