@@ -112,17 +112,20 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   // ─── Render Functions for Dynamic Placement ──────────────────────────────
   // Function to render an inline affiliate ad from custom plugin data
   const renderInlineAffiliate = (data: any) => {
-    if (!data.title || !data.link) return null;
+    const title = data['data-title'] || data.title;
+    const link = data['data-link'] || data.link;
+
+    if (!title || !link) return null;
     
     const product = {
       id: Math.random().toString(36).substr(2, 9),
-      title: data.title,
-      price: data.price || '',
-      originalPrice: data.originalprice || '',
-      rating: parseFloat(data.rating) || 4.5,
-      buyLink: data.link,
-      image: data.image || '📚',
-      discountBadge: data.discount || '',
+      title: title,
+      price: data['data-price'] || data.price || '',
+      originalPrice: data['data-originalprice'] || data.originalprice || '',
+      rating: parseFloat(data['data-rating'] || data.rating) || 4.5,
+      buyLink: link,
+      image: data['data-image'] || data.image || '📚',
+      discountBadge: data['data-discount'] || data.discount || '',
       categoryTags: [],
       author: '',
       description: ''

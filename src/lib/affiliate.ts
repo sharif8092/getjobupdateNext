@@ -101,11 +101,11 @@ export const AFFILIATE_PRODUCTS: AffiliateProduct[] = [
     id: 'Macbook-neo-13',
     title: 'Apple 2026 MacBook Neo 13',
     author: 'HP',
-    image: 'https://m.media-amazon.com/images/I/718yG0g8f0L._SL1500_.jpg',
+    image: 'https://m.media-amazon.com/images/I/61dLund7bhL._SL1500_.jpg',
     price: '₹6500',
     originalPrice: '₹65000',
     rating: 4.7,
-    buyLink: 'https://m.media-amazon.com/images/I/61dLund7bhL._SL1500_.jpg',
+    buyLink: 'https://amzn.to/4nWoCcq',
     // ✅ No change — ASIN valid
     categoryTags: ['laptop', 'computer', 'tech', 'student'],
     description: 'Perfect budget laptop for online classes, mock tests, and PDF reading with long battery life.',
