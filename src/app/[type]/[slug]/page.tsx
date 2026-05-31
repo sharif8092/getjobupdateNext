@@ -73,18 +73,18 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
   let finalHtml = processedHtml;
   
-  if (/\[smart_faq[^\]]*\]/gi.test(finalHtml)) {
+  if (/\[smart_faq[^\]]*\]/gi.test(finalHtml) || /wp-block-yoast-faq-block|schema-faq|rank-math-faq/i.test(finalHtml)) {
     contentHasInlineFaq = true;
     finalHtml = finalHtml.replace(/\[smart_faq[^\]]*\]/gi, '<div id="react-faq-placeholder"></div>');
   }
   
-  if (/\[smart_howto[^\]]*\]/gi.test(finalHtml)) {
+  if (/\[smart_howto[^\]]*\]/gi.test(finalHtml) || /schema-how-to|rank-math-howto-block|wp-block-yoast-how-to-block/i.test(finalHtml)) {
     contentHasInlineHowTo = true;
     finalHtml = finalHtml.replace(/\[smart_howto[^\]]*\]/gi, '<div id="react-howto-placeholder"></div>');
   }
 
   // ACF Positioning (with override if inline shortcode is detected)
-  const faqPosition = contentHasInlineFaq ? 'inline' : (meta.faq_position || 'after_content');
+  const faqPosition = contentHasInlineFaq ? 'inline' : (meta.faq_position || 'before_related_posts');
   const howtoPosition = contentHasInlineHowTo ? 'inline' : (meta.howto_position || 'after_content');
 
   const isResult = post.type === 'aziz_result';
@@ -144,7 +144,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     if (!isInline && contentHasInlineFaq) return null;
 
     return (
-      <div id="article-faq-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
+      <div id="article-faq-section" className={`mb-6 overflow-hidden not-prose ${isInline ? 'mt-8 pt-6 border-t border-slate-100' : 'bg-white rounded-xl border border-slate-200 shadow-sm'}`}>
         <AffiliateSlot position="before_faq" slots={affiliateSlots} fallbackTags={['laptop', 'study-table']} department={meta.aziz_department} postType={post.type} />
         <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -171,7 +171,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     if (!isInline && contentHasInlineHowTo) return null;
 
     return (
-      <div id="howto-instructions-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
+      <div id="howto-instructions-section" className={`mb-6 overflow-hidden not-prose ${isInline ? 'mt-8 pt-6 border-t border-slate-100' : 'bg-white rounded-xl border border-slate-200 shadow-sm'}`}>
         <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
             <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75z"/></svg>
@@ -427,16 +427,31 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                       if (domNode.attribs && domNode.attribs.class && domNode.attribs.class.includes('react-affiliate-placeholder')) {
                         return renderInlineAffiliate(domNode.attribs);
                       }
+                      
+                      // Intercept raw Gutenberg SEO blocks and replace them with our premium React components inline
+                      if (domNode.attribs) {
+                        const classes = domNode.attribs.class || '';
+                        const id = domNode.attribs.id || '';
+                        
+                        if (classes.includes('wp-block-yoast-faq-block') || classes.includes('schema-faq') || id === 'rank-math-faq' || classes.includes('rank-math-faq')) {
+                          return renderFaq(true);
+                        }
+                        if (classes.includes('schema-how-to') || classes.includes('rank-math-howto-block') || classes.includes('wp-block-yoast-how-to-block')) {
+                          return renderHowTo(true);
+                        }
+                      }
                     }
                   })}
+
+                  {/* If position is after_content, integrate them seamlessly at the end of the article text */}
+                  {faqPosition === 'after_content' && renderFaq(true)}
+                  {howtoPosition === 'after_content' && renderHowTo(true)}
                 </div>
               </div>
             </div>
 
             {/* Dynamic Zone: After Content */}
             <AffiliateSlot position="after_content" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
-            {faqPosition === 'after_content' && renderFaq()}
-            {howtoPosition === 'after_content' && renderHowTo()}
 
             {/* Trust Signals & Premium Author Box */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6 p-6 md:p-8">

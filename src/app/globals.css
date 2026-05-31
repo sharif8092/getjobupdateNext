@@ -336,10 +336,10 @@ body {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05) !important;
 }
 .post-content thead tr {
-  background: #1e3a8a !important; /* slate-900 / blue-900 */
+  background: #0b1120 !important; /* Brand dark */
 }
 .post-content th {
-  background: #1e3a8a !important;
+  background: #0b1120 !important;
   color: #ffffff !important;
   font-family: var(--font-sans) !important;
   font-weight: 800 !important;
@@ -351,7 +351,7 @@ body {
   border: none !important;
 }
 .post-content th:first-child {
-  border-left: 4px solid #3b82f6 !important; /* blue-500 */
+  border-left: 4px solid #ea580c !important; /* Orange strip */
 }
 .post-content td {
   padding: 12px 20px !important;
