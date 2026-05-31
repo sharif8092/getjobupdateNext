@@ -1,5 +1,6 @@
 import React from 'react';
 import AffiliateAd from './AffiliateAd';
+import { getAffiliateSettings } from '@/lib/wordpress';
 
 interface AffiliateSlotProps {
   position: string;
@@ -9,7 +10,7 @@ interface AffiliateSlotProps {
   postType?: string;
 }
 
-export default function AffiliateSlot({ position, slots, fallbackTags, department, postType }: AffiliateSlotProps) {
+export default async function AffiliateSlot({ position, slots, fallbackTags, department, postType }: AffiliateSlotProps) {
   // Find matching slot from backend data if available
   const match = slots?.find(s => s.position === position);
   
@@ -24,9 +25,13 @@ export default function AffiliateSlot({ position, slots, fallbackTags, departmen
   if (department) contextualTags.push(department);
   if (postType) contextualTags.push(postType);
 
+  // Fetch the global Amazon Affiliate ID from WordPress Settings
+  const settings = await getAffiliateSettings();
+  const amazonId = settings?.amazon_id || '';
+
   return (
     <div className="mb-6 affiliate-slot-container" data-position={position}>
-      <AffiliateAd tags={contextualTags} />
+      <AffiliateAd tags={contextualTags} globalAmazonId={amazonId} />
     </div>
   );
 }

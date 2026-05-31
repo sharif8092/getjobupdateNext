@@ -65,6 +65,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
+  // Add Web Stories index
+  routes.push({
+    url: `${SITE_URL}/web-stories`,
+    lastModified: new Date(),
+    changeFrequency: 'daily',
+    priority: 0.8,
+  });
+
   // Fetch all posts from major types to add to sitemap
   // We fetch up to 100 recent posts across different categories to keep it lightweight but effective
   const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_answerkey', 'aziz_yojana'];
@@ -81,6 +89,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           changeFrequency: 'weekly',
           priority: 0.7,
         });
+        
+        // Auto-generated Web Story for Jobs
+        if (type === 'aziz_job') {
+          routes.push({
+            url: `${SITE_URL}/web-stories/${post.slug}`,
+            lastModified: new Date(post.modified || post.date),
+            changeFrequency: 'weekly',
+            priority: 0.6,
+          });
+        }
       });
     } catch (e) {
       console.error(`Failed to fetch sitemap posts for type: ${type}`);

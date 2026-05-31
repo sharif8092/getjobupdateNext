@@ -3,7 +3,7 @@ import parse from 'html-react-parser';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts } from '@/lib/wordpress';
+import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts, getAffiliateSettings } from '@/lib/wordpress';
 import FAQAccordion from '@/components/FAQAccordion';
 import SyllabusTracker from '@/components/SyllabusTracker';
 import AffiliateSlot from '@/components/AffiliateSlot';
@@ -59,6 +59,9 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const recentJobs = await getPosts('aziz_job', 5);
   const recentResults = await getPosts('aziz_result', 5);
   const recentAdmitCards = await getPosts('aziz_admit', 5);
+
+  const affiliateSettings = await getAffiliateSettings();
+  const globalAmazonId = affiliateSettings?.amazon_id || '';
 
   const meta = post.custom_meta || {};
   
@@ -142,6 +145,22 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   } else if (/<div[^>]*data-schema="howto"[^>]*>/gi.test(finalHtml) || /schema-how-to|rank-math-howto-block|wp-block-yoast-how-to-block/i.test(finalHtml)) {
     contentHasInlineHowTo = true;
   }
+
+  // ─── Auto Internal Linking Engine ──────────────────────────────────────────
+  const internalLinks = [
+    { word: 'Sarkari Result', link: '/results' },
+    { word: 'Admit Card', link: '/admit-cards' },
+    { word: 'Syllabus', link: '/syllabus' },
+    { word: 'Answer Key', link: '/answer-keys' },
+    { word: 'Latest Jobs', link: '/jobs' },
+    { word: 'Govt Jobs', link: '/jobs' },
+    { word: 'Government Jobs', link: '/jobs' },
+  ];
+  
+  internalLinks.forEach(item => {
+    const regex = new RegExp(`(?![^<]*>|[^<>]*<\\/a>)\\b(${item.word})\\b`, 'i'); // removed 'g' to replace only first occurrence naturally
+    finalHtml = finalHtml.replace(regex, `<a href="${item.link}" class="text-blue-600 hover:text-blue-800 hover:underline font-semibold" title="${item.word}">$1</a>`);
+  });
 
   // ─── Position Extraction with Fallback Support & Debug Logging ──────────────
   // Support BOTH data sources with comprehensive fallback chain:
@@ -301,11 +320,14 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     );
   };
 
-  // ─── Schemas ──────────────────────────────────────────────────
-  const articleSchema = {
+  // ─── Schemas (Advanced Technical SEO) ────────────────────────
+  const schemas: any[] = [];
+
+  // 1. Article Schema
+  schemas.push({
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": post.seo_meta?.title || post.title.rendered,
+    "headline": post.seo_meta?.title || post.title.rendered.replace(/<[^>]*>?/gm, ''),
     "image": post.seo_meta?.og_image ? [post.seo_meta.og_image] : [],
     "datePublished": post.date,
     "dateModified": post.modified,
@@ -313,13 +335,119 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
         "@type": "Organization",
         "name": "Get Job Update",
         "url": "https://getjobupdate.co.in"
-    }]
-  };
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Get Job Update",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://getjobupdate.co.in/icon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://getjobupdate.co.in/${type}/${slug}`
+    }
+  });
+
+  // 2. BreadcrumbList Schema
+  schemas.push({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://getjobupdate.co.in/" },
+      { "@type": "ListItem", "position": 2, "name": type.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()), "item": `https://getjobupdate.co.in/${type}` },
+      { "@type": "ListItem", "position": 3, "name": post.title.rendered.replace(/<[^>]*>?/gm, ''), "item": `https://getjobupdate.co.in/${type}/${slug}` }
+    ]
+  });
+
+  // 3. FAQPage Schema
+  if (faqs && faqs.length > 0) {
+    const faqEntities: any[] = [];
+    faqs.forEach((group: any) => {
+      if (group.parsed) {
+        group.parsed.forEach((faq: any) => {
+          if (faq.q && faq.a) {
+            faqEntities.push({
+              "@type": "Question",
+              "name": faq.q.replace(/<[^>]*>?/gm, ''),
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.a.replace(/<[^>]*>?/gm, '')
+              }
+            });
+          }
+        });
+      }
+    });
+    if (faqEntities.length > 0) {
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqEntities
+      });
+    }
+  }
+
+  // 4. HowTo Schema
+  if (howtos && howtos.length > 0) {
+    const mainHowto = howtos[0];
+    if (mainHowto.parsed && mainHowto.parsed.length > 0) {
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": mainHowto.title || `How to apply for ${post.title.rendered.replace(/<[^>]*>?/gm, '')}`,
+        "step": mainHowto.parsed.map((step: any, idx: number) => ({
+          "@type": "HowToStep",
+          "name": step.title ? step.title.replace(/<[^>]*>?/gm, '') : `Step ${idx + 1}`,
+          "text": step.desc ? step.desc.replace(/<[^>]*>?/gm, '') : ''
+        }))
+      });
+    }
+  }
+
+  // 5. JobPosting Schema (Only for Jobs)
+  if (post.type === 'aziz_job') {
+    schemas.push({
+      "@context": "https://schema.org",
+      "@type": "JobPosting",
+      "title": post.title.rendered.replace(/<[^>]*>?/gm, ''),
+      "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]*>?/gm, ''),
+      "datePosted": post.date,
+      "validThrough": (() => {
+         if (!meta.aziz_apply_end) return new Date(new Date(post.date).getTime() + 30*24*60*60*1000).toISOString();
+         const d = new Date(cleanText(meta.aziz_apply_end));
+         return isNaN(d.getTime()) ? new Date(new Date(post.date).getTime() + 30*24*60*60*1000).toISOString() : d.toISOString();
+      })(),
+      "employmentType": meta.job_type ? (meta.job_type.toUpperCase().includes('PART') ? 'PART_TIME' : 'FULL_TIME') : "FULL_TIME",
+      "hiringOrganization": {
+        "@type": "Organization",
+        "name": cleanText(meta.aziz_department) || "Government Organization",
+        "sameAs": "https://getjobupdate.co.in"
+      },
+      "jobLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "IN"
+        }
+      },
+      "baseSalary": {
+        "@type": "MonetaryAmount",
+        "currency": "INR",
+        "value": {
+          "@type": "QuantitativeValue",
+          "value": cleanText(meta.aziz_salary) || "Not Disclosed",
+          "unitText": "MONTH"
+        }
+      }
+    });
+  }
 
   return (
     <div className="w-full font-sans min-h-screen bg-slate-50">
       
-      <Script id="article-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <Script id="article-schemas" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }} />
 
       {/* ══════════════════════════════════════════════
           PREMIUM HERO SECTION
@@ -540,6 +668,18 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                         }
                         if (classes.includes('schema-how-to') || classes.includes('rank-math-howto-block') || classes.includes('wp-block-yoast-how-to-block')) {
                           return renderHowTo(true);
+                        }
+                      }
+                      
+                      // Inject Global Amazon Affiliate ID into any existing Amazon links in content
+                      if (domNode.name === 'a' && domNode.attribs && domNode.attribs.href && globalAmazonId) {
+                        const href = domNode.attribs.href;
+                        if (href.includes('amazon.') || href.includes('amzn.to')) {
+                           let finalLink = href.replace(/([?&])tag=[^&]+(&|$)/, '$1');
+                           finalLink = finalLink.replace(/[?&]$/, '');
+                           finalLink += (finalLink.includes('?') ? '&' : '?') + 'tag=' + encodeURIComponent(globalAmazonId);
+                           domNode.attribs.href = finalLink;
+                           return domNode;
                         }
                       }
                     }

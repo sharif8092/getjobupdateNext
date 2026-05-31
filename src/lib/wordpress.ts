@@ -476,6 +476,15 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 }
 
+// Fetch Affiliate Settings
+export async function getAffiliateSettings(): Promise<{ amazon_id: string }> {
+  try {
+    return await fetchWP<{ amazon_id: string }>('/wp-json/gju/v1/affiliate-settings', { next: { revalidate: 3600 } });
+  } catch (err) {
+    return { amazon_id: '' };
+  }
+}
+
 // Fetch lists of posts for any post type
 export async function getPosts(
   postTypeSlug: string,

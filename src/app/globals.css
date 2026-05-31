@@ -15,6 +15,9 @@
   --animate-marquee: marquee 45s linear infinite;
 }
 
+/* Disable automatic dark mode based on OS. Only trigger if .dark class is added manually */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
@@ -31,6 +34,7 @@
   --card: #ffffff;
   --border: #e2e8f0;
   --text-muted: #64748b;
+  color-scheme: light; /* Force light mode for browser UI elements */
 }
 
 /* Dark mode is intentionally disabled — site uses light theme only */

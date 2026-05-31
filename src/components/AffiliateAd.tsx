@@ -7,11 +7,28 @@ import { getRecommendedProducts } from '@/lib/affiliate';
 interface AffiliateAdProps {
   tags?: string[];
   customProduct?: any;
+  globalAmazonId?: string;
 }
 
-export default function AffiliateAd({ tags, customProduct }: AffiliateAdProps) {
+export default function AffiliateAd({ tags, customProduct, globalAmazonId }: AffiliateAdProps) {
   // Use custom product if provided, otherwise dynamically query 2 best books
-  const matchedBooks = customProduct ? [customProduct] : (tags ? getRecommendedProducts(tags, 2) : []);
+  let matchedBooks = customProduct ? [customProduct] : (tags ? getRecommendedProducts(tags, 2) : []);
+
+  // Dynamically rewrite Amazon tags if global ID is provided
+  if (globalAmazonId) {
+    matchedBooks = matchedBooks.map((book: any) => {
+      let finalLink = book.buyLink || '';
+      if (finalLink.includes('amazon.') || finalLink.includes('amzn.to')) {
+        // Strip out any existing tag
+        finalLink = finalLink.replace(/([?&])tag=[^&]+(&|$)/, '$1');
+        // Clean trailing ? or & if tag was the last parameter
+        finalLink = finalLink.replace(/[?&]$/, '');
+        // Append new tag
+        finalLink += (finalLink.includes('?') ? '&' : '?') + 'tag=' + encodeURIComponent(globalAmazonId);
+      }
+      return { ...book, buyLink: finalLink };
+    });
+  }
 
   if (matchedBooks.length === 0) return null;
 

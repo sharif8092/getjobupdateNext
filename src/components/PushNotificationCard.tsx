@@ -1,25 +1,29 @@
 'use client';
 
 import React from 'react';
-import OneSignal from 'react-onesignal';
 
 export default function PushNotificationCard() {
   const handleSubscribe = async () => {
     try {
-      if (typeof window !== 'undefined' && OneSignal) {
-        // Check current permission status
-        const permission = OneSignal.Notifications.permission;
-        
-        if (permission) {
-          alert('Aap pehle se hi notifications ke liye subscribed hain! (You are already subscribed)');
-          return;
-        }
-        
-        // If they denied it previously (permission might just be false before prompting, so we rely on prompt Push's own checks)
-        // Let's just prompt it, the SDK handles the rest if denied.
-        await OneSignal.Slidedown.promptPush();
-      } else {
-        alert('OneSignal abhi load ho raha hai. Kripya 2 second wait karein.');
+      if (typeof window !== 'undefined') {
+        // @ts-ignore
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        // @ts-ignore
+        window.OneSignalDeferred.push(async function(OneSignal) {
+          // Check if already subscribed
+          if (OneSignal.Notifications && OneSignal.Notifications.permission === true) {
+            alert('Aap pehle se hi notifications ke liye subscribed hain! (You are already subscribed)');
+            return;
+          }
+          
+          if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+            await OneSignal.Notifications.requestPermission();
+          } else if (OneSignal.Slidedown && typeof OneSignal.Slidedown.promptPush === 'function') {
+            await OneSignal.Slidedown.promptPush();
+          } else {
+            alert('OneSignal abhi load ho raha hai. Kripya 2 second wait karein.');
+          }
+        });
       }
     } catch (error) {
       console.error('OneSignal prompt error:', error);

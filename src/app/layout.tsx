@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import OneSignalInit from '@/components/OneSignalInit';
 import LiveTicker from '@/components/LiveTicker';
+import FloatingSocial from '@/components/FloatingSocial';
 
 // Load Inter Google Font for maximum readability and a clean, premium look
 const inter = Inter({
@@ -67,6 +68,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <FloatingSocial />
       </body>
     </html>
   );
