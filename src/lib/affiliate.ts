@@ -148,6 +148,59 @@ export const AFFILIATE_PRODUCTS: AffiliateProduct[] = [
     categoryTags: ['gk', 'police', 'state', 'yojana', 'jobs'],
     description: 'High-speed booklet outlining Indian national struggles, census figures, science keys, and hot current affairs summaries.',
     discountBadge: '20% OFF'
+  },
+  // Electronics & Gadgets
+  {
+    id: 'hp-laptop-15s',
+    title: 'HP 15s Core i3 12th Gen Laptop (8GB/512GB SSD)',
+    author: 'HP',
+    image: '💻',
+    price: '₹37,990',
+    originalPrice: '₹47,147',
+    rating: 4.3,
+    buyLink: 'https://amzn.to/3EXAMPLE',
+    categoryTags: ['laptop', 'computer', 'tech', 'student'],
+    description: 'Perfect budget laptop for online classes, mock tests, and PDF reading with long battery life.',
+    discountBadge: '19% OFF'
+  },
+  {
+    id: 'epson-printer-l3250',
+    title: 'Epson EcoTank L3250 A4 Wi-Fi All-in-One Ink Tank Printer',
+    author: 'Epson',
+    image: '🖨️',
+    price: '₹13,999',
+    originalPrice: '₹18,299',
+    rating: 4.4,
+    buyLink: 'https://amzn.to/3EXAMPLE2',
+    categoryTags: ['printer', 'tech', 'student'],
+    description: 'Cost-effective printer for printing syllabus, previous year papers, and application forms at home.',
+    discountBadge: '23% OFF'
+  },
+  {
+    id: 'study-table-wood',
+    title: 'Wakefit Sage Study Table / Computer Desk',
+    author: 'Wakefit',
+    image: '🪑',
+    price: '₹3,499',
+    originalPrice: '₹5,999',
+    rating: 4.5,
+    buyLink: 'https://amzn.to/3EXAMPLE3',
+    categoryTags: ['furniture', 'study-table', 'desk', 'student'],
+    description: 'Ergonomic wooden study table for long hours of preparation with ample legroom and storage shelf.',
+    discountBadge: '41% OFF'
+  },
+  {
+    id: 'boat-headphones',
+    title: 'boAt Rockerz 450 Bluetooth On Ear Headphones',
+    author: 'boAt',
+    image: '🎧',
+    price: '₹1,499',
+    originalPrice: '₹3,990',
+    rating: 4.1,
+    buyLink: 'https://amzn.to/3EXAMPLE4',
+    categoryTags: ['headphones', 'tech', 'student', 'audio'],
+    description: 'Immersive audio for focused online video lectures without background disturbance.',
+    discountBadge: '62% OFF'
   }
 ];
 
