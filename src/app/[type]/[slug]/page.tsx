@@ -157,10 +157,33 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     { word: 'Government Jobs', link: '/jobs' },
   ];
   
+  // Safe O(N) HTML parsing to avoid Regex Denial of Service (ReDoS) which caused 503 Timeouts
+  const parts = finalHtml.split(/(<a[^>]*>|<\/a>|<[^>]*>)/i);
+  
   internalLinks.forEach(item => {
-    const regex = new RegExp(`(?![^<]*>|[^<>]*<\\/a>)\\b(${item.word})\\b`, 'i'); // removed 'g' to replace only first occurrence naturally
-    finalHtml = finalHtml.replace(regex, `<a href="${item.link}" class="text-blue-600 hover:text-blue-800 hover:underline font-semibold" title="${item.word}">$1</a>`);
+    let replaced = false;
+    let inAnchor = false;
+    const regex = new RegExp(`\\b(${item.word})\\b`, 'i');
+    
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (!part) continue;
+      
+      const lowerPart = part.toLowerCase();
+      if (lowerPart.startsWith('<a ') || lowerPart === '<a>') {
+        inAnchor = true;
+      } else if (lowerPart === '</a>') {
+        inAnchor = false;
+      } else if (!part.startsWith('<')) { // Text node
+        if (!inAnchor && !replaced && regex.test(part)) {
+          parts[i] = part.replace(regex, `<a href="${item.link}" class="text-blue-600 hover:text-blue-800 hover:underline font-semibold" title="${item.word}">$1</a>`);
+          replaced = true;
+        }
+      }
+    }
   });
+  
+  finalHtml = parts.join('');
 
   // ─── Position Extraction with Fallback Support & Debug Logging ──────────────
   // Support BOTH data sources with comprehensive fallback chain:
