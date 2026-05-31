@@ -14,10 +14,11 @@ import AgeCalculator from '@/components/AgeCalculator';
 import JobMatcher from '@/components/JobMatcher';
 
 const HOME_FAQS = [
-  { q: 'What is Get Job Update and how does it help candidates?', a: 'Get Job Update is a leading portal that aggregates verified government employment opportunities across India. We save you time by organizing chaotic official notifications, admit cards, and results into a single, clean dashboard.' },
-  { q: 'How frequently are job notifications updated?', a: 'We monitor servers of recruitment boards like SSC, RRB, UPSC, State PSCs around the clock. Our database is updated in real-time as soon as an official gazette or link is live.' },
-  { q: 'Which government exams and commissions do you cover?', a: 'We cover all major central and state commissions including UPSC, SSC, IBPS, RRB, State Police Boards, and educational testing agencies like NTA.' },
-  { q: 'Is Get Job Update free to use?', a: 'Absolutely. We believe that access to employment information should be open and free for all candidates preparing for their future.' }
+  { q: 'What is Get Job Update and how does it help candidates?', a: 'Get Job Update is India\'s most trusted portal for the latest <strong>Sarkari Naukri</strong>, <strong>Free Job Alerts</strong>, and government exam updates. We aggregate official notifications, admit cards, and results into one easy-to-use platform.' },
+  { q: 'How frequently are job notifications and Sarkari Results updated?', a: 'We monitor official recruitment boards (SSC, UPSC, RRB, State PSCs) 24/7. Our database is updated in real-time so you never miss an important <strong>Sarkari Result</strong> or application deadline.' },
+  { q: 'Which government exams and commissions do you cover?', a: 'We cover all major central and state commissions including UPSC, SSC, IBPS, Railway Recruitment Boards (RRB), State Police Boards, and educational testing agencies like NTA.' },
+  { q: 'Is Get Job Update free to use for candidates?', a: 'Yes, absolutely. We believe that access to crucial employment information and <strong>Free Job Alerts</strong> should be completely open and free for all students and job seekers.' },
+  { q: 'How can I get instant alerts for new government job vacancies?', a: 'You can click the "Enable Alerts" button on our homepage for browser push notifications, or join our official Telegram and WhatsApp channels for lightning-fast updates directly to your phone.' }
 ];
 
 /* ── Feed Card Component ── */
@@ -143,7 +144,7 @@ export default async function HomePage() {
   ];
 
   return (
-    <div className="w-full flex flex-col font-sans bg-[var(--background)]">
+    <div className="w-full flex flex-col font-sans bg-slate-50">
 
       {/* ════════════════════════════════
           1. HERO
@@ -348,11 +349,11 @@ export default async function HomePage() {
                   <p className="text-xs text-slate-400 mt-1 leading-relaxed">Get lightning-fast alerts on your favorite platforms.</p>
                 </div>
                 <div className="space-y-2.5">
-                  <a href="#" className="flex items-center justify-between px-4 py-3 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 group">
+                  <a href="https://t.me/getjobupdatefree" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between px-4 py-3 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 group">
                     <span className="flex items-center gap-2"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.94-4.22 2.78-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.37.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"/></svg>Telegram Channel</span>
                     <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                   </a>
-                  <a href="#" className="flex items-center justify-between px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 group">
+                  <a href="https://whatsapp.com/channel/0029VbCi7hW9RZAO5fRVKO0W" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 group">
                     <span className="flex items-center gap-2"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>WhatsApp Channel</span>
                     <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                   </a>
@@ -368,7 +369,7 @@ export default async function HomePage() {
       {/* ════════════════════════════════
           4. CAREER PATHWAY DIRECTORY
       ════════════════════════════════ */}
-      <section className="py-20">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader label="Career Pathway Directory" title={<>Sarkari <span className="text-orange-600">Resource</span> Center</>} sub="Your central hub for navigating India's vast recruitment landscape. We hand-categorize official notifications into definitive, high-growth career pathways." />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -387,7 +388,7 @@ export default async function HomePage() {
       {/* ════════════════════════════════
           5. STATE BROWSER
       ════════════════════════════════ */}
-      <section id="state-map-section" className="py-20">
+      <section id="state-map-section" className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <InteractiveStateBrowser />
         </div>
@@ -396,7 +397,7 @@ export default async function HomePage() {
       {/* ════════════════════════════════
           6. WHY CHOOSE US
       ════════════════════════════════ */}
-      <section className="py-20">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-6">
@@ -431,25 +432,19 @@ export default async function HomePage() {
       {/* ════════════════════════════════
           7. TOOLS — JOB MATCHER + FAQ + AGE CALC
       ════════════════════════════════ */}
-      <section className="py-20">
+      <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader label="Smart Tools" title={<>Candidate <span className="text-orange-600">Utility Tools</span></>} sub="Use our free smart tools to calculate your exact age for form submissions and find matching jobs instantly." />
           <div className="mb-16"><JobMatcher /></div>
 
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden">
-              <div className="px-6 py-5 bg-slate-900 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center shadow-inner">
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Common Queries</p>
-                  <h3 className="text-lg font-black text-white">Frequently Asked Questions</h3>
-                </div>
-              </div>
-              <div className="p-6 md:p-8 bg-slate-50/30">
-                <FAQAccordion items={HOME_FAQS} />
-              </div>
+          <div className="max-w-4xl mx-auto pt-10">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+                Frequently Asked <span className="text-orange-600">Questions</span>
+              </h2>
+            </div>
+            <div className="w-full">
+              <FAQAccordion items={HOME_FAQS} />
             </div>
           </div>
         </div>

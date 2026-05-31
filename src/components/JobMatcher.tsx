@@ -120,7 +120,7 @@ export default function JobMatcher() {
   };
 
   return (
-    <div className="w-full font-baloo relative group">
+    <div className="w-full relative group">
       <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-slate-200 dark:border-white/10 p-6 md:p-10 shadow-sm relative overflow-hidden transition-all duration-500">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start relative z-10">
@@ -128,10 +128,10 @@ export default function JobMatcher() {
             {/* Form Wizard Column (5 Columns) */}
             <div className="lg:col-span-5 space-y-8">
               <div className="space-y-3 relative">
-                <span className="inline-flex items-center gap-2 text-[10px] font-black font-rajdhani tracking-widest text-slate-500 bg-slate-100 border border-slate-200 px-3.5 py-1.5 rounded-full shadow-sm">
+                <span className="inline-flex items-center gap-2 text-[10px] font-black tracking-widest text-slate-500 bg-slate-100 border border-slate-200 px-3.5 py-1.5 rounded-full shadow-sm">
                   <span>✨</span> AI Integration
                 </span>
-                <h3 className="text-3xl font-black font-rajdhani text-slate-800 dark:text-slate-100 uppercase tracking-tight leading-none">
+                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight leading-none">
                   Eligibility Matcher
                 </h3>
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -220,7 +220,7 @@ export default function JobMatcher() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-rajdhani font-bold text-base tracking-wider uppercase px-6 py-4 shadow-lg shadow-slate-900/10 cursor-pointer transition-all flex items-center justify-center gap-2 relative overflow-hidden"
+                  className="w-full mt-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base tracking-wider uppercase px-6 py-4 shadow-lg shadow-slate-900/10 cursor-pointer transition-all flex items-center justify-center gap-2 relative overflow-hidden"
                 >
                   {loading ? (
                     <>

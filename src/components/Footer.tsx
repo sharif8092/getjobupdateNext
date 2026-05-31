@@ -7,52 +7,52 @@ export default async function Footer() {
   const activeUpdatesCount = await getTotalPostCount();
 
   return (
-    <footer className="w-full bg-[#0b1120] text-slate-400 border-t border-slate-800 pt-16 pb-8">
+    <footer className="w-full bg-slate-900 text-slate-400 border-t border-slate-800 pt-16 pb-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* 5-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Column 1: Brand Info & office */}
           <div className="lg:col-span-1 space-y-4">
             
             {/* Logo Text */}
-            <div className="flex items-baseline gap-1.5 font-black text-2xl tracking-wide uppercase leading-none">
+            <div className="flex items-baseline gap-1.5 font-black text-2xl tracking-wide uppercase leading-none mb-2">
               <span className="text-white">GETJOB</span>
-              <span className="text-[#ffbc00]">UPDATE</span>
+              <span className="text-orange-500">UPDATE</span>
             </div>
             
             <p className="text-sm leading-relaxed text-slate-400">
               Get Job Update is India&apos;s leading platform providing 100% verified, ultra-fast notifications for latest government jobs, results, admit cards, and schemes directly from official gazettes.
             </p>
-            <div className="pt-2 text-xs text-slate-500 border-t border-slate-800">
-              <strong className="block text-slate-400 mb-1 uppercase tracking-wider">📍 REGIONAL OFFICE:</strong>
+            <div className="pt-4 mt-2 text-xs text-slate-500 border-t border-slate-800/60">
+              <strong className="block text-slate-300 mb-1.5 uppercase tracking-widest font-bold">📍 REGIONAL OFFICE</strong>
               Sector 62, Noida, Uttar Pradesh, India - 201301
             </div>
           </div>
 
           {/* Column 2: Latest Updates */}
           <div>
-            <h4 className="text-white font-extrabold text-[15px] tracking-wider uppercase mb-5 border-l-2 border-[#ffbc00] pl-3">
+            <h4 className="text-white font-black text-[14px] tracking-wider uppercase mb-5 border-l-2 border-orange-500 pl-3">
               LATEST UPDATES
             </h4>
-            <ul className="space-y-3 text-sm font-semibold">
+            <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/jobs" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Latest Govt Jobs
+                <Link href="/jobs" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Latest Govt Jobs
                 </Link>
               </li>
               <li>
-                <Link href="/results" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Sarkari Result 2026
+                <Link href="/results" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Sarkari Result 2026
                 </Link>
               </li>
               <li>
-                <Link href="/admit-cards" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Exam Admit Cards
+                <Link href="/admit-cards" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Exam Admit Cards
                 </Link>
               </li>
               <li>
-                <Link href="/answer-keys" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Answer Keys
+                <Link href="/answer-keys" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Answer Keys
                 </Link>
               </li>
             </ul>
@@ -60,33 +60,33 @@ export default async function Footer() {
 
           {/* Column 3: Exam Resources */}
           <div>
-            <h4 className="text-white font-extrabold text-[15px] tracking-wider uppercase mb-5 border-l-2 border-[#ffbc00] pl-3">
+            <h4 className="text-white font-black text-[14px] tracking-wider uppercase mb-5 border-l-2 border-orange-500 pl-3">
               SMART TOOLS
             </h4>
-            <ul className="space-y-3 text-sm font-semibold">
+            <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/age-calculator" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Age Calculator
+                <Link href="/age-calculator" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Age Calculator
                 </Link>
               </li>
               <li>
-                <Link href="/job-matcher" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> AI Job Matcher
+                <Link href="/job-matcher" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> AI Job Matcher
                 </Link>
               </li>
               <li>
-                <Link href="/sarkari-yojana" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Govt Yojana Schemes
+                <Link href="/sarkari-yojana" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Govt Yojana Schemes
                 </Link>
               </li>
               <li>
-                <Link href="/exams" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Exam Guide
+                <Link href="/exams" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Exam Guide
                 </Link>
               </li>
               <li>
-                <Link href="/syllabus" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Exam Syllabus
+                <Link href="/syllabus" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Exam Syllabus
                 </Link>
               </li>
             </ul>
@@ -94,22 +94,22 @@ export default async function Footer() {
 
           {/* Column 4: Directory */}
           <div>
-            <h4 className="text-white font-extrabold text-[15px] tracking-wider uppercase mb-5 border-l-2 border-[#ffbc00] pl-3">
+            <h4 className="text-white font-black text-[14px] tracking-wider uppercase mb-5 border-l-2 border-orange-500 pl-3">
               DIRECTORY
             </h4>
-            <ul className="space-y-3 text-sm font-semibold">
+            <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/#state-map-section" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Browse Jobs by State
+                <Link href="/#state-map-section" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Browse Jobs by State
                 </Link>
               </li>
               <li>
-                <Link href="/#qualifications-section" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Jobs by Qualification
+                <Link href="/#qualifications-section" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Jobs by Qualification
                 </Link>
               </li>
               <li>
-                <span className="text-[12px] bg-slate-800 text-slate-300 py-1 px-2.5 rounded-lg border border-slate-700/80 inline-block mt-1 font-bold">
+                <span className="text-[12px] bg-slate-800 text-slate-300 py-1.5 px-3 rounded-lg border border-slate-700/80 inline-block mt-2 font-bold shadow-sm">
                   Active Updates: {activeUpdatesCount.toLocaleString()}+
                 </span>
               </li>
@@ -118,33 +118,33 @@ export default async function Footer() {
 
           {/* Column 5: Company Pages */}
           <div>
-            <h4 className="text-white font-extrabold text-[15px] tracking-wider uppercase mb-5 border-l-2 border-[#ffbc00] pl-3">
+            <h4 className="text-white font-black text-[14px] tracking-wider uppercase mb-5 border-l-2 border-orange-500 pl-3">
               LEGAL & COMPANY
             </h4>
-            <ul className="space-y-3 text-sm font-semibold">
+            <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/about" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> About Us
+                <Link href="/about" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Contact Support
+                <Link href="/contact" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Contact Support
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Disclaimer
+                <Link href="/disclaimer" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Disclaimer
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Privacy Policy
+                <Link href="/privacy-policy" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-[#ffbc00] transition-colors flex items-center gap-1.5 group">
-                  <span className="text-[#ffbc00] group-hover:translate-x-0.5 transition-transform">›</span> Terms & Conditions
+                <Link href="/terms" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Terms & Conditions
                 </Link>
               </li>
             </ul>

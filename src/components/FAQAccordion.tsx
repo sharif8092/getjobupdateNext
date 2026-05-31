@@ -19,36 +19,36 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4 font-baloo">
+    <div className="w-full space-y-4 font-sans">
       {items.map((item, idx) => {
         const isOpen = openIndex === idx;
         return (
           <div 
             key={idx} 
-            className={`rounded-xl border transition-all duration-300 overflow-hidden shadow-sm group ${
-              isOpen 
-                ? 'border-orange-500 bg-orange-50/20 shadow-md ring-1 ring-orange-400/20' 
-                : 'border-slate-200 bg-white hover:border-orange-300 hover:shadow-md'
+            className={`border transition-all duration-300 overflow-hidden bg-white shadow-sm hover:shadow-md rounded-2xl ${
+              isOpen ? 'border-slate-300' : 'border-slate-200'
             }`}
           >
             <button
               onClick={() => toggleFAQ(idx)}
-              className="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-left cursor-pointer transition-colors"
+              className={`w-full flex items-center justify-between gap-4 text-left cursor-pointer transition-colors ${
+                isOpen ? 'p-6 pb-4' : 'px-8 py-5'
+              }`}
             >
-              <h3 className={`font-bold font-rajdhani text-base md:text-lg transition-colors pr-8 leading-snug ${
-                isOpen ? 'text-orange-700' : 'text-slate-700 group-hover:text-slate-900'
-              }`}>
+              <h3 className="font-bold text-slate-900 text-base md:text-[17px] pr-8 leading-snug tracking-tight">
                 {item.q}
               </h3>
               
-              <div className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${
-                isOpen 
-                  ? 'bg-orange-500 text-white shadow-md transform rotate-180' 
-                  : 'bg-slate-100 text-slate-500 group-hover:bg-orange-100 group-hover:text-orange-600'
-              }`}>
-                <svg className="w-5 h-5 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                </svg>
+              <div className="flex-shrink-0 text-slate-500 flex items-center justify-center transition-transform duration-300">
+                {isOpen ? (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                )}
               </div>
             </button>
             <div 
@@ -56,9 +56,9 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
                 isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
               }`}
             >
-              <div className="px-5 md:px-6 pb-6 pt-1">
+              <div className="px-6 pb-6 pt-2">
                 <div 
-                  className="text-sm md:text-base text-slate-600 leading-relaxed"
+                  className="text-[15px] text-slate-600 leading-relaxed font-medium"
                   dangerouslySetInnerHTML={{ __html: item.a }}
                 />
               </div>

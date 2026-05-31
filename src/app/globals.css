@@ -37,7 +37,7 @@
 
 
 body {
-  background-color: var(--background);
+  background-color: #f8fafc; /* slate-50 - consistent across all devices */
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;

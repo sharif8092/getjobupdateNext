@@ -7,12 +7,23 @@ export default function PushNotificationCard() {
   const handleSubscribe = async () => {
     try {
       if (typeof window !== 'undefined' && OneSignal) {
-        // Safe check to avoid crashing if OneSignal isn't fully initialized
+        // Check current permission status
+        const permission = OneSignal.Notifications.permission;
+        
+        if (permission) {
+          alert('Aap pehle se hi notifications ke liye subscribed hain! (You are already subscribed)');
+          return;
+        }
+        
+        // If they denied it previously (permission might just be false before prompting, so we rely on prompt Push's own checks)
+        // Let's just prompt it, the SDK handles the rest if denied.
         await OneSignal.Slidedown.promptPush();
+      } else {
+        alert('OneSignal abhi load ho raha hai. Kripya 2 second wait karein.');
       }
     } catch (error) {
       console.error('OneSignal prompt error:', error);
-      alert('Please configure your OneSignal App ID first!');
+      alert('Notification prompt load hone me error aayi. Kripya page refresh karein.');
     }
   };
 

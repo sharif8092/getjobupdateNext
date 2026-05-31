@@ -1,54 +1,70 @@
 import React from 'react';
+import { Metadata } from 'next';
 import Link from 'next/link';
 
-export const metadata = {
-  title: 'Disclaimer – Get Job Update',
-  description: 'Legal disclaimer outlining the educational informational purpose of Get Job Update and our relationships to government departments.',
+export const metadata: Metadata = {
+  title: 'Disclaimer | Get Job Update',
+  description: 'Disclaimer and non-affiliation statement for Get Job Update.',
 };
 
 export default function DisclaimerPage() {
   return (
-    <div className="w-full bg-[#f8fafc] dark:bg-[#030712] py-16 font-baloo">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 space-y-8">
-        
-        {/* Breadcrumbs */}
-        <nav className="flex items-center gap-1.5 text-xs font-bold font-rajdhani uppercase text-slate-400 mb-2 tracking-wide">
-          <Link href="/" className="hover:text-amber-500">HOME</Link>
-          <span>›</span>
-          <span className="text-slate-500">DISCLAIMER</span>
-        </nav>
-
-        <div className="bg-white dark:bg-[#0b0f19] border border-[var(--border)] rounded-3xl p-8 md:p-12 shadow-sm space-y-6">
-          <h1 className="text-3xl md:text-4xl font-extrabold font-rajdhani text-[var(--foreground)] uppercase border-b border-[var(--border)] pb-4">
-            ⚠️ Disclaimer
-          </h1>
+    <div className="bg-slate-50 min-h-screen py-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
           
-          <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
-            Last updated: May 2026
-          </p>
+          <div className="bg-slate-900 px-8 py-10 md:px-12 text-center border-b border-slate-800">
+            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">Disclaimer</h1>
+            <p className="mt-3 text-slate-400 font-medium">Important legal information regarding the use of our platform.</p>
+          </div>
 
-          <h2 className="text-xl md:text-2xl font-bold font-rajdhani text-[var(--foreground)] uppercase pt-4">
-            1. No Affiliation with Government
-          </h2>
-          <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
-            **Get Job Update** (https://getjobupdate.co.in) is an independent, private educational and informational news portal. We are **not affiliated, associated, authorized, endorsed by, or in any way officially connected** with the Government of India, any state government, union territory administration, or any government department, public sector enterprise, or academic institution.
-          </p>
+          <div className="p-8 md:p-12 space-y-8 text-slate-600 leading-relaxed font-medium text-[15px]">
+            <section className="space-y-4">
+              <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2">Non-Affiliation with Government</h2>
+              <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
+                <p className="text-amber-900 font-bold mb-1">DECLARATION:</p>
+                <p className="text-amber-800">
+                  <strong>Get Job Update (getjobupdate.co.in) is an independent private educational and informational platform. We are NOT a government organization, nor do we represent any government entity, department, or recruitment board.</strong>
+                </p>
+              </div>
+              <p>
+                All information provided on this website regarding government jobs, exam dates, admit cards, and results is strictly for general informational and educational purposes. 
+              </p>
+            </section>
 
-          <h2 className="text-xl md:text-2xl font-bold font-rajdhani text-[var(--foreground)] uppercase pt-4">
-            2. Purpose of Information
-          </h2>
-          <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
-            All the information provided on this website is for general informational and educational purposes only. While we make every effort to verify details and keep listings updated in real-time, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of the website or the information, products, services, or related graphics contained on the website.
-          </p>
+            <section className="space-y-4">
+              <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2">Source of Information</h2>
+              <p>
+                We aggregate our data from various publicly available official government gazettes, press releases, and employment newspapers (like Employment News / Rozgar Samachar). While we make every effort to ensure the accuracy and reliability of the information published, we cannot guarantee it to be 100% accurate or up-to-date at all times.
+              </p>
+              <p>
+                We highly recommend that users <strong>always cross-verify</strong> any job notification or exam update by visiting the official website of the respective department or commission before applying or paying any fees.
+              </p>
+            </section>
 
-          <h2 className="text-xl md:text-2xl font-bold font-rajdhani text-[var(--foreground)] uppercase pt-4">
-            3. Candidates Responsibility
-          </h2>
-          <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
-            Candidates are strongly advised to **always verify and cross-check the details from the official government websites, gazette bulletins, and recruitment portals** before applying or making any decisions. Get Job Update shall not be responsible for any loss, damage, or inconvenience caused by reliance on any information provided on this website.
-          </p>
+            <section className="space-y-4">
+              <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2">No Guarantee of Employment</h2>
+              <p>
+                Get Job Update is merely an aggregator of news. We do not provide employment, nor do we play any role in the recruitment or selection process of any government body. We do not charge any money for job placements. Beware of fraudulent calls or emails claiming to offer jobs on our behalf.
+              </p>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-2">External Links</h2>
+              <p>
+                Our website may contain links to external websites that are not provided or maintained by or in any way affiliated with Get Job Update. Please note that we do not guarantee the accuracy, relevance, timeliness, or completeness of any information on these external websites.
+              </p>
+            </section>
+
+            <section className="space-y-4 pt-6 border-t border-slate-100">
+              <p>
+                If you have any questions or concerns regarding this disclaimer, please contact us at: <br/>
+                <a href="mailto:contact@getjobupdate.co.in" className="text-orange-600 font-bold hover:underline">contact@getjobupdate.co.in</a>
+              </p>
+            </section>
+          </div>
+
         </div>
-
       </div>
     </div>
   );
