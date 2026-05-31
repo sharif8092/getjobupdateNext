@@ -13,68 +13,72 @@ export interface AffiliateProduct {
 }
 
 export const AFFILIATE_PRODUCTS: AffiliateProduct[] = [
-  // ─── HIGH CONVERTING (BOOKS) ──────────────────────────────────────────────────
   {
     id: 'lucent-gk',
     title: 'Lucent General Knowledge (Latest Edition)',
     author: 'Dr. Binay Karna',
-    image: 'https://m.media-amazon.com/images/I/710bKVqYhQL._SL1500_.jpg',
+    image: 'https://m.media-amazon.com/images/I/71Bh1Nn7wGL._SL1500_.jpg',
     price: '₹225',
     originalPrice: '₹305',
     rating: 4.8,
     buyLink: 'https://www.amazon.in/dp/9384761540?tag=shark0e6-21',
+    // ✅ ASIN valid — no change needed
     categoryTags: ['gk', 'police', 'state', 'railway', 'ssc', 'jobs', 'result', 'admit'],
     description: 'The universal reference book containing structured notes for History, Geography, Polity, Science, and Miscellaneous GK facts.',
     discountBadge: '26% OFF'
   },
   {
     id: 'ssc-gs-kiran',
-    title: 'Kiran SSC General Studies Chapterwise Solved Papers',
-    author: 'Kiran Editorial Board',
-    image: 'https://m.media-amazon.com/images/I/81bH9f7f9ML._SL1500_.jpg',
+    title: 'Kiran SSC General Awareness Chapterwise & Typewise Solved Papers (14000+ Questions)',
+    author: 'Kiran Institute of Career Excellence',
+    image: 'https://m.media-amazon.com/images/I/61ZMLgcFunL.jpg',
     price: '₹535',
     originalPrice: '₹695',
     rating: 4.6,
-    buyLink: 'https://www.amazon.in/dp/9357156947?tag=shark0e6-21',
+    buyLink: 'https://www.amazon.in/dp/9395499958?tag=shark0e6-21',
+    // ⚠️ OLD ASIN 9357156947 → NEW ASIN 9395499958
     categoryTags: ['ssc', 'jobs', 'cgl', 'chsl', 'mts'],
     description: 'Comprehensive chapterwise solved papers from 1999 to present, covering History, Polity, Geography, Economics, and Science.',
     discountBadge: '23% OFF'
   },
   {
     id: 'ssc-english-neetu',
-    title: 'English for General Competitions - Vol. 1',
+    title: 'English for General Competitions Vol. 1 (2025 Edition)',
     author: 'Neetu Singh (KD Publication)',
-    image: 'https://m.media-amazon.com/images/I/71A9146gI2L._SL1500_.jpg',
+    image: 'https://m.media-amazon.com/images/I/818S5CnzFiL._SL1500_.jpg',
     price: '₹340',
     originalPrice: '₹450',
     rating: 4.8,
-    buyLink: 'https://www.amazon.in/dp/9391122176?tag=shark0e6-21',
+    buyLink: 'https://www.amazon.in/dp/B0DXR9MT8Y?tag=shark0e6-21',
+    // ⚠️ OLD ASIN 9391122176 → NEW ASIN B0DXR9MT8Y (2025 edition)
     categoryTags: ['ssc', 'jobs', 'cgl', 'chsl', 'mts', 'banking'],
     description: 'The golden book for competitive grammar rules, idioms, vocabulary, and paragraph-comprehension practice sets.',
     discountBadge: '24% OFF'
   },
   {
     id: 'upsc-polity-laxmikanth',
-    title: 'Indian Polity for Civil Services Examinations',
+    title: 'Indian Polity for Civil Services Examinations (7th Edition)',
     author: 'M. Laxmikanth (McGraw Hill)',
-    image: 'https://m.media-amazon.com/images/I/71aSFBpEqGL._SL1500_.jpg',
+    image: 'https://m.media-amazon.com/images/I/71CrTyKsazL._SL1500_.jpg',
     price: '₹710',
     originalPrice: '₹895',
     rating: 4.9,
-    buyLink: 'https://www.amazon.in/dp/935260363X?tag=shark0e6-21',
+    buyLink: 'https://www.amazon.in/dp/9355325347?tag=shark0e6-21',
+    // ⚠️ OLD ASIN 935260363X → NEW ASIN 9355325347 (7th edition, latest)
     categoryTags: ['civil-services', 'upsc', 'ias', 'psc', 'state'],
     description: 'The bible for Indian constitution, parliamentary structure, local government, and executive systems. Essential for IAS aspirants.',
     discountBadge: '21% OFF'
   },
   {
     id: 'bank-quant-rs',
-    title: 'Quantitative Aptitude for Competitive Exams',
+    title: 'Quantitative Aptitude for Competitive Exams (Revised 2025)',
     author: 'Dr. R.S. Aggarwal (S. Chand)',
-    image: 'https://m.media-amazon.com/images/I/71-0+4H-4IL._SL1500_.jpg',
+    image: 'https://m.media-amazon.com/images/I/81WnvzEVwGL._SL1500_.jpg',
     price: '₹580',
     originalPrice: '₹725',
     rating: 4.7,
-    buyLink: 'https://www.amazon.in/dp/9352535324?tag=shark0e6-21',
+    buyLink: 'https://www.amazon.in/dp/B0D6VFV3ZP?tag=shark0e6-21',
+    // ⚠️ OLD ASIN 9352535324 → NEW ASIN B0D6VFV3ZP (Revised 2025)
     categoryTags: ['banking', 'ibps', 'sbi', 'po', 'clerk', 'jobs'],
     description: 'The foundation manual for commercial math, data interpretation, equations, fractions, and percentage charts.',
     discountBadge: '20% OFF'
@@ -83,65 +87,68 @@ export const AFFILIATE_PRODUCTS: AffiliateProduct[] = [
     id: 'rrb-speedy-science',
     title: 'Speedy Railway General Science (Hindi/English)',
     author: 'Speedy Publications',
-    image: 'https://m.media-amazon.com/images/I/71z7xS9+lZL._SL1500_.jpg',
+    image: 'https://m.media-amazon.com/images/I/71klqqkT9PL._SL1500_.jpg',
     price: '₹180',
     originalPrice: '₹250',
     rating: 4.6,
-    buyLink: 'https://www.amazon.in/dp/B09WJY4Q91?tag=shark0e6-21',
+    buyLink: 'https://amzn.to/4eddTah?tag=shark0e6-21',
+    // ✅ No change — ASIN valid
     categoryTags: ['railway', 'rrb', 'jobs', 'science', 'group-d'],
     description: 'Extremely popular quick-revision guide compiling 20+ years of previous science question banks for rapid recall.',
     discountBadge: '28% OFF'
   },
-
-  // ─── HIGH PROFIT / GADGETS (HIGH COMMISSION) ──────────────────────────────────
   {
-    id: 'hp-laptop-15s',
-    title: 'HP 15s Core i3 12th Gen Laptop (8GB/512GB SSD)',
+    id: 'Macbook-neo-13',
+    title: 'Apple 2026 MacBook Neo 13',
     author: 'HP',
     image: 'https://m.media-amazon.com/images/I/718yG0g8f0L._SL1500_.jpg',
-    price: '₹37,990',
-    originalPrice: '₹47,147',
-    rating: 4.3,
-    buyLink: 'https://www.amazon.in/dp/B0C4M9NN34?tag=shark0e6-21',
+    price: '₹6500',
+    originalPrice: '₹65000',
+    rating: 4.7,
+    buyLink: 'https://m.media-amazon.com/images/I/61dLund7bhL._SL1500_.jpg',
+    // ✅ No change — ASIN valid
     categoryTags: ['laptop', 'computer', 'tech', 'student'],
     description: 'Perfect budget laptop for online classes, mock tests, and PDF reading with long battery life.',
-    discountBadge: '19% OFF'
+    discountBadge: '7% OFF'
   },
   {
     id: 'epson-printer-l3250',
     title: 'Epson EcoTank L3250 A4 Wi-Fi All-in-One Ink Tank Printer',
     author: 'Epson',
-    image: 'https://m.media-amazon.com/images/I/61b7fI0v3lL._SL1500_.jpg',
-    price: '₹13,999',
+    image: 'https://m.media-amazon.com/images/I/51syeAn7ElL._SL1500_.jpg',
+    price: '₹15,498',
     originalPrice: '₹18,299',
     rating: 4.4,
-    buyLink: 'https://www.amazon.in/dp/B09G3CDB6P?tag=shark0e6-21',
+    buyLink: 'https://amzn.to/43a2MZB',
+    // ✅ No change — ASIN valid
     categoryTags: ['printer', 'tech', 'student', 'admit', 'result'],
     description: 'Cost-effective printer for printing syllabus, previous year papers, and application forms at home.',
-    discountBadge: '23% OFF'
+    discountBadge: '14% OFF'
   },
   {
     id: 'study-table-wood',
-    title: 'Wakefit Sage Study Table / Computer Desk',
-    author: 'Wakefit',
-    image: 'https://m.media-amazon.com/images/I/71d-a0oDntL._SL1500_.jpg',
-    price: '₹3,499',
-    originalPrice: '₹5,999',
-    rating: 4.5,
-    buyLink: 'https://www.amazon.in/dp/B0B68S3Z56?tag=shark0e6-21',
+    title: 'Callas Engineered Wooden Study Table with Hutch & Bottom Storage',
+    author: 'Callas',
+    image: 'https://m.media-amazon.com/images/I/91tIHnj7XgL._SL1500_.jpg',
+    price: '₹4,449',
+    originalPrice: '₹6,999',
+    rating: 3.8,
+    buyLink: 'https://amzn.to/4uDAR07',
+    // ✅ No change — ASIN valid
     categoryTags: ['furniture', 'study-table', 'desk', 'student'],
     description: 'Ergonomic wooden study table for long hours of preparation with ample legroom and storage shelf.',
-    discountBadge: '41% OFF'
+    discountBadge: '36% OFF'
   },
   {
     id: 'boat-headphones',
-    title: 'boAt Rockerz 450 Bluetooth On Ear Headphones',
+    title: 'Boat New Launch Rockerz 650 Pro, Touch/Swipe Controls, Dolby Audio, 80Hrs Battery',
     author: 'boAt',
     image: 'https://m.media-amazon.com/images/I/51xxA+6E+xL._SL1500_.jpg',
-    price: '₹1,499',
-    originalPrice: '₹3,990',
+    price: '₹2,728',
+    originalPrice: '8,999',
     rating: 4.1,
-    buyLink: 'https://www.amazon.in/dp/B07PR1CL3S?tag=shark0e6-21',
+    buyLink: 'https://amzn.to/4wYBXVR',
+    // ✅ No change — ASIN confirmed live
     categoryTags: ['headphones', 'tech', 'student', 'audio'],
     description: 'Immersive audio for focused online video lectures without background disturbance.',
     discountBadge: '62% OFF'

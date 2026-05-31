@@ -67,25 +67,38 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const hasRankMathToc = !!meta.rank_math_toc_html;
   const { headings, content: processedHtml } = processContentAndHeadings(post.content.rendered);
 
-  const rawContentLower = post.content.rendered.toLowerCase();
-  const hasFAQShortcode = /\[smart_faq[^\]]*\]/i.test(post.content.rendered);
-  const hasHowToShortcode = /\[smart_howto[^\]]*\]/i.test(post.content.rendered);
+  // Check if user manually placed shortcodes inside the content
+  let contentHasInlineFaq = false;
+  let contentHasInlineHowTo = false;
 
-  // Replace shortcodes with temporary HTML placeholders
   let finalHtml = processedHtml;
-  finalHtml = finalHtml.replace(/\[smart_faq[^\]]*\]/gi, '<div id="react-faq-placeholder"></div>');
-  finalHtml = finalHtml.replace(/\[smart_howto[^\]]*\]/gi, '<div id="react-howto-placeholder"></div>');
+  
+  if (/\[smart_faq[^\]]*\]/gi.test(finalHtml)) {
+    contentHasInlineFaq = true;
+    finalHtml = finalHtml.replace(/\[smart_faq[^\]]*\]/gi, '<div id="react-faq-placeholder"></div>');
+  }
+  
+  if (/\[smart_howto[^\]]*\]/gi.test(finalHtml)) {
+    contentHasInlineHowTo = true;
+    finalHtml = finalHtml.replace(/\[smart_howto[^\]]*\]/gi, '<div id="react-howto-placeholder"></div>');
+  }
+
+  // ACF Positioning (with override if inline shortcode is detected)
+  const faqPosition = contentHasInlineFaq ? 'inline' : (meta.faq_position || 'after_content');
+  const howtoPosition = contentHasInlineHowTo ? 'inline' : (meta.howto_position || 'after_content');
 
   const isResult = post.type === 'aziz_result';
 
   // ─── Dynamic Layout Positions ────────────────────────────────────────────
-  const faqPosition = meta.faq_position || 'after_content';
-  const howtoPosition = meta.howto_position || 'after_content';
   const affiliateSlots = meta.affiliate_slots || [];
 
   // ─── Dates ──────────────────────────────────────────────────────────────
   const publishedDate = new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
   const modifiedDate  = new Date(post.modified).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  // Extract Featured Image if available
+  const featuredMedia = (post as any)._embedded?.['wp:featuredmedia']?.[0];
+  const featuredImageUrl = featuredMedia?.source_url || null;
 
   // Helper to clean up corrupted text fields (e.g. RankMath JSON leaking into strings)
   const cleanText = (text: any) => {
@@ -125,7 +138,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const renderFaq = (isInline = false) => {
     if (faqs.length === 0) return null;
     // If the shortcode is in the content, ONLY render inline, not in layout zones
-    if (!isInline && hasFAQShortcode) return null;
+    if (!isInline && contentHasInlineFaq) return null;
 
     return (
       <div id="article-faq-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
@@ -151,8 +164,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
   const renderHowTo = (isInline = false) => {
     if (howtos.length === 0) return null;
-    // If the shortcode is in the content, ONLY render inline, not in layout zones
-    if (!isInline && hasHowToShortcode) return null;
+    // If shortcode in content, ONLY render inline
+    if (!isInline && contentHasInlineHowTo) return null;
 
     return (
       <div id="howto-instructions-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
@@ -385,6 +398,19 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
             {/* Full Article Body */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+              
+              {/* Featured Image (if available) */}
+              {featuredImageUrl && (
+                <div className="w-full border-b border-slate-200 bg-slate-50">
+                  <img 
+                    src={featuredImageUrl} 
+                    alt={post.title.rendered.replace(/<[^>]*>?/gm, '')} 
+                    className="w-full max-h-[500px] object-contain" 
+                    loading="eager"
+                  />
+                </div>
+              )}
+
               <div className="px-6 py-6 md:px-8 md:py-8">
                 <div id="full-article-content" className="post-content prose prose-slate max-w-none text-slate-700 text-[17px] leading-8 prose-headings:font-bold prose-h2:text-2xl">
                   {parse(finalHtml, {
