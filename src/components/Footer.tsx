@@ -99,12 +99,12 @@ export default async function Footer() {
             </h4>
             <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/#state-map-section" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link href="/state" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Browse Jobs by State
                 </Link>
               </li>
               <li>
-                <Link href="/#qualifications-section" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link href="/qualification" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Jobs by Qualification
                 </Link>
               </li>

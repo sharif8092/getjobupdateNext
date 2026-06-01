@@ -608,20 +608,29 @@ export async function getPostsByCategory(categorySlug: string, count = 30): Prom
 
 // Fetch all posts matching a qualification filter (aziz_qualification meta)
 export async function getPostsByQualification(qualName: string, count = 30): Promise<WordPressPost[]> {
+  const getSearchKey = (name: string) => {
+    let key = name.toLowerCase().replace(' pass', '').trim();
+    if (key === 'b.e / b.tech') return 'tech';
+    if (key === 'graduate pass') return 'graduate';
+    return key;
+  };
+  const searchKey = getSearchKey(qualName);
+
   try {
-    // WP REST filter requires registering filter arguments or query custom fields
-    // Standard Rest does not support custom meta queries natively without registering them
-    // For safety, we query the Jobs endpoint with a meta_query if available, or filter them here
     const posts = await getPosts('aziz_job', 100);
-    const filtered = posts.filter((p) => 
-      p.custom_meta?.aziz_qualification?.toLowerCase().includes(qualName.toLowerCase())
-    );
+    const filtered = posts.filter((p) => {
+      const q = p.custom_meta?.aziz_qualification?.toLowerCase() || '';
+      // Also check if textContent contains the keyword if meta is missing
+      const textContent = (p.title?.rendered + ' ' + p.excerpt?.rendered).toLowerCase();
+      return q.includes(searchKey) || textContent.includes(searchKey);
+    });
     return filtered.slice(0, count);
   } catch (err) {
     const allMocks = Object.values(MOCK_POSTS).flat();
-    return allMocks.filter((p) => 
-      p.custom_meta?.aziz_qualification?.toLowerCase().includes(qualName.toLowerCase())
-    );
+    return allMocks.filter((p) => {
+      const q = p.custom_meta?.aziz_qualification?.toLowerCase() || '';
+      return q.includes(searchKey);
+    });
   }
 }
 
