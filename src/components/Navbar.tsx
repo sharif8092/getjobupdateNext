@@ -66,9 +66,8 @@ export default function Navbar() {
 
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center">
-            <button className="text-white hover:text-orange-600 p-2 focus:outline-none">
+            <button aria-label="Toggle mobile menu" className="text-white hover:text-orange-600 p-2 focus:outline-none">
               <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>

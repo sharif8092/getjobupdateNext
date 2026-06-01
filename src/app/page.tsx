@@ -37,7 +37,7 @@ function FeedCard({
           <div className={`w-8 h-8 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0 group-hover/header:scale-110 transition-transform`}>
             {icon}
           </div>
-          <h3 className="font-black text-white text-sm tracking-wide">{title}</h3>
+          <h2 className="font-black text-white text-sm tracking-wide">{title}</h2>
         </div>
         <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${accentColor} group-hover/header:translate-x-0.5 transition-transform`}>
           View All
@@ -52,7 +52,7 @@ function FeedCard({
           return (
             <Link key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
               <div className="flex items-start justify-between gap-2">
-                <h4 className={`text-[13px] font-semibold text-slate-800 leading-snug ${hoverText} transition-colors line-clamp-2 flex-1`} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                <h3 className={`text-[13px] font-semibold text-slate-800 leading-snug ${hoverText} transition-colors line-clamp-2 flex-1`} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                 {isNew && <span className="text-[9px] font-black text-white bg-rose-500 px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide">New</span>}
               </div>
               {(dept || totalPosts || qual || lastDate) && (
@@ -175,7 +175,7 @@ export default async function HomePage() {
 
           {/* Trending */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
-            <span className="text-slate-500 text-xs font-semibold">Trending:</span>
+            <span className="text-slate-400 text-xs font-semibold">Trending:</span>
             {['SSC CGL', 'UPSC CSE', 'Railway NTPC', 'SBI PO'].map(t => (
               <Link key={t} href="#" className="bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl px-4 py-1.5 text-xs font-semibold border border-white/10 hover:border-white/20 transition-all">{t}</Link>
             ))}
