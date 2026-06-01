@@ -918,7 +918,14 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                   "title": post.title.rendered.replace(/<[^>]+>/g, '').trim(),
                   "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]+>/g, '').trim(),
                   "datePosted": post.date,
-                  "validThrough": (meta as any).aziz_apply_end ? new Date((meta as any).aziz_apply_end).toISOString() : new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+                  "validThrough": (() => {
+                    const fallback = new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString();
+                    if ((meta as any).aziz_apply_end) {
+                      const d = new Date((meta as any).aziz_apply_end);
+                      return isNaN(d.getTime()) ? fallback : d.toISOString();
+                    }
+                    return fallback;
+                  })(),
                   "employmentType": "FULL_TIME",
                   "hiringOrganization": {
                     "@type": "Organization",
