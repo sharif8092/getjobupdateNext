@@ -77,33 +77,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // We fetch up to 100 recent posts across different categories to keep it lightweight but effective
   const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_answerkey', 'aziz_yojana'];
   
-  for (const type of targetTypes) {
-    try {
-      const posts = await getPosts(type, 100);
-      const categorySlug = POST_TYPE_MAP[type] || 'jobs';
-      
-      posts.forEach((post) => {
-        routes.push({
-          url: `${SITE_URL}/${categorySlug}/${post.slug}`,
-          lastModified: new Date(post.modified || post.date),
-          changeFrequency: 'weekly',
-          priority: 0.7,
-        });
+  await Promise.all(
+    targetTypes.map(async (type) => {
+      try {
+        const posts = await getPosts(type, 100);
+        const categorySlug = POST_TYPE_MAP[type] || 'jobs';
         
-        // Auto-generated Web Story for Jobs
-        if (type === 'aziz_job') {
+        posts.forEach((post) => {
           routes.push({
-            url: `${SITE_URL}/web-stories/${post.slug}`,
+            url: `${SITE_URL}/${categorySlug}/${post.slug}`,
             lastModified: new Date(post.modified || post.date),
             changeFrequency: 'weekly',
-            priority: 0.6,
+            priority: 0.7,
           });
-        }
-      });
-    } catch (e) {
-      console.error(`Failed to fetch sitemap posts for type: ${type}`);
-    }
-  }
+          
+          // Auto-generated Web Story for Jobs
+          if (type === 'aziz_job') {
+            routes.push({
+              url: `${SITE_URL}/web-stories/${post.slug}`,
+              lastModified: new Date(post.modified || post.date),
+              changeFrequency: 'weekly',
+              priority: 0.6,
+            });
+          }
+        });
+      } catch (e) {
+        console.error(`Failed to fetch sitemap posts for type: ${type}`);
+      }
+    })
+  );
 
   return routes;
 }
