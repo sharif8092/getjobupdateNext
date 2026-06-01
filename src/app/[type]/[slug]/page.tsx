@@ -1,5 +1,5 @@
 import React from 'react';
-import parse from 'html-react-parser';
+import parse, { domToReact } from 'html-react-parser';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -748,6 +748,30 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                            domNode.attribs.href = finalLink;
                            return domNode;
                         }
+                      }
+                      
+                      // Make tables responsive on mobile by wrapping them in a scrollable container
+                      if (domNode.name === 'table') {
+                        // We do a simple React element creation to avoid infinite recursion
+                        // We map basic attributes manually (class -> className, etc)
+                        const props: any = {};
+                        if (domNode.attribs) {
+                          for (const key in domNode.attribs) {
+                             if (key === 'class') props.className = domNode.attribs[key];
+                             else if (key === 'colspan') props.colSpan = domNode.attribs[key];
+                             else if (key === 'rowspan') props.rowSpan = domNode.attribs[key];
+                             else props[key] = domNode.attribs[key];
+                          }
+                        }
+                        // We want to process the children normally, so we don't pass 'replace' again to avoid complexity.
+                        // For tables, domToReact is usually fine without recursive replacements inside.
+                        return (
+                          <div className="responsive-table-wrapper">
+                            <table {...props}>
+                              {domToReact(domNode.children as any)}
+                            </table>
+                          </div>
+                        );
                       }
                     }
                   })}
