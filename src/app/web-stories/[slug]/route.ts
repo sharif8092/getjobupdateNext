@@ -109,8 +109,8 @@ export async function GET(
         publisher-logo-src="${logo}"
         poster-portrait-src="${coverImage}">
       
-      ${Array.isArray(meta.web_story_slides) && meta.web_story_slides.length > 0 ? 
-        meta.web_story_slides.map((slide: any, index: number) => {
+      ${Array.isArray((meta as any).web_story_slides) && (meta as any).web_story_slides.length > 0 ? 
+        (meta as any).web_story_slides.map((slide: any, index: number) => {
           const slideImage = slide.slide_image || coverImage;
           const heading = slide.slide_heading || '';
           const text = slide.slide_text || '';
