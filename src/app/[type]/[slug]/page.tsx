@@ -349,8 +349,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     if (!isInline && contentHasInlineHowTo) return null;
 
     return (
-      <div id="howto-instructions-section" className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden not-prose">
-        <div className="p-6 md:p-8 space-y-4">
+      <div id="howto-instructions-section" className="mb-6 not-prose">
+        <div className="space-y-4 mt-2">
           {currentHowtos.map((howto: any, idx: number) => (
             <div key={idx} className="space-y-4">
               {howto.title && <p className="text-sm font-black text-orange-600 uppercase tracking-widest border-b border-slate-100 pb-2">{howto.title}</p>}
@@ -539,11 +539,11 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           </div>
 
           {/* H1 Title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.15] tracking-tight mb-6 max-w-4xl"
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-snug tracking-tight mb-6 max-w-4xl break-words"
             dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
 
           {/* Hero Quick Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
              <div className="flex flex-col">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">🏢 Department</span>
                <span className="text-white font-black text-sm">{cleanText(meta.aziz_department) || '-'}</span>
@@ -578,7 +578,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           <div className="flex flex-wrap gap-3 items-center">
              {meta.aziz_apply_link && (
                 <a href={meta.aziz_apply_link} target="_blank" rel="noopener noreferrer" 
-                   className={`${isResult ? 'bg-green-600 hover:bg-green-700 shadow-green-600/30 w-full sm:w-auto text-base' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/30 text-base'} text-white font-black px-8 py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2`}>
+                   className={`${isResult ? 'bg-green-600 hover:bg-green-700 shadow-green-600/30' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/30'} w-full sm:w-auto text-base text-white font-black px-8 py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2`}>
                   {isResult ? '🚀 Check Result Online' : 'Apply Now Online'}
                 </a>
              )}
@@ -601,7 +601,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
       {/* ══════════════════════════════════════════════
           MAIN 8-4 LAYOUT
       ══════════════════════════════════════════════ */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
           {/* ══ CENTER ARTICLE [col-span-8] ══ */}
@@ -660,9 +660,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             {hasRankMathToc ? (
               <div className="mb-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200 toc-container" dangerouslySetInnerHTML={{ __html: meta.rank_math_toc_html! }} />
             ) : (
-              <div className="mb-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <TableOfContents headings={headings} />
-              </div>
+              <TableOfContents headings={headings} />
             )}
 
             {/* Syllabus tracker */}

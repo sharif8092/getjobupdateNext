@@ -152,44 +152,35 @@ body {
 .post-content h2 {
   font-family: var(--font-sans);
   font-weight: 900;
-  font-size: 1.8rem;
-  margin-top: 2.75rem;
-  margin-bottom: 1rem;
+  font-size: 1.6rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
   text-transform: uppercase;
-  letter-spacing: 0.01em;
-  line-height: 1.2;
-  background: linear-gradient(90deg, #ea580c, #f97316 50%, #f59e0b);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  padding-top: 0.1em;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0; 
+  background: linear-gradient(90deg, #1d4ed8, #4338ca); /* Royal Blue to Indigo Gradient */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: block;
-  width: fit-content;
 }
 
 /* ── H3 ── */
 .post-content h3 {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: 1.35rem;
-  color: #0f172a;
-  margin-top: 2.5rem;
-  margin-bottom: 1.25rem;
-  line-height: 1.4;
-  position: relative;
-  display: block;
-  width: fit-content;
-  padding-bottom: 0.5rem;
-}
-.post-content h3::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 4px;
-  background: #ea580c;
-  border-radius: 9999px;
-  display: block;
+  font-size: 1.25rem;
+  color: #1e40af; /* Premium Deep Blue */
+  margin-top: 2.25rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  border-left: 4px solid #ea580c;
+  padding-left: 0.75rem;
 }
 
 /* ── H4 ── */
@@ -322,7 +313,7 @@ body {
   margin: 0 !important;
 }
 
-/* ── TABLE — Premium Dark-Header Style ── */
+/* ✨ TABLE — Premium Dark-Header Style ✨ */
 .post-content table {
   width: 100% !important;
   border-collapse: separate !important;
@@ -332,6 +323,9 @@ body {
   overflow: hidden !important;
   border: 1px solid #e2e8f0 !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05) !important;
+  display: block !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
 }
 .post-content thead tr {
   background: #0b1120 !important; /* Brand dark */
