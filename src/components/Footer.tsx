@@ -148,8 +148,8 @@ export default async function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/sitemap.xml" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group" target="_blank" prefetch={false}>
-                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> XML Sitemap
+                <Link href="/site-map" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                  <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Sitemap
                 </Link>
               </li>
             </ul>
