@@ -14,6 +14,14 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'api.getjobupdate.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.getjobupdate.co.in',
+      },
+      {
+        protocol: 'https',
+        hostname: 'getjobupdate.co.in',
       }
     ],
   },

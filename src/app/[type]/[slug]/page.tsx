@@ -708,7 +708,6 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                             style={{ width: '100%', height: 'auto' }}
                             className={domNode.attribs.class || 'rounded-xl shadow-sm my-6 mx-auto'}
                             loading="lazy"
-                            unoptimized={domNode.attribs.src.includes('data:image')}
                           />
                         );
                       }
