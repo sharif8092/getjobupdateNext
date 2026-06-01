@@ -111,7 +111,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   // 2. Old API structure: post.faq?.items (Array of questions)
   // 3. Custom meta properties: post.custom_meta.faqs, post.custom_meta.howtos
   
-  const faqs = ((post.faq as any)?.blocks && Array.isArray((post.faq as any).blocks) && (post.faq as any).blocks.length > 0)
+  let faqs = ((post.faq as any)?.blocks && Array.isArray((post.faq as any).blocks) && (post.faq as any).blocks.length > 0)
     ? (post.faq as any).blocks
     : ((post.faq?.items && Array.isArray(post.faq.items) && post.faq.items.length > 0)
       ? [{ parsed: post.faq.items }]
@@ -126,16 +126,47 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const hasRankMathToc = !!meta.rank_math_toc_html;
   const { headings, content: processedHtml } = processContentAndHeadings(post.content.rendered, post.title.rendered.replace(/<[^>]*>?/gm, ''));
 
-  // Check if user manually placed shortcodes inside the content
   let contentHasInlineFaq = false;
   let contentHasInlineHowTo = false;
 
   let finalHtml = processedHtml;
   
+  // Auto Extract FAQs from RankMath / Yoast blocks if faqs is empty
+  if (faqs.length === 0) {
+    const qRegex = /<[^>]+class="[^"]*(?:question|schema-faq-question|rank-math-question)[^"]*"[^>]*>([\s\S]*?)<\/[^>]+>/gi;
+    const aRegex = /<[^>]+class="[^"]*(?:answer|schema-faq-answer|rank-math-answer)[^"]*"[^>]*>([\s\S]*?)<\/(?:div|p)>/gi;
+    
+    const qMatches = [...finalHtml.matchAll(qRegex)];
+    const aMatches = [...finalHtml.matchAll(aRegex)];
+    
+    if (qMatches.length > 0 && aMatches.length > 0) {
+      const parsedFaqs = [];
+      const len = Math.min(qMatches.length, aMatches.length);
+      for (let i = 0; i < len; i++) {
+        parsedFaqs.push({
+          q: qMatches[i][1].replace(/<[^>]+>/g, '').trim(),
+          a: aMatches[i][1].trim() // Keep HTML for answers
+        });
+      }
+      if (parsedFaqs.length > 0) {
+        faqs = [{ title: "Frequently Asked Questions", parsed: parsedFaqs }];
+        
+        // Inject placeholder before the first block
+        finalHtml = finalHtml.replace(/(<div[^>]*class="[^"]*(?:wp-block-yoast-faq-block|rank-math-faq)[^"]*"[^>]*>)/i, '<div id="react-faq-placeholder"></div>$1');
+        finalHtml = finalHtml.replace(/(<div[^>]*id="rank-math-faq"[^>]*>)/i, '<div id="react-faq-placeholder"></div>$1');
+        
+        // Hide original blocks so they don't show up twice
+        finalHtml = finalHtml.replace(/class="([^"]*rank-math-faq[^"]*)"/g, 'class="$1 hidden"')
+                             .replace(/id="rank-math-faq"/g, 'id="rank-math-faq" class="hidden"')
+                             .replace(/class="([^"]*wp-block-yoast-faq-block[^"]*)"/g, 'class="$1 hidden"');
+      }
+    }
+  }
+  
   if (/\[smart_faq[^\]]*\]/gi.test(finalHtml)) {
     contentHasInlineFaq = true;
     finalHtml = finalHtml.replace(/\[smart_faq[^\]]*\]/gi, '<div id="react-faq-placeholder"></div>');
-  } else if (/<div[^>]*data-schema="faq"[^>]*>/gi.test(finalHtml) || /wp-block-yoast-faq-block|schema-faq|rank-math-faq/i.test(finalHtml)) {
+  } else if (/<div[^>]*data-schema="faq"[^>]*>/gi.test(finalHtml) || /wp-block-yoast-faq-block|schema-faq|rank-math-faq/i.test(finalHtml) || finalHtml.includes('react-faq-placeholder')) {
     contentHasInlineFaq = true;
   }
   

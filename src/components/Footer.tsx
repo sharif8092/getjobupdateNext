@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { getTotalPostCount } from '@/lib/wordpress';
+import BrandIcon from '@/components/BrandIcon';
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
@@ -14,10 +15,13 @@ export default async function Footer() {
           {/* Column 1: Brand Info & office */}
           <div className="lg:col-span-1 space-y-4">
             
-            {/* Logo Text */}
-            <div className="flex items-baseline gap-1.5 font-black text-2xl tracking-wide uppercase leading-none mb-2">
-              <span className="text-white">GETJOB</span>
-              <span className="text-orange-500">UPDATE</span>
+            {/* Logo Text & Icon */}
+            <div className="flex items-center gap-2 mb-2">
+              <BrandIcon className="w-7 h-7 flex-shrink-0" />
+              <div className="flex items-baseline gap-1 font-black text-xl tracking-wide uppercase leading-none">
+                <span className="text-white">GETJOB</span>
+                <span className="text-orange-500">UPDATE</span>
+              </div>
             </div>
             
             <p className="text-sm leading-relaxed text-slate-400">

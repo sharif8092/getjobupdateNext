@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import BrandIcon from '@/components/BrandIcon';
 
 export default function Navbar() {
   return (
@@ -7,15 +8,10 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           
-          {/* Logo Section (Image 1 style) */}
+          {/* Logo Section */}
           <Link href="/" className="flex items-center gap-3 group">
-            {/* Logo Icon */}
-            <div className="relative flex items-center justify-center w-12 h-12 rounded-full border-[3px] border-orange-600 overflow-hidden">
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-orange-600"></div>
-              <svg className="w-6 h-6 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
-              </svg>
-            </div>
+            {/* Brand Icon */}
+            <BrandIcon className="w-12 h-12 flex-shrink-0 transform group-hover:scale-105 transition-transform" />
             
             {/* Logo Text */}
             <div className="flex flex-col justify-center">
