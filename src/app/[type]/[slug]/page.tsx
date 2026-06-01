@@ -318,20 +318,15 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     return (
       <div id="article-faq-section" className={`mb-8 overflow-hidden not-prose ${isInline ? 'mt-8' : ''}`}>
         <AffiliateSlot position="before_faq" slots={affiliateSlots} fallbackTags={['laptop', 'study-table']} department={meta.aziz_department} postType={post.type} />
-        
-        <div className="pb-6 border-b border-slate-100 flex items-start gap-4 mb-8">
-          <div className="w-11 h-11 rounded-lg bg-[#eef2ff] flex items-center justify-center flex-shrink-0 mt-1">
-            <svg className="w-5 h-5 text-[#4f46e5]" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">People Also Ask</p>
-            <h2 className="text-[28px] font-black text-[#0f172a] leading-none tracking-tight">Frequently Asked Questions</h2>
+        <div className="mb-6 mt-10">
+          <div className="text-center">
+            <div role="heading" aria-level={2} className="text-2xl md:text-[28px] font-black text-slate-900 tracking-tight">
+              Frequently Asked <span className="text-orange-600">Questions</span>
+            </div>
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-0">
           {currentFaqs.map((faqGroup: any, idx: number) => (
             <FAQAccordion key={idx} items={faqGroup.parsed || []} />
           ))}
