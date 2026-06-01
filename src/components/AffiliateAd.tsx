@@ -9,11 +9,25 @@ interface AffiliateAdProps {
   customProduct?: any;
   globalAmazonId?: string;
   variant?: 'list' | 'highlight';
+  position?: string;
 }
 
-export default function AffiliateAd({ tags, customProduct, globalAmazonId, variant = 'list' }: AffiliateAdProps) {
-  // Use custom product if provided, otherwise dynamically query 2 best books
-  let matchedBooks = customProduct ? [customProduct] : (tags ? getRecommendedProducts(tags, 2) : []);
+export default function AffiliateAd({ tags, customProduct, globalAmazonId, variant = 'list', position = '' }: AffiliateAdProps) {
+  // Use custom product if provided, otherwise dynamically query up to 10 best books
+  let matchedBooks = customProduct ? [customProduct] : (tags ? getRecommendedProducts(tags, 10) : []);
+
+  if (matchedBooks.length > 0 && !customProduct) {
+    // Generate a deterministic rotation based on the position string so each slot shows different ads
+    const hash = position.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const startIndex = hash % matchedBooks.length;
+    
+    // Rotate the array
+    matchedBooks = [...matchedBooks.slice(startIndex), ...matchedBooks.slice(0, startIndex)];
+    
+    // Take exactly what we need for this variant
+    const limit = variant === 'highlight' ? 1 : 2;
+    matchedBooks = matchedBooks.slice(0, limit);
+  }
 
   // Dynamically rewrite Amazon tags if global ID is provided
   if (globalAmazonId) {

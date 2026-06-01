@@ -31,7 +31,7 @@ export default async function AffiliateSlot({ position, slots, fallbackTags, dep
 
   return (
     <div className="mb-6 affiliate-slot-container" data-position={position}>
-      <AffiliateAd tags={contextualTags} globalAmazonId={amazonId} variant={position === 'before_content' ? 'highlight' : 'list'} />
+      <AffiliateAd tags={contextualTags} globalAmazonId={amazonId} variant={position === 'before_content' ? 'highlight' : 'list'} position={position} />
     </div>
   );
 }

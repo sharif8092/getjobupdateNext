@@ -828,32 +828,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           {/* ══ RIGHT SIDEBAR [col-span-4] ══ */}
           <aside className="lg:col-span-4 lg:sticky lg:top-24 self-start space-y-6 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto sidebar-scroll pr-2 pb-4">
 
-            {/* Important Links Widget (Card format) */}
-            {(meta.aziz_apply_link || meta.aziz_notification || meta.aziz_official_site) && (
-              <div className="space-y-4">
-                  {meta.aziz_apply_link && (
-                    <a href={meta.aziz_apply_link} target="_blank" rel="noopener noreferrer"
-                      className={`w-full flex items-center justify-center gap-2 rounded-xl text-white px-5 py-4 font-black text-base transition-all shadow-md hover:-translate-y-0.5 border-b-[5px] active:border-b-0 active:translate-y-1 ${isResult ? 'bg-green-600 border-green-800 hover:bg-green-500 shadow-green-600/30' : 'bg-blue-600 border-blue-800 hover:bg-blue-500 shadow-blue-600/30'}`}>
-                      {isResult ? 'Check Result Now' : 'Apply Now Online'}
-                    </a>
-                  )}
-                  {meta.aziz_official_site && (
-                    <a href={meta.aziz_official_site} target="_blank" rel="noopener noreferrer"
-                      className="w-full flex items-center justify-between gap-2 rounded-xl bg-white text-slate-700 px-5 py-4 font-bold text-[15px] transition-all border-2 border-slate-200 hover:border-blue-500 hover:text-blue-600 shadow-sm hover:-translate-y-0.5 group">
-                      Official Website
-                      <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582"/></svg>
-                    </a>
-                  )}
-                  {meta.aziz_notification && (
-                    <a href={meta.aziz_notification} target="_blank" rel="noopener noreferrer"
-                      className="w-full flex items-center justify-between gap-2 rounded-xl bg-white text-slate-700 px-5 py-4 font-bold text-[15px] transition-all border-2 border-slate-200 hover:border-rose-500 hover:text-rose-600 shadow-sm hover:-translate-y-0.5 group">
-                      Download Notice
-                      <svg className="w-5 h-5 text-slate-400 group-hover:text-rose-500 transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
-                    </a>
-                  )}
-              </div>
-            )}
-
+            {/* Affiliate Ad Slot (Replaced Important Links Buttons) */}
+            <AffiliateSlot position="sidebar" slots={affiliateSlots} fallbackTags={['study table', 'laptop']} department={meta.aziz_department} postType={post.type} />
             {/* Sidebar Ordering: Jobs -> Results -> Admits */}
             {recentJobs.length > 0 && <RecentPosts posts={recentJobs} title="Latest Jobs" />}
             {recentResults.length > 0 && <RecentPosts posts={recentResults} title="Latest Results" icon="🏆" />}
