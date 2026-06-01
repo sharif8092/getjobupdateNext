@@ -470,8 +470,11 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
       throw new Error(`WordPress REST API returned status: ${res.status}`);
     }
     return await res.json() as T;
-  } catch (error) {
-    console.error(`Fetch error at ${url}:`, error);
+  } catch (error: any) {
+    // Suppress console.error for 404s to avoid Next.js dev overlay spam
+    if (!error.message?.includes('status: 404')) {
+      console.error(`Fetch error at ${url}:`, error);
+    }
     throw error;
   }
 }
@@ -479,7 +482,12 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
 // Fetch Affiliate Settings
 export async function getAffiliateSettings(): Promise<{ amazon_id: string }> {
   try {
-    return await fetchWP<{ amazon_id: string }>('/wp-json/gju/v1/affiliate-settings', { next: { revalidate: 3600 } });
+    const url = `${process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://getjobupdate.com'}/wp-json/gju/v1/affiliate-settings`;
+    const res = await fetch(url, { next: { revalidate: 3600 } });
+    if (!res.ok) {
+      return { amazon_id: '' };
+    }
+    return await res.json() as { amazon_id: string };
   } catch (err) {
     return { amazon_id: '' };
   }

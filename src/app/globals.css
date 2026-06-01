@@ -177,16 +177,24 @@ body {
 .post-content h3 {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   color: #0f172a;
-  background: #f8fafc; /* Soft Light Gray/Slate */
-  border: 1px solid #e2e8f0;
-  padding: 0.75rem 1.25rem;
-  border-radius: 12px;
-  margin-top: 2.25rem;
+  margin-top: 2.5rem;
   margin-bottom: 1.25rem;
   line-height: 1.4;
-  display: block;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+}
+.post-content h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 4px;
+  background: #ea580c;
+  border-radius: 9999px;
 }
 
 /* ── H4 ── */
