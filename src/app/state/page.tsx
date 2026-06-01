@@ -31,7 +31,7 @@ export default function StateDirectoryPage() {
               className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3 hover:border-blue-500 hover:shadow-md transition-all group"
             >
               <div className="text-2xl group-hover:scale-110 transition-transform">
-                {state.emoji || '📍'}
+                {(state as any).emoji || '📍'}
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition-colors">
