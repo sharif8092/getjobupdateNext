@@ -100,7 +100,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           });
         }
       });
-    } catch (e) {
+    } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error(`Failed to fetch sitemap posts for type: ${type}`);
     }
   }

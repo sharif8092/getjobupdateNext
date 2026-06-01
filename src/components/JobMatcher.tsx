@@ -112,7 +112,7 @@ export default function JobMatcher() {
       });
 
       setMatchedJobs(matched.slice(0, 8)); // Limit to top 8 best matches
-    } catch (err) {
+    } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error(err);
     } finally {
       setLoading(false);

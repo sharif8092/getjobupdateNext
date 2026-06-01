@@ -36,7 +36,7 @@ export default function PushNotificationCard() {
             } else {
               alert('Aapke browser ne Notification popup ko block kar diya hai. Kripya URL bar me notification icon check karein.');
             }
-          } catch(e) {
+          } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
             alert('Aapke browser ne permission block kar di hai (Notifications Blocked). Kripya browser settings check karein.');
           }
         });

@@ -3,6 +3,7 @@ import parse from 'html-react-parser';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts, getAffiliateSettings } from '@/lib/wordpress';
 import FAQAccordion from '@/components/FAQAccordion';
 import SyllabusTracker from '@/components/SyllabusTracker';
@@ -13,6 +14,7 @@ import ShareWidget from '@/components/ShareWidget';
 import MobileStickyCTA from '@/components/MobileStickyCTA';
 import TableOfContents from '@/components/TableOfContents';
 import RelatedJobs from '@/components/RelatedJobs';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import Script from 'next/script';
 
 interface SinglePostProps {
@@ -56,11 +58,14 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const post = await getPostBySlug(type, slug);
   if (!post) return notFound();
 
-  const recentJobs = await getPosts('aziz_job', 5);
-  const recentResults = await getPosts('aziz_result', 5);
-  const recentAdmitCards = await getPosts('aziz_admit', 5);
+  // Fetch all sidebar/footer data in parallel to significantly reduce network wait time
+  const [recentJobs, recentResults, recentAdmitCards, affiliateSettings] = await Promise.all([
+    getPosts('aziz_job', 5),
+    getPosts('aziz_result', 5),
+    getPosts('aziz_admit', 5),
+    getAffiliateSettings()
+  ]);
 
-  const affiliateSettings = await getAffiliateSettings();
   const globalAmazonId = affiliateSettings?.amazon_id || '';
 
   const meta = post.custom_meta || {};
@@ -223,11 +228,11 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   // 3. Custom meta properties: post.custom_meta.faq_position, post.custom_meta.howto_position
   // 4. Default positions (lowest priority) with fallback protection
   
-  let rawFaqPosition = contentHasInlineFaq 
+  const rawFaqPosition = contentHasInlineFaq 
     ? 'inline' 
     : (post.faq?.position || meta.faq_position || 'before_related_posts');
   
-  let rawHowtoPosition = contentHasInlineHowTo 
+  const rawHowtoPosition = contentHasInlineHowTo 
     ? 'inline' 
     : (post.howto?.position || meta.howto_position || 'after_content');
 
@@ -509,13 +514,10 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
           {/* Breadcrumb */}
-          <nav aria-label="breadcrumb" className="flex items-center flex-wrap gap-1.5 text-[11px] font-medium text-slate-500 mb-5">
-            <Link href="/" className="hover:text-blue-400 transition-colors">Home</Link>
-            <span className="text-slate-700">›</span>
-            <Link href={`/${type}`} className="hover:text-blue-400 transition-colors capitalize">{type.replace(/-/g,' ')}</Link>
-            <span className="text-slate-700">›</span>
-            <span className="text-slate-400 line-clamp-1 max-w-xs sm:max-w-md" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-          </nav>
+          <Breadcrumbs items={[
+            { name: type.replace(/-/g,' ').replace(/\b\w/g, (c: string) => c.toUpperCase()), url: `/${type}` },
+            { name: post.title.rendered.replace(/<[^>]*>?/gm, ''), url: `/${type}/${slug}` }
+          ]} />
 
           {/* Highlight Badge & Verification */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
@@ -679,12 +681,14 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               
               {/* Featured Image (if available) */}
               {featuredImageUrl && (
-                <div className="w-full border-b border-slate-200 bg-slate-50">
-                  <img 
+                <div className="w-full border-b border-slate-200 bg-slate-50 relative flex justify-center">
+                  <Image 
                     src={featuredImageUrl} 
                     alt={post.title.rendered.replace(/<[^>]*>?/gm, '')} 
+                    width={1200}
+                    height={500}
                     className="w-full max-h-[500px] object-contain" 
-                    loading="eager"
+                    priority={true}
                   />
                 </div>
               )}
@@ -693,6 +697,21 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                 <div id="full-article-content" className="post-content prose prose-slate max-w-none text-slate-700 text-[17px] leading-8 prose-headings:font-bold prose-h2:text-2xl">
                   {parse(finalHtml, {
                     replace: (domNode: any) => {
+                      // Optimize WordPress images automatically with Next.js Image component
+                      if (domNode.name === 'img' && domNode.attribs && domNode.attribs.src) {
+                        return (
+                          <Image
+                            src={domNode.attribs.src}
+                            alt={domNode.attribs.alt || ''}
+                            width={domNode.attribs.width ? parseInt(domNode.attribs.width, 10) : 800}
+                            height={domNode.attribs.height ? parseInt(domNode.attribs.height, 10) : 450}
+                            style={{ width: '100%', height: 'auto' }}
+                            className={domNode.attribs.class || 'rounded-xl shadow-sm my-6 mx-auto'}
+                            loading="lazy"
+                            unoptimized={domNode.attribs.src.includes('data:image')}
+                          />
+                        );
+                      }
                       if (domNode.attribs && domNode.attribs['data-schema'] === 'faq') {
                         return renderFaq(true, domNode.attribs['data-id']);
                       }
@@ -886,6 +905,72 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
         </div>
       </div>
+
+      {/* JSON-LD Schema Scripts */}
+      <Script
+        id="schema-main"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            post.type === 'aziz_job'
+              ? {
+                  "@context": "https://schema.org",
+                  "@type": "JobPosting",
+                  "title": post.title.rendered.replace(/<[^>]+>/g, '').trim(),
+                  "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]+>/g, '').trim(),
+                  "datePosted": post.date,
+                  "validThrough": (meta as any).aziz_apply_end ? new Date((meta as any).aziz_apply_end).toISOString() : new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+                  "employmentType": "FULL_TIME",
+                  "hiringOrganization": {
+                    "@type": "Organization",
+                    "name": meta.aziz_department || "Government Organization",
+                    "sameAs": "https://getjobupdate.co.in"
+                  },
+                  "jobLocation": {
+                    "@type": "Place",
+                    "address": {
+                      "@type": "PostalAddress",
+                      "addressCountry": "IN"
+                    }
+                  }
+                }
+              : {
+                  "@context": "https://schema.org",
+                  "@type": "Article",
+                  "headline": post.title.rendered.replace(/<[^>]+>/g, '').trim(),
+                  "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]+>/g, '').trim(),
+                  "image": post.seo_meta?.og_image || "https://getjobupdate.co.in/logo.png",
+                  "datePublished": post.date,
+                  "dateModified": post.modified,
+                  "author": [{
+                    "@type": "Person",
+                    "name": "Get Job Update",
+                    "url": "https://getjobupdate.co.in"
+                  }]
+                }
+          )
+        }}
+      />
+      {faqs && faqs.length > 0 && (
+        <Script
+          id="schema-faq"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": faqs.map((f: any) => ({
+                "@type": "Question",
+                "name": f.q?.replace(/<[^>]+>/g, '').trim() || '',
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": f.a?.replace(/<[^>]+>/g, '').trim() || ''
+                }
+              }))
+            })
+          }}
+        />
+      )}
 
       {/* Mobile Sticky Apply CTA */}
       <MobileStickyCTA

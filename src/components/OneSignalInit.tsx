@@ -40,7 +40,7 @@ export default function OneSignalInit() {
             } else if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
               await OneSignal.Notifications.requestPermission();
             }
-          } catch(e) {
+          } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
             console.error("Auto prompt error:", e);
           }
         }, 3000);

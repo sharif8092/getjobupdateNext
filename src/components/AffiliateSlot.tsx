@@ -14,7 +14,7 @@ export default async function AffiliateSlot({ position, slots, fallbackTags, dep
   // Find matching slot from backend data if available
   const match = slots?.find(s => s.position === position);
   
-  let tagsToUse = match?.tags || fallbackTags;
+  const tagsToUse = match?.tags || fallbackTags;
   
   if (!tagsToUse || tagsToUse.length === 0) {
     return null; // Don't render if no tags and no fallback

@@ -17,7 +17,7 @@ export default function AffiliateAd({ tags, customProduct, globalAmazonId, varia
 
   // Dynamically rewrite Amazon tags if global ID is provided
   if (globalAmazonId) {
-    matchedBooks = matchedBooks.map((book: any) => {
+    matchedBooks = matchedBooks.map((book /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
       let finalLink = book.buyLink || '';
       if (finalLink.includes('amazon.') || finalLink.includes('amzn.to')) {
         finalLink = finalLink.replace(/([?&])tag=[^&]+(&|$)/, '$1');

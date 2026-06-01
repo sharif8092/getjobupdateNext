@@ -463,14 +463,14 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
         'Content-Type': 'application/json',
         ...options.headers,
       },
-      next: { revalidate: 300 }, // Cache response for 5 minutes (ISR)
+      next: { revalidate: options.next?.revalidate ?? 3600 }, // Cache response for 1 hour by default to reduce WP server load
     });
 
     if (!res.ok) {
       throw new Error(`WordPress REST API returned status: ${res.status}`);
     }
     return await res.json() as T;
-  } catch (error: any) {
+  } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     // Suppress console.error for 404s to avoid Next.js dev overlay spam
     if (!error.message?.includes('status: 404')) {
       console.error(`Fetch error at ${url}:`, error);
@@ -488,7 +488,7 @@ export async function getAffiliateSettings(): Promise<{ amazon_id: string }> {
       return { amazon_id: '' };
     }
     return await res.json() as { amazon_id: string };
-  } catch (err) {
+  } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     return { amazon_id: '' };
   }
 }
@@ -503,9 +503,11 @@ export async function getPosts(
   const wpType = REVERSE_POST_TYPE_MAP[postTypeSlug] || postTypeSlug;
   try {
     // Map of WP REST endpoints for each CPT
-    const endpoint = `/wp-json/wp/v2/${wpType}?per_page=${count}&page=${page}${additionalParams}`;
+    // Added _fields to optimize payload size based on frontend requirements
+    const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state,faq,howto';
+    const endpoint = `/wp-json/wp/v2/${wpType}?per_page=${count}&page=${page}&_fields=${fields}${additionalParams}`;
     return await fetchWP<WordPressPost[]>(endpoint);
-  } catch (err) {
+  } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Falling back to Mock Data for ${postTypeSlug}`);
     const mocks = MOCK_POSTS[wpType] || [];
     return mocks;
@@ -519,10 +521,11 @@ export async function getPostBySlug(
 ): Promise<WordPressPost | null> {
   const wpType = REVERSE_POST_TYPE_MAP[postTypeSlug] || postTypeSlug;
   try {
-    const endpoint = `/wp-json/wp/v2/${wpType}?slug=${slug}`;
+    const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state,faq,howto';
+    const endpoint = `/wp-json/wp/v2/${wpType}?slug=${slug}&_fields=${fields}`;
     const posts = await fetchWP<WordPressPost[]>(endpoint);
     return posts.length > 0 ? posts[0] : null;
-  } catch (err) {
+  } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Falling back to Mock Data for single post: ${slug}`);
     const mocks = MOCK_POSTS[wpType] || [];
     const matched = mocks.find((p) => p.slug === slug);
@@ -542,7 +545,7 @@ export async function getPostsByState(stateSlug: string, count = 30): Promise<Wo
     let allIndiaTerms: WordPressTerm[] = [];
     try {
       allIndiaTerms = await fetchWP<WordPressTerm[]>(allIndiaEndpoint);
-    } catch (e) {
+    } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       // ignore if all-india fails
     }
 
@@ -559,17 +562,18 @@ export async function getPostsByState(stateSlug: string, count = 30): Promise<Wo
     
     for (const type of targetTypes) {
       try {
+        const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state';
         const posts = await fetchWP<WordPressPost[]>(
-          `/wp-json/wp/v2/${type}?job_state=${idString}&per_page=${Math.ceil(count / 3)}`
+          `/wp-json/wp/v2/${type}?job_state=${idString}&per_page=${Math.ceil(count / 3)}&_fields=${fields}`
         );
         allPosts.push(...posts);
-      } catch (e) {
+      } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
         // ignore individual type fetch failures
       }
     }
     
     return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  } catch (err) {
+  } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Failed fetching state archive for ${stateSlug}, returning mock data`);
     // Return mock posts that match the state string or 'All India'
     const allMocks = Object.values(MOCK_POSTS).flat();
@@ -598,17 +602,18 @@ export async function getPostsByCategory(categorySlug: string, count = 30): Prom
     
     for (const type of targetTypes) {
       try {
+        const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state';
         const posts = await fetchWP<WordPressPost[]>(
-          `/wp-json/wp/v2/${type}?job_category=${catId}&per_page=${Math.ceil(count / 5)}`
+          `/wp-json/wp/v2/${type}?job_category=${catId}&per_page=${Math.ceil(count / 5)}&_fields=${fields}`
         );
         allPosts.push(...posts);
-      } catch (e) {
+      } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
         // ignore
       }
     }
     
     return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  } catch (err) {
+  } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Failed fetching category archive for ${categorySlug}, returning mock data`);
     return Object.values(MOCK_POSTS).flat();
   }
@@ -617,7 +622,7 @@ export async function getPostsByCategory(categorySlug: string, count = 30): Prom
 // Fetch all posts matching a qualification filter (aziz_qualification meta)
 export async function getPostsByQualification(qualName: string, count = 30): Promise<WordPressPost[]> {
   const getSearchKey = (name: string) => {
-    let key = name.toLowerCase().replace(' pass', '').trim();
+    const key = name.toLowerCase().replace(' pass', '').trim();
     if (key === 'b.e / b.tech') return 'tech';
     if (key === 'graduate pass') return 'graduate';
     return key;
@@ -633,7 +638,7 @@ export async function getPostsByQualification(qualName: string, count = 30): Pro
       return q.includes(searchKey) || textContent.includes(searchKey);
     });
     return filtered.slice(0, count);
-  } catch (err) {
+  } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     const allMocks = Object.values(MOCK_POSTS).flat();
     return allMocks.filter((p) => {
       const q = p.custom_meta?.aziz_qualification?.toLowerCase() || '';
@@ -650,10 +655,11 @@ export async function searchPosts(query: string, count = 10): Promise<WordPressP
   
   for (const type of targetTypes) {
     try {
-      const posts = await fetchWP<WordPressPost[]>(`/wp-json/wp/v2/${type}?search=${encodeURIComponent(query)}&per_page=${Math.ceil(count / 4)}`);
+      const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state';
+      const posts = await fetchWP<WordPressPost[]>(`/wp-json/wp/v2/${type}?search=${encodeURIComponent(query)}&per_page=${Math.ceil(count / 4)}&_fields=${fields}`);
       allPosts.push(...posts);
       apiSuccess = true;
-    } catch (e) {
+    } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       // ignore
     }
   }
@@ -755,7 +761,7 @@ export async function getTotalPostCount(): Promise<number> {
         const count = res.headers.get('x-wp-total');
         if (count) total += parseInt(count, 10);
       }
-    } catch (e) {
+    } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       // ignore
     }
   }));

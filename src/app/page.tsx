@@ -12,6 +12,7 @@ import FAQAccordion from '@/components/FAQAccordion';
 import PushNotificationCard from '@/components/PushNotificationCard';
 import AgeCalculator from '@/components/AgeCalculator';
 import JobMatcher from '@/components/JobMatcher';
+import LiveSearch from '@/components/LiveSearch';
 
 const HOME_FAQS = [
   { q: 'What is Get Job Update and how does it help candidates?', a: 'Get Job Update is India\'s most trusted portal for the latest <strong>Sarkari Naukri</strong>, <strong>Free Job Alerts</strong>, and government exam updates. We aggregate official notifications, admit cards, and results into one easy-to-use platform.' },
@@ -170,23 +171,7 @@ export default async function HomePage() {
           </p>
 
           {/* Search Bar */}
-          <form action="/search" className="bg-white rounded-2xl p-2 flex items-center shadow-2xl mx-auto max-w-3xl border border-slate-100">
-            <div className="flex-1 flex items-center pl-4 border-r border-slate-200">
-              <svg className="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              <input type="text" name="q" aria-label="Search jobs" placeholder="Search by job title or organization..." className="w-full px-3 py-2.5 outline-none text-slate-800 bg-transparent text-sm font-medium placeholder:text-slate-400" />
-            </div>
-            <div className="hidden sm:flex items-center px-4 w-44 border-r border-slate-200 cursor-pointer gap-2">
-              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              <select name="state" aria-label="Filter by state" className="bg-transparent text-slate-700 outline-none w-full text-sm font-semibold cursor-pointer appearance-none">
-                <option value="">All States</option>
-                {STATES_LIST.map(s => <option key={s.slug} value={s.slug}>{s.name}</option>)}
-              </select>
-            </div>
-            <button type="submit" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl px-6 py-3 font-bold text-sm flex items-center gap-2 transition-colors ml-1.5 shadow-md shadow-orange-600/30">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              Search
-            </button>
-          </form>
+          <LiveSearch />
 
           {/* Trending */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">

@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { STATES_LIST } from '@/lib/wordpress';
 import { MapPin } from 'lucide-react';
+import { STATES_LIST } from '@/lib/wordpress';
 
 export const metadata: Metadata = {
   title: 'Browse Government Jobs by State | Get Job Update',
