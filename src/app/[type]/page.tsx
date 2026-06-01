@@ -86,35 +86,34 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }} />
-      <div className="w-full bg-slate-50 min-h-screen py-8 font-sans">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="w-full bg-slate-50 min-h-screen flex flex-col font-sans">
+        
+        {/* Brand Hero Section */}
+        <div className="bg-slate-900 w-full pt-12 pb-24 md:pb-32 relative overflow-hidden">
+          {/* Decorative Grid */}
+          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#475569 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
           
-          {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm mb-6">
-            <Link href="/" className="text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-              Home
-            </Link>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="m9 18 6-6-6-6"></path></svg>
-            <span className="text-slate-900 font-medium">{categoryTitle}</span>
-          </nav>
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            {/* Breadcrumbs */}
+            <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-1.5 text-[11px] font-black uppercase text-slate-400 mb-6 tracking-widest font-rajdhani">
+              <Link href="/" className="hover:text-orange-500 transition-colors">
+                HOME
+              </Link>
+              <span>›</span>
+              <span className="text-white">{categoryTitle}</span>
+            </nav>
 
-          {/* Header Section */}
-          <div className="mb-10 max-w-3xl">
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl flex items-center gap-3">
-              <span className="text-4xl">{categoryEmoji}</span>
-              {categoryTitle}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-5 uppercase font-rajdhani leading-none flex items-center justify-center gap-3">
+              <span className="text-4xl md:text-5xl">{categoryEmoji}</span>
+              <span className="text-orange-500">{categoryTitle}</span>
             </h1>
-            <div className="mt-4 flex flex-col gap-3">
-              <p className="text-lg font-medium text-slate-600 leading-relaxed">
-                Find the best {categoryTitle} for 2026. We list active vacancies and updates with clear details on age, qualifications, and how to apply. Browse daily verified updates from official sources.
-              </p>
-              <p className="text-base text-slate-500">
-                Latest {categoryTitle.toLowerCase()} notifications. Updated daily.
-              </p>
-            </div>
+            <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium">
+              Find the best {categoryTitle} for 2026. We list active vacancies and updates with clear details on age, qualifications, and how to apply. Browse daily verified updates from official sources.
+            </p>
           </div>
+        </div>
 
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full -mt-12 md:-mt-20 relative z-20 pb-12">
           {/* Layout Grid */}
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
             

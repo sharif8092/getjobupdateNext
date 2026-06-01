@@ -150,7 +150,7 @@ export default function JobMatcher() {
                       required
                       value={qual}
                       onChange={(e) => setQual(e.target.value)}
-                      className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
+                      className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
                     >
                       <option value="" disabled>-- Choose Qualification --</option>
                       {QUALIFICATIONS_LIST.map((q) => (
@@ -170,7 +170,7 @@ export default function JobMatcher() {
                         id="jm-category"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
+                        className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
                       >
                         <option value="General">General / UR</option>
                         <option value="OBC">OBC</option>
@@ -191,7 +191,7 @@ export default function JobMatcher() {
                       max="60"
                       value={age}
                       onChange={(e) => setAge(e.target.value)}
-                      className="w-full rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] transition-all font-sans font-bold"
+                      className="w-full rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] transition-all font-sans font-bold"
                     />
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export default function JobMatcher() {
                       required
                       value={stateSlug}
                       onChange={(e) => setStateSlug(e.target.value)}
-                      className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
+                      className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
                     >
                       <option value="" disabled>-- Choose Location --</option>
                       {STATES_LIST.map((s) => (
@@ -261,10 +261,10 @@ export default function JobMatcher() {
                   ) : loading ? (
                     <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 space-y-4">
                       <div className="relative">
-                        <div className="h-12 w-12 rounded-full border-4 border-amber-400/20"></div>
-                        <div className="h-12 w-12 rounded-full border-4 border-amber-400 border-t-transparent animate-spin absolute inset-0"></div>
+                        <div className="h-12 w-12 rounded-full border-4 border-orange-500/20"></div>
+                        <div className="h-12 w-12 rounded-full border-4 border-orange-500 border-t-transparent animate-spin absolute inset-0"></div>
                       </div>
-                      <p className="text-sm font-black font-rajdhani tracking-widest uppercase text-amber-500 animate-pulse">Running Scripts...</p>
+                      <p className="text-sm font-black font-rajdhani tracking-widest uppercase text-orange-500 animate-pulse">Running Scripts...</p>
                     </div>
                   ) : matchedJobs.length > 0 ? (
                     <div className="space-y-4">
@@ -273,7 +273,7 @@ export default function JobMatcher() {
                         return (
                           <div 
                             key={post.id}
-                            className="group/card rounded-2xl border-2 border-white dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 hover:border-amber-400/50 hover:shadow-xl hover:shadow-amber-400/5 transition-all cursor-default"
+                            className="group/card rounded-2xl border-2 border-white dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all cursor-default"
                             style={{ animationDelay: `${idx * 100}ms` }}
                           >
                             <div className="flex-1 space-y-2.5 w-full">
@@ -281,7 +281,7 @@ export default function JobMatcher() {
                                 <span className="text-[10px] font-black font-rajdhani tracking-widest text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md uppercase">
                                   🏢 {dept || 'Govt Board'}
                                 </span>
-                                <span className={`text-[9px] font-black font-rajdhani tracking-widest uppercase px-2 py-1 rounded-md ${relaxationApplied ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'}`}>
+                                <span className={`text-[9px] font-black font-rajdhani tracking-widest uppercase px-2 py-1 rounded-md ${relaxationApplied ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-500' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'}`}>
                                   {relaxationApplied ? 'Relaxation Applied' : 'Direct Match'}
                                 </span>
                               </div>
@@ -297,7 +297,7 @@ export default function JobMatcher() {
                             
                             <Link
                               href={`/${postTypeSlug}/${post.slug}`}
-                              className="w-full sm:w-auto text-center shrink-0 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-amber-400 text-white hover:text-slate-900 font-rajdhani font-black text-[13px] px-5 py-3 uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+                              className="w-full sm:w-auto text-center shrink-0 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-900 font-rajdhani font-black text-[13px] px-5 py-3 uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
                             >
                               Check
                             </Link>

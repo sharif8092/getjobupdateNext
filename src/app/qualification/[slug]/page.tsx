@@ -58,35 +58,37 @@ export default async function QualificationArchivePage({ params }: QualArchivePr
   };
 
   return (
-    <div className="w-full bg-[#f8fafc] dark:bg-[#030712] py-10 font-baloo">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-slate-50 min-h-screen flex flex-col font-sans">
+      
+      {/* Brand Hero Section */}
+      <div className="bg-slate-900 w-full pt-12 pb-24 md:pb-32 relative overflow-hidden">
+        {/* Decorative Grid */}
+        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#475569 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         
-        {/* Breadcrumbs */}
-        <nav className="flex items-center gap-1.5 text-xs font-bold font-rajdhani uppercase text-slate-400 mb-6 tracking-wide">
-          <Link href="/" className="hover:text-amber-500">HOME</Link>
-          <span>›</span>
-          <span>QUALIFICATION ARCHIVE</span>
-          <span>›</span>
-          <span className="text-slate-500">{qualName}</span>
-        </nav>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          {/* Breadcrumbs */}
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-1.5 text-[11px] font-black uppercase text-slate-400 mb-6 tracking-widest font-rajdhani">
+            <Link href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
+            <span>›</span>
+            <span>QUALIFICATION ARCHIVE</span>
+            <span>›</span>
+            <span className="text-white">{qualName}</span>
+          </nav>
 
-        {/* Qualification Banner */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#030712] text-white p-8 md:p-12 border border-slate-900 shadow-sm mb-10">
-          <div className="absolute right-0 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-          
-          <div className="space-y-4 relative z-10 max-w-2xl">
-            <span className="text-xs font-black font-rajdhani tracking-widest text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full uppercase">
-              🎓 Eligibility Directory
-            </span>
-            <h1 className="text-3xl md:text-5xl font-black font-rajdhani uppercase tracking-tight leading-none">
-              Sarkari Jobs for {qualName}
-            </h1>
-            <p className="text-slate-400 text-sm md:text-base leading-relaxed">
-              Explore active central government vacancies and regional recruitment drives matched specifically to candidates possessing **{qualName}** credentials.
-            </p>
-          </div>
+          <span className="inline-block text-xs font-black font-rajdhani tracking-widest text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full uppercase mb-5">
+            🎓 Eligibility Directory
+          </span>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-5 uppercase font-rajdhani leading-none">
+            Sarkari Jobs for <span className="text-orange-500">{qualName}</span>
+          </h1>
+          <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium">
+            Explore active central government vacancies and regional recruitment drives matched specifically to candidates possessing {qualName} credentials.
+          </p>
         </div>
+      </div>
 
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full -mt-12 md:-mt-20 relative z-20 pb-12">
+        
         {/* Timeline Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
