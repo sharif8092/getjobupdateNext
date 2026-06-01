@@ -1,0 +1,45 @@
+import React from 'react';
+import Link from 'next/link';
+import { Metadata } from 'next';
+import { QUALIFICATIONS_LIST } from '@/lib/wordpress';
+import { GraduationCap } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Browse Government Jobs by Qualification | Get Job Update',
+  description: 'Find government jobs and recruitment based on your educational qualification (10th, 12th, ITI, Diploma, Graduate).',
+};
+
+export default function QualificationDirectoryPage() {
+  return (
+    <div className="w-full bg-slate-50 min-h-screen py-12 font-sans">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-10 max-w-3xl">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl flex items-center gap-3">
+            <GraduationCap className="w-8 h-8 text-indigo-600" />
+            Browse by Qualification
+          </h1>
+          <p className="mt-4 text-lg text-slate-600">
+            Select your highest educational qualification to find suitable active government job postings.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {QUALIFICATIONS_LIST.map((qual) => (
+            <Link
+              key={qual.slug}
+              href={`/qualification/${qual.slug}`}
+              className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:border-indigo-500 hover:shadow-md transition-all group"
+            >
+              <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
+                {qual.emoji || '🎓'}
+              </div>
+              <h3 className="font-bold text-slate-900 text-xl group-hover:text-indigo-600 transition-colors">
+                {qual.name}
+              </h3>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

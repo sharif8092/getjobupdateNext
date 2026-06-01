@@ -109,7 +109,39 @@ export async function GET(
         publisher-logo-src="${logo}"
         poster-portrait-src="${coverImage}">
       
-      <!-- Page 1: Cover -->
+      ${Array.isArray(meta.web_story_slides) && meta.web_story_slides.length > 0 ? 
+        meta.web_story_slides.map((slide: any, index: number) => {
+          const slideImage = slide.slide_image || coverImage;
+          const heading = slide.slide_heading || '';
+          const text = slide.slide_text || '';
+          const ctaText = slide.slide_cta_text || 'Read More';
+          const ctaLink = slide.slide_cta_link || '';
+          
+          const ctaHtml = ctaLink ? `
+            <amp-story-page-outlink layout="nodisplay">
+              <a href="${ctaLink}" title="${ctaText}">${ctaText}</a>
+            </amp-story-page-outlink>` : '';
+
+          return `
+      <!-- Dynamic Slide ${index + 1} -->
+      <amp-story-page id="page${index + 1}">
+        <amp-story-grid-layer template="fill">
+          <amp-img src="${slideImage}" width="720" height="1280" layout="responsive" alt="Slide ${index + 1} Background"></amp-img>
+        </amp-story-grid-layer>
+        <amp-story-grid-layer template="fill">
+          <div class="bg-overlay"></div>
+        </amp-story-grid-layer>
+        <amp-story-grid-layer template="vertical">
+          <div class="content">
+            ${heading ? `<h1>${heading}</h1>` : ''}
+            ${text ? `<p>${text.replace(/\\n/g, '<br>')}</p>` : ''}
+            ${ctaHtml}
+          </div>
+        </amp-story-grid-layer>
+      </amp-story-page>`;
+        }).join('\\n')
+      : `
+      <!-- Fallback Page 1: Cover -->
       <amp-story-page id="page1">
         <amp-story-grid-layer template="fill">
           <amp-img src="${coverImage}" width="720" height="1280" layout="responsive" alt="Cover background"></amp-img>
@@ -126,7 +158,7 @@ export async function GET(
         </amp-story-grid-layer>
       </amp-story-page>
 
-      <!-- Page 2: Key Details -->
+      <!-- Fallback Page 2: Key Details -->
       <amp-story-page id="page2">
         <amp-story-grid-layer template="fill">
           <amp-img src="${coverImage}" width="720" height="1280" layout="responsive" alt="Details background"></amp-img>
@@ -155,7 +187,7 @@ export async function GET(
         </amp-story-grid-layer>
       </amp-story-page>
 
-      <!-- Page 3: Call to Action -->
+      <!-- Fallback Page 3: Call to Action -->
       <amp-story-page id="page3">
         <amp-story-grid-layer template="fill">
           <amp-img src="${coverImage}" width="720" height="1280" layout="responsive" alt="CTA background"></amp-img>
@@ -175,7 +207,7 @@ export async function GET(
           </div>
         </amp-story-grid-layer>
       </amp-story-page>
-
+      `}
     </amp-story>
   </body>
 </html>`;

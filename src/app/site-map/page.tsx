@@ -14,10 +14,10 @@ const SECTIONS = [
     icon: LayoutGrid,
     iconColor: "bg-blue-500",
     links: [
-      { title: "Sarkari Job Updates", href: "/job", tag: "Daily" },
-      { title: "Exam Results", href: "/result", tag: "Live" },
-      { title: "Admit Card Download", href: "/admit-card" },
-      { title: "Official Answer Keys", href: "/answer-key" },
+      { title: "Sarkari Job Updates", href: "/jobs", tag: "Daily" },
+      { title: "Exam Results", href: "/results", tag: "Live" },
+      { title: "Admit Card Download", href: "/admit-cards" },
+      { title: "Official Answer Keys", href: "/answer-keys" },
       { title: "Syllabus & Guides", href: "/syllabus" },
     ]
   },
@@ -27,9 +27,9 @@ const SECTIONS = [
     icon: History,
     iconColor: "bg-amber-500",
     links: [
-      { title: "Admissions", href: "/admission" },
-      { title: "Scholarships", href: "/scholarship" },
-      { title: "Govt. Schemes", href: "/scheme" },
+      { title: "Admissions & Exams", href: "/exams" },
+      { title: "Scholarships", href: "/scholarships" },
+      { title: "Govt. Schemes", href: "/sarkari-yojana" },
       { title: "Web Stories", href: "/web-stories" },
     ]
   },
