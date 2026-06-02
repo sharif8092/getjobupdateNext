@@ -102,8 +102,8 @@ export const AFFILIATE_PRODUCTS: AffiliateProduct[] = [
     title: 'Apple 2026 MacBook Neo 13',
     author: 'HP',
     image: 'https://m.media-amazon.com/images/I/61dLund7bhL._SL1500_.jpg',
-    price: '₹6500',
-    originalPrice: '₹65000',
+    price: '₹65000',
+    originalPrice: '₹69000',
     rating: 4.7,
     buyLink: 'https://amzn.to/4nWoCcq',
     // ✅ No change — ASIN valid
