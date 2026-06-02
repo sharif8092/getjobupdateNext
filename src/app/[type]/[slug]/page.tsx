@@ -499,6 +499,34 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
       }
     });
   }
+  // --- Smart Tags Generation ---
+  const generatedTags = new Set<string>();
+  if (post.type === 'aziz_job') generatedTags.add('Latest Govt Jobs');
+  else if (post.type === 'aziz_result') generatedTags.add('Sarkari Result');
+  else if (post.type === 'aziz_admit') generatedTags.add('Admit Card');
+  else if (post.type === 'aziz_answerkey') generatedTags.add('Answer Key');
+  else if (post.type === 'aziz_syllabus') generatedTags.add('Syllabus');
+  else if (post.type === 'aziz_admission') generatedTags.add('Admission');
+  
+  if (meta.aziz_department) {
+    const cleanDept = meta.aziz_department.split(/[-(]/)[0].trim();
+    if (cleanDept && cleanDept.length > 2) generatedTags.add(cleanDept);
+  }
+  if (meta.job_type) {
+    generatedTags.add(cleanText(meta.job_type));
+  }
+  if (meta.aziz_qualification) {
+    const quals = meta.aziz_qualification.split(/[,/]/).map((q: string) => cleanText(q).trim()).filter(Boolean);
+    quals.forEach((q: string) => {
+      if (q.toLowerCase() !== 'any') generatedTags.add(`${q} Pass Jobs`);
+    });
+  }
+  if (meta.application_mode) {
+    generatedTags.add(`${cleanText(meta.application_mode)} Form`);
+  }
+  
+  generatedTags.add('Get Job Update');
+  const finalTagsList = Array.from(generatedTags).slice(0, 10).filter(Boolean);
 
   return (
     <div className="w-full font-sans min-h-screen bg-slate-50">
@@ -549,40 +577,40 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
 
           {/* Hero Quick Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
-             <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">🏢 Department</span>
-               <span className="text-white font-black text-sm">{cleanText(meta.aziz_department) || '-'}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-6 mb-8 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
+             <div className="flex flex-col min-w-0">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
+               <span className="text-white font-black text-sm break-words leading-snug">{cleanText(meta.aziz_department) || '-'}</span>
              </div>
-             <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">📋 Vacancy</span>
-               <span className="text-orange-400 font-black text-sm">{cleanText(meta.aziz_total_posts) || '-'}</span>
+             <div className="flex flex-col min-w-0">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📋 Vacancy</span>
+               <span className="text-orange-400 font-black text-sm break-words leading-snug">{cleanText(meta.aziz_total_posts) || '-'}</span>
              </div>
-             <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">🎓 Qualification</span>
-               <span className="text-blue-400 font-black text-sm">{cleanText(meta.aziz_qualification) || '-'}</span>
+             <div className="flex flex-col min-w-0">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🎓 Qualification</span>
+               <span className="text-blue-400 font-black text-sm break-words leading-snug">{cleanText(meta.aziz_qualification) || '-'}</span>
              </div>
-             <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">💰 Salary</span>
-               <span className="text-emerald-400 font-black text-sm">{cleanText(meta.aziz_salary) || '-'}</span>
+             <div className="flex flex-col min-w-0">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💰 Salary</span>
+               <span className="text-emerald-400 font-black text-sm break-words leading-snug">{cleanText(meta.aziz_salary) || '-'}</span>
              </div>
-             <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">⚡ Job Type</span>
-               <span className="text-indigo-400 font-black text-sm">{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
+             <div className="flex flex-col min-w-0">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">⚡ Job Type</span>
+               <span className="text-indigo-400 font-black text-sm break-words leading-snug">{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
              </div>
-             <div className="flex flex-col">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">💻 App Mode</span>
-               <span className="text-purple-400 font-black text-sm">{cleanText(meta.application_mode) || 'Online Form'}</span>
+             <div className="flex flex-col min-w-0">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💻 App Mode</span>
+               <span className="text-purple-400 font-black text-sm break-words leading-snug">{cleanText(meta.application_mode) || 'Online Form'}</span>
              </div>
-             <div className="flex flex-col col-span-2 md:col-span-2">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">📅 Last Date / Status</span>
+             <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-2">
+               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Last Date / Status</span>
                {(() => {
                   const deadlineStr = cleanText(meta.aziz_apply_end);
-                  if (isResult) return <span className="text-emerald-400 font-black text-sm">Result Declared</span>;
-                  if (!deadlineStr) return <span className="text-slate-300 font-black text-sm">-</span>;
+                  if (isResult) return <span className="text-emerald-400 font-black text-sm break-words leading-snug">Result Declared</span>;
+                  if (!deadlineStr) return <span className="text-slate-300 font-black text-sm break-words leading-snug">-</span>;
                   const status = getDeadlineStatus(deadlineStr);
                   const colorClass = status.color === 'green' ? 'text-emerald-400' : status.color === 'yellow' ? 'text-amber-400' : 'text-rose-400';
-                  return <span className={`${colorClass} font-black text-sm`}>{deadlineStr}</span>;
+                  return <span className={`${colorClass} font-black text-sm break-words leading-snug`}>{deadlineStr}</span>;
                })()}
              </div>
           </div>
@@ -626,46 +654,6 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             {/* Top Affiliate Slot */}
             <AffiliateSlot position="before_content" slots={affiliateSlots} fallbackTags={['laptop', 'study-table', 'printer']} department={meta.aziz_department} postType={post.type} />
 
-            {/* Quick Overview Card (Premium Summary) */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
-              <div className="px-5 py-4 bg-slate-900 flex items-center gap-3">
-                 <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest leading-none">Quick Overview</p>
-                    <p className="text-base font-black text-white leading-tight mt-0.5">Recruitment Summary</p>
-                  </div>
-              </div>
-              <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div className="flex flex-col border-b sm:border-b-0 border-slate-100 pb-3 sm:pb-0">
-                  <span className="text-slate-500 font-semibold mb-1">Organization</span>
-                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_department) || '-'}</span>
-                </div>
-                <div className="flex flex-col border-b sm:border-b-0 border-slate-100 pb-3 sm:pb-0">
-                  <span className="text-slate-500 font-semibold mb-1">Vacancy</span>
-                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_total_posts) || '-'}</span>
-                </div>
-                <div className="flex flex-col border-b border-slate-100 pb-3">
-                  <span className="text-slate-500 font-semibold mb-1">Qualification</span>
-                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_qualification) || '-'}</span>
-                </div>
-                <div className="flex flex-col border-b border-slate-100 pb-3">
-                  <span className="text-slate-500 font-semibold mb-1">Age Limit</span>
-                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_age_limit) || '-'}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-slate-500 font-semibold mb-1">Salary</span>
-                  <span className="font-bold text-slate-900">{cleanText(meta.aziz_salary) || '-'}</span>
-                </div>
-                <div className="flex flex-col bg-rose-50 rounded-lg p-2.5 border border-rose-100 items-start justify-center">
-                  <span className="text-rose-700 font-semibold text-xs uppercase tracking-wider mb-1">Last Date</span>
-                  <span className="font-black text-rose-700 text-base">{cleanText(meta.aziz_apply_end) || '-'}</span>
-                </div>
-              </div>
-            </div>
 
 
 
@@ -792,6 +780,25 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                   {/* If position is after_content, integrate them seamlessly at the end of the article text */}
                   {faqPosition === 'after_content' && renderFaq(true)}
                   {howtoPosition === 'after_content' && renderHowTo(true)}
+
+                  {/* Smart Tags Section */}
+                  {finalTagsList.length > 0 && (
+                    <div className="mt-10 pt-8 border-t border-slate-100">
+                      <div className="flex items-center gap-2 mb-4">
+                        <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                        <h3 className="text-sm font-black text-slate-700 uppercase tracking-widest">Related Tags</h3>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {finalTagsList.map((tag, idx) => (
+                          <span key={idx} className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition-colors cursor-default">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
