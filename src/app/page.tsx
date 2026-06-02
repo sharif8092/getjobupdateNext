@@ -5,7 +5,8 @@ import {
   WordPressPost,
   STATES_LIST,
   POST_TYPE_MAP,
-  extractPostMeta
+  extractPostMeta,
+  getDeadlineStatus
 } from '@/lib/wordpress';
 import InteractiveStateBrowser from '@/components/InteractiveStateBrowser';
 import FAQAccordion from '@/components/FAQAccordion';
@@ -60,7 +61,15 @@ function FeedCard({
                   {dept && <div className="col-span-2 flex items-start gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 font-semibold truncate">{dept}</span></div>}
                   {totalPosts && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 font-semibold truncate">{totalPosts}</span></div>}
                   {qual && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 font-semibold truncate">{qual}</span></div>}
-                  {lastDate && <div className="col-span-2 flex items-center gap-1 mt-0.5 pt-1.5 border-t border-slate-200/50 group-hover:border-slate-200"><span className="text-amber-600/70 font-bold shrink-0">Deadline:</span> <span className="text-amber-700 font-bold">{lastDate}</span></div>}
+                  {lastDate && (() => {
+                    const status = getDeadlineStatus(lastDate);
+                    return (
+                      <div className={`col-span-2 flex items-center gap-1 mt-0.5 pt-1.5 border-t border-slate-200/50 group-hover:border-slate-200`}>
+                        <span className={`${status.text} opacity-70 font-bold shrink-0`}>Deadline:</span> 
+                        <span className={`${status.text} font-bold`}>{lastDate}</span>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </Link>
@@ -275,7 +284,15 @@ export default async function HomePage() {
                             {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
                             {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
                             {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
-                            {lastDate && <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100"><span className="text-amber-600/80 font-bold shrink-0">Deadline:</span> <span className="text-amber-700 font-bold">{lastDate}</span></div>}
+                            {lastDate && (() => {
+                              const status = getDeadlineStatus(lastDate);
+                              return (
+                                <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100">
+                                  <span className={`${status.text} opacity-80 font-bold shrink-0`}>Deadline:</span> 
+                                  <span className={`${status.text} font-bold`}>{lastDate}</span>
+                                </div>
+                              );
+                            })()}
                           </div>
                         )}
                       </div>
@@ -314,7 +331,15 @@ export default async function HomePage() {
                             {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
                             {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
                             {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
-                            {lastDate && <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100"><span className="text-amber-600/80 font-bold shrink-0">Deadline:</span> <span className="text-amber-700 font-bold">{lastDate}</span></div>}
+                            {lastDate && (() => {
+                              const status = getDeadlineStatus(lastDate);
+                              return (
+                                <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100">
+                                  <span className={`${status.text} opacity-80 font-bold shrink-0`}>Deadline:</span> 
+                                  <span className={`${status.text} font-bold`}>{lastDate}</span>
+                                </div>
+                              );
+                            })()}
                         </div>
                       )}
                     </div>

@@ -2,7 +2,9 @@ import React from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostsByQualification, QUALIFICATIONS_LIST, POST_TYPE_MAP, WordPressPost } from '@/lib/wordpress';
+import { getPostsByQualification, QUALIFICATIONS_LIST, POST_TYPE_MAP, WordPressPost, extractPostMeta, getDeadlineStatus } from '@/lib/wordpress';
+import PushNotificationCard from '@/components/PushNotificationCard';
+import AffiliateSlot from '@/components/AffiliateSlot';
 
 interface QualArchiveProps {
   params: Promise<{
@@ -16,7 +18,7 @@ export async function generateMetadata({ params }: QualArchiveProps): Promise<Me
   const qualName = qual ? qual.name : slug.replace('-', ' ');
 
   return {
-    title: `Sarkari Jobs for ${qualName} 2026 – Apply Online List`,
+    title: `Sarkari Jobs for ${qualName} 2026 – Apply Online List | Get Job Update`,
     description: `Sabhi active govt vacancies eligibility matching ${qualName}. Check salary scales, age criteria, and apply online links immediately.`,
     alternates: {
       canonical: `/qualification/${slug}`,
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }: QualArchiveProps): Promise<Me
   };
 }
 
-export const revalidate = 300; // Cache qualification archives for 5 minutes
+export const revalidate = 300;
 
 export default async function QualificationArchivePage({ params }: QualArchiveProps) {
   const { slug } = await params;
@@ -35,6 +37,8 @@ export default async function QualificationArchivePage({ params }: QualArchivePr
   }
 
   const qualName = qualObj.name;
+  const categoryEmoji = qualObj.emoji || '🎓';
+  
   let posts: WordPressPost[] = [];
   try {
     posts = await getPostsByQualification(qualName, 30);
@@ -42,154 +46,225 @@ export default async function QualificationArchivePage({ params }: QualArchivePr
     console.error(`Failed to fetch qualification posts for: ${slug}`, err);
   }
 
-  const getBadgeStyles = (postType: string) => {
-    switch (postType) {
-      case 'aziz_job':
-        return { bg: 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-[var(--color-brand-blue)]/20', text: 'Job', emoji: '💼' };
-      case 'aziz_result':
-        return { bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', text: 'Result', emoji: '🏆' };
-      case 'aziz_admit':
-        return { bg: 'bg-amber-500/10 text-amber-500 border-amber-500/20', text: 'Admit Card', emoji: '🎟️' };
-      case 'aziz_yojana':
-        return { bg: 'bg-rose-500/10 text-rose-500 border-rose-500/20', text: 'Yojana', emoji: '🇮🇳' };
-      default:
-        return { bg: 'bg-slate-500/10 text-slate-500 border-slate-500/20', text: 'Update', emoji: '📢' };
+  const schemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": `Sarkari Jobs for ${qualName} 2026`,
+      "description": `Active government jobs and vacancies for candidates with ${qualName} qualifications.`,
+      "url": `https://getjobupdate.co.in/qualification/${slug}`,
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": posts.map((post, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "url": `https://getjobupdate.co.in/${POST_TYPE_MAP[post.type] || 'jobs'}/${post.slug}`,
+          "name": post.title.rendered.replace(/(<([^>]+)>)/gi, "")
+        }))
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://getjobupdate.co.in/" },
+        { "@type": "ListItem", "position": 2, "name": "Qualifications", "item": "https://getjobupdate.co.in/qualification" },
+        { "@type": "ListItem", "position": 3, "name": qualName, "item": `https://getjobupdate.co.in/qualification/${slug}` }
+      ]
     }
-  };
+  ];
 
   return (
-    <div className="w-full bg-slate-50 min-h-screen flex flex-col font-sans">
-      
-      {/* Brand Hero Section */}
-      <div className="bg-slate-900 w-full pt-12 pb-24 md:pb-32 relative overflow-hidden">
-        {/* Decorative Grid */}
-        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#475569 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }} />
+      <div className="w-full bg-slate-50 min-h-screen flex flex-col font-sans">
         
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-1.5 text-[11px] font-black uppercase text-slate-400 mb-6 tracking-widest font-rajdhani">
-            <Link href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
-            <span>›</span>
-            <span>QUALIFICATION ARCHIVE</span>
-            <span>›</span>
-            <span className="text-white">{qualName}</span>
-          </nav>
-
-          <span className="inline-block text-xs font-black font-rajdhani tracking-widest text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full uppercase mb-5">
-            🎓 Eligibility Directory
-          </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-5 uppercase font-rajdhani leading-none">
-            Sarkari Jobs for <span className="text-orange-500">{qualName}</span>
-          </h1>
-          <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium">
-            Explore active central government vacancies and regional recruitment drives matched specifically to candidates possessing {qualName} credentials.
-          </p>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full -mt-12 md:-mt-20 relative z-20 pb-12">
-        
-        {/* Timeline Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Brand Hero Section */}
+        <div className="bg-slate-900 w-full pt-16 pb-28 md:pb-36 relative overflow-hidden">
+          {/* Dot grid */}
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
+          {/* Glow blobs */}
+          <div className="absolute -top-40 -left-40 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-600/8 rounded-full blur-3xl pointer-events-none" />
           
-          {/* Main Feed List (8 Columns) */}
-          <div className="lg:col-span-8 space-y-4">
-            {posts.length > 0 ? (
-              posts.map((post) => {
-                const badge = getBadgeStyles(post.type);
-                const postTypeSlug = POST_TYPE_MAP[post.type] || 'jobs';
-                const totalPosts = post.custom_meta?.aziz_total_posts;
-                const deadline = post.custom_meta?.aziz_apply_end;
-                const department = post.custom_meta?.aziz_department;
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            {/* Breadcrumbs */}
+            <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-1.5 text-[11px] font-black uppercase text-slate-400 mb-6 tracking-widest">
+              <Link href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
+              <span>›</span>
+              <Link href="/qualification" className="hover:text-orange-500 transition-colors">QUALIFICATIONS</Link>
+              <span>›</span>
+              <span className="text-white">{qualName}</span>
+            </nav>
+
+            <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-black text-white leading-[1.1] tracking-tight mb-5 flex items-center justify-center gap-3">
+              <span className="text-4xl md:text-5xl">{categoryEmoji}</span>
+              <span className="text-orange-500">{qualName} Jobs</span>
+            </h1>
+            <p className="text-slate-400 text-sm md:text-base font-medium mb-4 max-w-2xl mx-auto leading-relaxed">
+              Explore active central government vacancies and regional recruitment drives matched specifically to candidates possessing {qualName} credentials.
+            </p>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full -mt-12 md:-mt-20 relative z-20 pb-12">
+          {/* Layout Grid */}
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
+            
+            {/* Left Sidebar */}
+            <aside className="hidden lg:block space-y-6">
+              <div className="sticky top-24 space-y-6">
                 
-                return (
-                  <div 
-                    key={post.id}
-                    className="glass-card flex flex-col md:flex-row gap-4 items-start md:items-center justify-between p-5 rounded-2xl border border-[var(--border)] hover:border-amber-400/40 transition-all duration-300 hover:shadow-md group"
-                  >
-                    <div className="flex-1 space-y-2.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-black uppercase font-rajdhani ${badge.bg}`}>
-                          <span>{badge.emoji}</span>
-                          <span>{badge.text}</span>
-                        </span>
-                        {department && (
-                          <span className="text-[11px] font-semibold text-slate-400">
-                            🏢 {department}
-                          </span>
-                        )}
-                      </div>
-
-                      <Link 
-                        href={`/${postTypeSlug}/${post.slug}`}
-                        className="block text-base md:text-lg font-bold text-[var(--foreground)] group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors"
-                        dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-                      />
-
-                      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-slate-500 font-medium">
-                        {totalPosts && (
-                          <span className="flex items-center gap-1">
-                            <strong>🔢 Posts:</strong> {totalPosts}
-                          </span>
-                        )}
-                        {deadline && (
-                          <span className="flex items-center gap-1">
-                            <strong>📅 Last Date:</strong> {deadline}
-                          </span>
-                        )}
-                        <span className="flex items-center gap-1">
-                          <strong>📍 Location:</strong> {post.custom_meta?.aziz_job_location || 'All India'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <Link
-                      href={`/${postTypeSlug}/${post.slug}`}
-                      className="w-full md:w-auto flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-amber-400 dark:hover:bg-amber-400 hover:text-slate-900 text-white px-5 py-2.5 text-xs font-black font-rajdhani tracking-wider uppercase transition-colors"
-                    >
-                      Details
-                      <span>→</span>
-                    </Link>
+                {/* Explore Categories */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                  <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 font-bold text-slate-900 text-sm">
+                    Browse Qualifications
                   </div>
-                )
-              })
-            ) : (
-              <div className="p-12 text-center border-2 border-dashed border-[var(--border)] rounded-2xl text-slate-400">
-                No active jobs categorized under **{qualName}** in our index right now.
+                  <div className="flex flex-col">
+                    {QUALIFICATIONS_LIST.filter((q) => q.slug !== slug).slice(0, 6).map((qual) => (
+                      <Link
+                        key={qual.slug}
+                        href={`/qualification/${qual.slug}`}
+                        className="px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 text-slate-600 hover:text-orange-600 text-sm font-medium transition-colors flex items-center gap-3"
+                      >
+                        <span className="text-lg">{qual.emoji}</span>
+                        {qual.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <PushNotificationCard />
+                
+                <AffiliateSlot position="sidebar" fallbackTags={['study table', 'laptop']} />
+
               </div>
-            )}
+            </aside>
+
+            {/* Right Main Content */}
+            <div className="space-y-6">
+              
+              {/* Toolbar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <p className="text-sm font-medium text-slate-600">
+                  Showing <span className="font-bold text-slate-900">{posts.length}</span> active records
+                </p>
+                <div className="flex items-center gap-2">
+                  <select className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg px-3 py-2 outline-none focus:border-orange-500 cursor-pointer transition-colors">
+                    <option>Latest Updates</option>
+                    <option>Expiring Soon</option>
+                    <option>Highest Vacancies</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Grid of Posts */}
+              {posts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {posts.map((post) => {
+                    const postTypeSlug = POST_TYPE_MAP[post.type] || 'jobs';
+                    const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
+                    const isNew = (Date.now() - new Date(post.date).getTime()) < 3 * 24 * 60 * 60 * 1000;
+                    
+                    return (
+                      <Link 
+                        key={post.id}
+                        href={`/${postTypeSlug}/${post.slug}`}
+                        className="group flex flex-col bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-orange-200 transition-all duration-300 overflow-hidden h-full relative"
+                      >
+                        {/* Hover Gradient Accent Line */}
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        
+                        <div className="p-5 flex flex-col flex-1">
+                          
+                          <div className="flex items-start justify-between gap-2 mb-3">
+                            <span className="inline-flex items-center gap-1.5 rounded-md bg-orange-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-orange-700 border border-orange-100">
+                              {qualName}
+                            </span>
+                            {isNew && (
+                              <span className="inline-flex items-center rounded bg-rose-500 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-sm">
+                                New
+                              </span>
+                            )}
+                          </div>
+
+                          <h3 
+                            className="text-[15px] font-bold text-slate-900 group-hover:text-orange-600 transition-colors leading-snug line-clamp-3 mb-4"
+                            dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                          />
+
+                          <div className="mt-auto space-y-2.5 pt-4 border-t border-slate-100">
+                            {dept && (
+                              <div className="flex items-start gap-2 text-xs">
+                                <span className="font-bold text-slate-400 shrink-0 w-16">Dept:</span>
+                                <span className="font-semibold text-slate-700 line-clamp-1">{dept}</span>
+                              </div>
+                            )}
+                            {totalPosts && (
+                              <div className="flex items-start gap-2 text-xs">
+                                <span className="font-bold text-slate-400 shrink-0 w-16">Posts:</span>
+                                <span className="font-semibold text-slate-700">{totalPosts} Vacancies</span>
+                              </div>
+                            )}
+                            {qual && (
+                              <div className="flex items-start gap-2 text-xs">
+                                <span className="font-bold text-slate-400 shrink-0 w-16">Eligible:</span>
+                                <span className="font-semibold text-slate-700 line-clamp-1">{qual}</span>
+                              </div>
+                            )}
+                            {lastDate && (() => {
+                              const status = getDeadlineStatus(lastDate);
+                              return (
+                                <div className={`flex items-start gap-2 text-xs px-2.5 py-1.5 rounded-lg mt-2 border ${status.bg} ${status.text} ${status.border}`}>
+                                  <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                  <span className="font-bold">Deadline: {lastDate}</span>
+                                </div>
+                              );
+                            })()}
+                          </div>
+                          
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="p-16 flex flex-col items-center justify-center text-center bg-white border border-dashed border-slate-300 rounded-2xl">
+                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-2xl mb-4">📭</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">No Active Records Found</h3>
+                  <p className="text-slate-500 text-sm max-w-sm">
+                    We currently don't have any active postings under this catalog. Please check back later or subscribe to notifications.
+                  </p>
+                </div>
+              )}
+
+            </div>
           </div>
 
-          {/* Sidebar Navigation */}
-          <aside className="lg:col-span-4 space-y-6">
+          {/* SEO Content Block & Popular Tags */}
+          <div className="mt-16 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-6 md:p-10 mb-12 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-rose-400"></div>
+            <h2 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">Govt Jobs for {qualName} Holders</h2>
+            <div className="prose prose-sm md:prose-base max-w-none text-slate-600 space-y-4">
+              <p>Welcome to the dedicated portal for <strong>{qualName} Government Jobs</strong> in India. At GetJobUpdate, we understand that finding roles tailored to your exact educational background can be challenging. Our system actively categorizes vacancies from UPSC, SSC, Railways, Banking sectors, and State PSCs specifically for candidates with a {qualName}.</p>
+              <p>Ensure you never miss a deadline by bookmarking this page. Every {qualName} vacancy listed above is cross-verified directly with official recruitment boards. Click on any job to view detailed age limits, exact eligibility criteria, syllabus, and official apply online links.</p>
+            </div>
             
-            {/* Quick Browse Qualifications */}
-            <div className="glass-card rounded-2xl border border-[var(--border)] p-6 space-y-4">
-              <h4 className="text-lg font-black font-rajdhani tracking-wider text-[var(--foreground)] uppercase border-b border-[var(--border)] pb-2.5">
-                🎓 Other Qualifications
-              </h4>
-              <div className="flex flex-col gap-2 font-rajdhani font-black text-sm uppercase">
-                {QUALIFICATIONS_LIST.filter((q) => q.slug !== slug).map((qual) => (
-                  <Link
-                    key={qual.slug}
-                    href={`/qualification/${qual.slug}`}
-                    className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-slate-50 dark:bg-slate-900/10 p-3 hover:border-amber-400 hover:text-amber-500 transition-all group"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span>{qual.emoji}</span>
-                      <span>{qual.name}</span>
-                    </span>
-                    <span className="text-xs text-slate-400 font-mono group-hover:text-amber-500">{qual.count} Jobs ›</span>
-                  </Link>
+            <div className="mt-8 pt-8 border-t border-slate-100">
+              <h3 className="font-bold text-slate-900 mb-4 text-sm uppercase tracking-widest flex items-center gap-2">
+                <svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                Trending Qualification Searches
+              </h3>
+              <div className="flex flex-wrap gap-2.5">
+                {QUALIFICATIONS_LIST.slice(0, 8).map((q) => (
+                  <Link key={q.slug} href={`/qualification/${q.slug}`} className="inline-block px-3 py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-colors border border-slate-200 hover:border-orange-200">{q.name} Jobs</Link>
                 ))}
               </div>
             </div>
-
-          </aside>
+          </div>
 
         </div>
-
       </div>
-    </div>
+    </>
   );
 }

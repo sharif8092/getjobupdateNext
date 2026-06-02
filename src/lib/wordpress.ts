@@ -142,6 +142,36 @@ export function extractPostMeta(post: WordPressPost) {
   return { dept, totalPosts, qual, lastDate };
 }
 
+export function getDeadlineStatus(dateString: string | undefined): { color: 'green' | 'yellow' | 'red', bg: string, text: string, border: string } {
+  if (!dateString) return { color: 'green', bg: 'bg-emerald-50/80', text: 'text-emerald-600', border: 'border-emerald-100/50' };
+  
+  // Try to parse the date. Format is usually like "25 Jun 2026", "2026-06-25", etc.
+  const parsedDate = new Date(dateString);
+  if (isNaN(parsedDate.getTime())) {
+    // If we can't parse it (e.g. "To Be Notified"), default to green
+    return { color: 'green', bg: 'bg-emerald-50/80', text: 'text-emerald-600', border: 'border-emerald-100/50' };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to start of day
+  const targetDate = new Date(parsedDate);
+  targetDate.setHours(0, 0, 0, 0);
+  
+  const diffTime = targetDate.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    // Deadline passed
+    return { color: 'red', bg: 'bg-rose-50/80', text: 'text-rose-600', border: 'border-rose-100/50' };
+  } else if (diffDays <= 2) {
+    // <= 2 days left
+    return { color: 'yellow', bg: 'bg-amber-50/80', text: 'text-amber-600', border: 'border-amber-100/50' };
+  } else {
+    // > 2 days left
+    return { color: 'green', bg: 'bg-emerald-50/80', text: 'text-emerald-600', border: 'border-emerald-100/50' };
+  }
+}
+
 // Mapping of custom post types to their rewrite slugs for Next.js routing
 export const POST_TYPE_MAP: Record<string, string> = {
   aziz_job: 'jobs',

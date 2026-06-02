@@ -4,12 +4,14 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts, getAffiliateSettings } from '@/lib/wordpress';
+import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts, getAffiliateSettings, getDeadlineStatus } from '@/lib/wordpress';
 import FAQAccordion from '@/components/FAQAccordion';
 import SyllabusTracker from '@/components/SyllabusTracker';
 import AffiliateSlot from '@/components/AffiliateSlot';
 import AffiliateAd from '@/components/AffiliateAd';
 import RecentPosts from '@/components/RecentPosts';
+import PushNotificationCard from '@/components/PushNotificationCard';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ShareWidget from '@/components/ShareWidget';
 import MobileStickyCTA from '@/components/MobileStickyCTA';
 import TableOfContents from '@/components/TableOfContents';
@@ -519,7 +521,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             { name: post.title.rendered.replace(/<[^>]*>?/gm, ''), url: `/${type}/${slug}` }
           ]} />
 
-          {/* Highlight Badge & Verification */}
+          {/* Highlight Badge, Verification & Language Switcher */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
             <div className="flex flex-wrap items-center gap-3">
               <span className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-black text-white uppercase tracking-widest shadow-lg ${isResult ? 'bg-green-600 shadow-green-600/30' : 'bg-blue-600 shadow-blue-600/30'}`}>
@@ -533,8 +535,12 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                 Verified Source
               </div>
             </div>
-            <div className="flex items-center gap-4 text-xs font-bold text-slate-400">
-               <span className="flex items-center gap-1 hidden sm:flex"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Updated: {modifiedDate}</span>
+            
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher />
+              <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-slate-400">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Updated: {modifiedDate}
+              </div>
             </div>
           </div>
 
@@ -570,7 +576,14 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
              </div>
              <div className="flex flex-col col-span-2 md:col-span-2">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1">📅 Last Date / Status</span>
-               <span className="text-rose-400 font-black text-sm">{isResult ? 'Result Declared' : cleanText(meta.aziz_apply_end) || '-'}</span>
+               {(() => {
+                  const deadlineStr = cleanText(meta.aziz_apply_end);
+                  if (isResult) return <span className="text-emerald-400 font-black text-sm">Result Declared</span>;
+                  if (!deadlineStr) return <span className="text-slate-300 font-black text-sm">-</span>;
+                  const status = getDeadlineStatus(deadlineStr);
+                  const colorClass = status.color === 'green' ? 'text-emerald-400' : status.color === 'yellow' ? 'text-amber-400' : 'text-rose-400';
+                  return <span className={`${colorClass} font-black text-sm`}>{deadlineStr}</span>;
+               })()}
              </div>
           </div>
 
