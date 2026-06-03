@@ -17,8 +17,8 @@ import MobileStickyCTA from '@/components/MobileStickyCTA';
 import TableOfContents from '@/components/TableOfContents';
 import RelatedJobs from '@/components/RelatedJobs';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import Comments from '@/components/Comments';
 import Script from 'next/script';
-
 interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;
 }
@@ -871,6 +871,9 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
             {/* Dynamic Zone: After Related Posts */}
             {faqPosition === 'after_related_posts' && renderFaq()}
+
+            {/* Comments Section */}
+            <Comments postId={post.id} />
 
           </article>
 

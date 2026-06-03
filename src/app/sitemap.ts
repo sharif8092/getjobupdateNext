@@ -74,15 +74,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // Fetch all posts from major types to add to sitemap
-  // We fetch up to 30 recent posts across different categories to keep it lightweight but effective
+  // We automatically fetch up to 500 recent posts per category
   const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_answerkey', 'aziz_yojana'];
   
   for (const type of targetTypes) {
     try {
-      const posts = await getPosts(type, 30);
+      let allPosts: any[] = [];
       const categorySlug = POST_TYPE_MAP[type] || 'jobs';
       
-      posts.forEach((post) => {
+      // Auto-paginate up to 5 pages (100 posts per page = 500 max per category)
+      for (let page = 1; page <= 5; page++) {
+        const posts = await getPosts(type, 100, page);
+        if (!posts || posts.length === 0) break;
+        
+        allPosts = allPosts.concat(posts);
+        
+        // If we got less than 100, it means we reached the last page
+        if (posts.length < 100) break;
+      }
+      
+      allPosts.forEach((post) => {
         routes.push({
           url: `${SITE_URL}/${categorySlug}/${post.slug}`,
           lastModified: new Date(post.modified || post.date),
