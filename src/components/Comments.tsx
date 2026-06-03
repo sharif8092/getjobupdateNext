@@ -49,13 +49,13 @@ export default function Comments({ postId }: CommentsProps) {
     setSubmitMessage({ text: '', type: '' });
 
     try {
-      const res = await fetch(`https://api.getjobupdate.co.in/wp-json/gju/v1/comment`, {
+      const res = await fetch(`/api/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          post_id: postId,
-          author_name: name,
-          author_email: email,
+          postId: postId,
+          name: name,
+          email: email,
           content: content,
         }),
       });
