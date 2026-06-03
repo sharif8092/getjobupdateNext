@@ -535,8 +535,9 @@ export async function getPosts(
     // Map of WP REST endpoints for each CPT
     // Added _fields to optimize payload size based on frontend requirements
     const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state,faq,howto';
-    const endpoint = `/wp-json/wp/v2/${wpType}?per_page=${count}&page=${page}&_fields=${fields}${additionalParams}`;
-    return await fetchWP<WordPressPost[]>(endpoint);
+    // Order by modified to bump updated posts to top, and set revalidate to 60 seconds
+    const endpoint = `/wp-json/wp/v2/${wpType}?per_page=${count}&page=${page}&orderby=modified&_fields=${fields}${additionalParams}`;
+    return await fetchWP<WordPressPost[]>(endpoint, { next: { revalidate: 60 } });
   } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Falling back to Mock Data for ${postTypeSlug}`);
     const mocks = MOCK_POSTS[wpType] || [];

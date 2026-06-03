@@ -267,13 +267,18 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const featuredMedia = (post as any)._embedded?.['wp:featuredmedia']?.[0];
   const featuredImageUrl = featuredMedia?.source_url || null;
 
-  // Helper to clean up corrupted text fields (e.g. RankMath JSON leaking into strings)
+  // Helper to clean up corrupted text fields and strip HTML tags
   const cleanText = (text: any) => {
     if (typeof text !== 'string') return text;
-    if (text.includes('","level":')) {
-      return text.split('","level":')[0].replace(/["{}]/g, '');
+    let cleaned = text;
+    if (cleaned.includes('","level":')) {
+      cleaned = cleaned.split('","level":')[0].replace(/["{}]/g, '');
     }
-    return text;
+    // Remove HTML tags completely so UI doesn't break
+    cleaned = cleaned.replace(/<[^>]*>?/gm, '').trim();
+    // Replace non-breaking spaces
+    cleaned = cleaned.replace(/&nbsp;/g, ' ');
+    return cleaned;
   };
 
   // ─── Render Functions for Dynamic Placement ──────────────────────────────

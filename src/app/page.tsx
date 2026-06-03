@@ -49,7 +49,7 @@ function FeedCard({
       <div className="flex flex-col flex-1 divide-y divide-slate-50">
         {posts.length > 0 ? posts.slice(0, 5).map(post => {
           const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
-          const isNew = (Date.now() - new Date(post.date).getTime()) < 3 * 24 * 60 * 60 * 1000;
+          const isNew = (Date.now() - new Date(post.modified).getTime()) < 3 * 24 * 60 * 60 * 1000;
           return (
             <Link key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
               <div className="flex items-start justify-between gap-2">
@@ -118,12 +118,12 @@ export default async function HomePage() {
 
   const latestNotifications = [...jobs, ...results, ...admits, ...yojanas]
     .map(p => ({ ...p, routePrefix: POST_TYPE_MAP[p.type] || 'blog' }))
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
     .slice(0, 6);
 
   const examGuideUpdates = [...exams]
     .map(p => ({ ...p, routePrefix: POST_TYPE_MAP[p.type] || 'blog' }))
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
     .slice(0, 5);
 
   const categories = [

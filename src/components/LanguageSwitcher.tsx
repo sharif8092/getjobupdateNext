@@ -38,7 +38,7 @@ export default function LanguageSwitcher() {
     (window as any).googleTranslateElementInit = () => {
       new (window as any).google.translate.TranslateElement(
         {
-          pageLanguage: 'en', // base language (could be auto, but en or hi is safe)
+          pageLanguage: 'hi', // base language must be Hindi for English translation to work
           includedLanguages: 'hi,en,mr,bn,te,ta,gu,kn,or,pa,ur',
           layout: (window as any).google.translate.TranslateElement.InlineLayout.SIMPLE,
           autoDisplay: false,
@@ -75,7 +75,8 @@ export default function LanguageSwitcher() {
       gtSelect.dispatchEvent(new Event('change'));
     } else {
       // Fallback if widget hasn't rendered properly but script is loaded
-      document.cookie = `googtrans=/auto/${code}; path=/;`;
+      document.cookie = `googtrans=/hi/${code}; path=/;`;
+      document.cookie = `googtrans=/hi/${code}; path=/; domain=${window.location.hostname};`;
       window.location.reload();
     }
   };
