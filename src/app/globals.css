@@ -449,3 +449,15 @@ body {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
 }
+
+/* ── Hide Google Translate Top Banner & Tooltips ── */
+.goog-te-banner-frame.skiptranslate,
+.VIpgJd-Zvi9od-ORHb-OEVmcd,
+#goog-gt-tt,
+.VIpgJd-Zvi9od-aZ2wEe-wOHMyf,
+.VIpgJd-Zvi9od-ORHb {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}

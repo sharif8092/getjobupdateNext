@@ -18,6 +18,7 @@ import TableOfContents from '@/components/TableOfContents';
 import RelatedJobs from '@/components/RelatedJobs';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import Comments from '@/components/Comments';
+import SidebarNavWidget from '@/components/SidebarNavWidget';
 import Script from 'next/script';
 interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;
@@ -582,43 +583,55 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
 
           {/* Hero Quick Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-6 mb-8 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-6 mb-6 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
              <div className="flex flex-col min-w-0">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
-               <span className="text-white font-black text-sm break-words leading-snug">{cleanText(meta.aziz_department) || '-'}</span>
+               <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
              </div>
              <div className="flex flex-col min-w-0">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📋 Vacancy</span>
-               <span className="text-orange-400 font-black text-sm break-words leading-snug">{cleanText(meta.aziz_total_posts) || '-'}</span>
+               <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_total_posts)}>{cleanText(meta.aziz_total_posts) || '-'}</span>
              </div>
              <div className="flex flex-col min-w-0">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🎓 Qualification</span>
-               <span className="text-blue-400 font-black text-sm break-words leading-snug">{cleanText(meta.aziz_qualification) || '-'}</span>
+               <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_qualification)}>{cleanText(meta.aziz_qualification) || '-'}</span>
              </div>
              <div className="flex flex-col min-w-0">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💰 Salary</span>
-               <span className="text-emerald-400 font-black text-sm break-words leading-snug">{cleanText(meta.aziz_salary) || '-'}</span>
+               <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_salary)}>{cleanText(meta.aziz_salary) || '-'}</span>
              </div>
              <div className="flex flex-col min-w-0">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">⚡ Job Type</span>
-               <span className="text-indigo-400 font-black text-sm break-words leading-snug">{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
+               <span className="text-indigo-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.job_type)}>{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
              </div>
              <div className="flex flex-col min-w-0">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💻 App Mode</span>
-               <span className="text-purple-400 font-black text-sm break-words leading-snug">{cleanText(meta.application_mode) || 'Online Form'}</span>
+               <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.application_mode)}>{cleanText(meta.application_mode) || 'Online Form'}</span>
              </div>
              <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-2">
                <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Last Date / Status</span>
                {(() => {
                   const deadlineStr = cleanText(meta.aziz_apply_end);
-                  if (isResult) return <span className="text-emerald-400 font-black text-sm break-words leading-snug">Result Declared</span>;
-                  if (!deadlineStr) return <span className="text-slate-300 font-black text-sm break-words leading-snug">-</span>;
+                  if (isResult) return <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3">Result Declared</span>;
+                  if (!deadlineStr) return <span className="text-slate-300 font-black text-sm break-words leading-snug line-clamp-3">-</span>;
                   const status = getDeadlineStatus(deadlineStr);
                   const colorClass = status.color === 'green' ? 'text-emerald-400' : status.color === 'yellow' ? 'text-amber-400' : 'text-rose-400';
-                  return <span className={`${colorClass} font-black text-sm break-words leading-snug`}>{deadlineStr}</span>;
+                  return <span className={`${colorClass} font-black text-sm break-words leading-snug line-clamp-3`} title={deadlineStr}>{deadlineStr}</span>;
                })()}
              </div>
           </div>
+
+          {/* Smart Tags (State, Qualification, Category, etc.) */}
+          {finalTagsList && finalTagsList.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-8 max-w-4xl">
+              {finalTagsList.map((tag, idx) => (
+                <span key={idx} className="bg-white/10 hover:bg-white/15 transition-colors cursor-default text-white/90 text-[11px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full border border-white/10 shadow-sm backdrop-blur-sm flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Hero CTAs */}
           <div className="flex flex-wrap gap-3 items-center">
@@ -882,6 +895,10 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
             {/* Affiliate Ad Slot (Replaced Important Links Buttons) */}
             <AffiliateSlot position="sidebar" slots={affiliateSlots} fallbackTags={['study table', 'laptop']} department={meta.aziz_department} postType={post.type} />
+            
+            {/* Sidebar Categories Widget */}
+            <SidebarNavWidget />
+            
             {/* Sidebar Ordering: Jobs -> Results -> Admits */}
             {recentJobs.length > 0 && <RecentPosts posts={recentJobs} title="Latest Jobs" />}
             {recentResults.length > 0 && <RecentPosts posts={recentResults} title="Latest Results" icon="🏆" />}
