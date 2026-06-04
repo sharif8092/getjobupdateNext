@@ -18,7 +18,6 @@ import TableOfContents from '@/components/TableOfContents';
 import RelatedJobs from '@/components/RelatedJobs';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import Comments from '@/components/Comments';
-import SidebarNavWidget from '@/components/SidebarNavWidget';
 import Script from 'next/script';
 interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;
@@ -895,9 +894,6 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
             {/* Affiliate Ad Slot (Replaced Important Links Buttons) */}
             <AffiliateSlot position="sidebar" slots={affiliateSlots} fallbackTags={['study table', 'laptop']} department={meta.aziz_department} postType={post.type} />
-            
-            {/* Sidebar Categories Widget */}
-            <SidebarNavWidget />
             
             {/* Sidebar Ordering: Jobs -> Results -> Admits */}
             {recentJobs.length > 0 && <RecentPosts posts={recentJobs} title="Latest Jobs" />}
