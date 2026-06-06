@@ -108,10 +108,10 @@ export default async function HomePage() {
 
   try {
     const data = await Promise.all([
-      getPosts('aziz_job', 6), getPosts('aziz_result', 6),
-      getPosts('aziz_admit', 6), getPosts('aziz_yojana', 6),
-      getPosts('aziz_syllabus', 6), getPosts('aziz_exam', 4),
-      getPosts('aziz_answerkey', 6)
+      getPosts('aziz_job', 4), getPosts('aziz_result', 4),
+      getPosts('aziz_admit', 4), getPosts('aziz_yojana', 4),
+      getPosts('aziz_syllabus', 4), getPosts('aziz_exam', 4),
+      getPosts('aziz_answerkey', 4)
     ]);
     [jobs, results, admits, yojanas, syllabus, exams, answerkeys] = data;
   } catch (err) { console.error('Failed to fetch posts', err); }
