@@ -281,6 +281,20 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     return cleaned;
   };
 
+  const ensureAbsoluteUrl = (url: any) => {
+    if (!url || typeof url !== 'string') return '';
+    let cleaned = cleanText(url).trim();
+    if (!cleaned) return '';
+    if (!/^https?:\/\//i.test(cleaned) && !cleaned.startsWith('#') && !cleaned.startsWith('/')) {
+      cleaned = 'https://' + cleaned;
+    }
+    return cleaned;
+  };
+
+  const applyLink = ensureAbsoluteUrl(meta.aziz_apply_link);
+  const notificationLink = ensureAbsoluteUrl(meta.aziz_notification);
+  const officialSiteLink = ensureAbsoluteUrl(meta.aziz_official_site);
+
   // ─── Render Functions for Dynamic Placement ──────────────────────────────
   // Function to render an inline affiliate ad from custom plugin data
   const renderInlineAffiliate = (data: any) => {
@@ -634,20 +648,20 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
           {/* Hero CTAs */}
           <div className="flex flex-wrap gap-3 items-center">
-             {meta.aziz_apply_link && (
-                <a href={meta.aziz_apply_link} target="_blank" rel="noopener noreferrer" 
+             {applyLink && (
+                <a href={applyLink} target="_blank" rel="noopener noreferrer" 
                    className={`${isResult ? 'bg-green-600 hover:bg-green-700 shadow-green-600/30' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/30'} w-full sm:w-auto text-base text-white font-black px-8 py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2`}>
                   {isResult ? '🚀 Check Result Online' : 'Apply Now Online'}
                 </a>
              )}
-             {meta.aziz_notification && (
-                <a href={meta.aziz_notification} target="_blank" rel="noopener noreferrer" className="bg-slate-800 text-white font-bold px-6 py-4 rounded-xl hover:bg-slate-700 transition-all border border-slate-700 flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
+             {notificationLink && (
+                <a href={notificationLink} target="_blank" rel="noopener noreferrer" className="bg-slate-800 text-white font-bold px-6 py-4 rounded-xl hover:bg-slate-700 transition-all border border-slate-700 flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
                   Download Notification
                 </a>
              )}
-             {meta.aziz_official_site && (
-                <a href={meta.aziz_official_site} target="_blank" rel="noopener noreferrer" className="bg-transparent text-slate-300 font-bold px-6 py-4 rounded-xl hover:bg-white/5 hover:text-white transition-all border border-slate-700 flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
+             {officialSiteLink && (
+                <a href={officialSiteLink} target="_blank" rel="noopener noreferrer" className="bg-transparent text-slate-300 font-bold px-6 py-4 rounded-xl hover:bg-white/5 hover:text-white transition-all border border-slate-700 flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
                   Official Website
                 </a>
              )}
@@ -1019,9 +1033,9 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
       {/* Mobile Sticky Apply CTA */}
       <MobileStickyCTA
-        applyLink={meta.aziz_apply_link}
-        pdfLink={meta.aziz_notification}
-        officialLink={meta.aziz_official_site}
+        applyLink={applyLink}
+        pdfLink={notificationLink}
+        officialLink={officialSiteLink}
         isResult={isResult}
       />
     </div>
