@@ -33,7 +33,7 @@ function FeedCard({
   return (
     <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-shadow duration-300">
       {/* Header */}
-      <Link href={`/${typeSlug}`} className="flex items-center justify-between px-5 py-3.5 bg-slate-900 group/header">
+      <Link prefetch={false} href={`/${typeSlug}`} className="flex items-center justify-between px-5 py-3.5 bg-slate-900 group/header">
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0 group-hover/header:scale-110 transition-transform`}>
             {icon}
@@ -51,7 +51,7 @@ function FeedCard({
           const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
           const isNew = (Date.now() - new Date(post.modified).getTime()) < 3 * 24 * 60 * 60 * 1000;
           return (
-            <Link key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
+            <Link prefetch={false} key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
               <div className="flex items-start justify-between gap-2">
                 <h3 className={`text-[13px] font-semibold text-slate-800 leading-snug ${hoverText} transition-colors line-clamp-2 flex-1`} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                 {isNew && <span className="text-[9px] font-black text-white bg-rose-500 px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide">New</span>}
@@ -186,7 +186,7 @@ export default async function HomePage() {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
             <span className="text-slate-400 text-xs font-semibold">Trending:</span>
             {['SSC CGL', 'UPSC CSE', 'Railway NTPC', 'SBI PO'].map(t => (
-              <Link key={t} href="#" className="bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl px-4 py-1.5 text-xs font-semibold border border-white/10 hover:border-white/20 transition-all">{t}</Link>
+              <Link prefetch={false} key={t} href="#" className="bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl px-4 py-1.5 text-xs font-semibold border border-white/10 hover:border-white/20 transition-all">{t}</Link>
             ))}
           </div>
         </div>
@@ -198,7 +198,7 @@ export default async function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-14 mb-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map((cat, i) => (
-            <Link key={i} href={cat.href} className="bg-white rounded-2xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.1)] transition-all duration-200 group">
+            <Link prefetch={false} key={i} href={cat.href} className="bg-white rounded-2xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-slate-100 flex items-center gap-3 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.1)] transition-all duration-200 group">
               <div className={`w-10 h-10 rounded-xl ${cat.iconBg} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                 {cat.icon}
               </div>
@@ -267,7 +267,7 @@ export default async function HomePage() {
                   </div>
                   <h3 className="font-black text-white text-sm">Latest Notifications</h3>
                 </div>
-                <Link href="/jobs" className="text-[10px] font-black text-orange-400 uppercase tracking-widest flex items-center gap-1 hover:text-orange-300 transition-colors">
+                <Link prefetch={false} href="/jobs" className="text-[10px] font-black text-orange-400 uppercase tracking-widest flex items-center gap-1 hover:text-orange-300 transition-colors">
                   All <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                 </Link>
               </div>
@@ -275,7 +275,7 @@ export default async function HomePage() {
                 {latestNotifications.length > 0 ? latestNotifications.map((post, idx) => {
                   const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
                   return (
-                    <Link key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-slate-50 px-3 py-3 -mx-1 rounded-xl transition-colors">
+                    <Link prefetch={false} key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-slate-50 px-3 py-3 -mx-1 rounded-xl transition-colors">
                       <span className="text-lg font-black text-slate-100 group-hover:text-orange-200 transition-colors leading-none w-6 shrink-0 text-center">{idx + 1}</span>
                       <div className="min-w-0 flex-1">
                         <h4 className="text-[13px] font-semibold text-slate-700 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
@@ -311,7 +311,7 @@ export default async function HomePage() {
                   </div>
                   <h3 className="font-black text-white text-sm">Exam Guide</h3>
                 </div>
-                <Link href="/exams" className="text-[10px] font-black text-orange-400 uppercase tracking-widest flex items-center gap-1 hover:text-orange-300 transition-colors">
+                <Link prefetch={false} href="/exams" className="text-[10px] font-black text-orange-400 uppercase tracking-widest flex items-center gap-1 hover:text-orange-300 transition-colors">
                   All <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                 </Link>
               </div>
@@ -319,7 +319,7 @@ export default async function HomePage() {
                 {examGuideUpdates.length > 0 ? examGuideUpdates.map((post, idx) => {
                   const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
                   return (
-                  <Link key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-orange-50/80 px-3 py-3 -mx-1 rounded-xl transition-colors">
+                  <Link prefetch={false} key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-orange-50/80 px-3 py-3 -mx-1 rounded-xl transition-colors">
                     <span className="text-lg font-black text-slate-100 group-hover:text-orange-200 transition-colors leading-none w-6 shrink-0 text-center">{idx + 1}</span>
                     <div className="min-w-0 flex-1">
                       <h4 className="text-[13px] font-semibold text-slate-700 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
