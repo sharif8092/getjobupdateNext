@@ -31,7 +31,7 @@ function FeedCard({
   accentColor: string; iconBg: string; icon: React.ReactNode; hoverText?: string;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-shadow duration-300">
+    <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 350px' }} className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-shadow duration-300">
       {/* Header */}
       <Link prefetch={false} href={`/${typeSlug}`} className="flex items-center justify-between px-5 py-3.5 bg-slate-900 group/header">
         <div className="flex items-center gap-3">

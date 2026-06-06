@@ -16,6 +16,10 @@ export async function GET(
 
   const meta = post.custom_meta || {};
   const coverImage = post.seo_meta?.og_image || 'https://getjobupdate.co.in/default-story-bg.jpg';
+  const contentImages = [...(post.content?.rendered || '').matchAll(/<img[^>]+src=["']([^"']+)["']/gi)].map(m => m[1]);
+  const img1 = contentImages[0] || coverImage;
+  const img2 = contentImages[1] || img1;
+  const img3 = contentImages[2] || img2;
   const logo = 'https://getjobupdate.co.in/icon.png';
   const publisher = 'Get Job Update';
   
@@ -161,7 +165,7 @@ export async function GET(
       <!-- Fallback Page 2: Key Details -->
       <amp-story-page id="page2">
         <amp-story-grid-layer template="fill">
-          <amp-img src="${coverImage}" width="720" height="1280" layout="responsive" alt="Details background"></amp-img>
+          <amp-img src="${img1}" width="720" height="1280" layout="responsive" alt="Details background"></amp-img>
         </amp-story-grid-layer>
         <amp-story-grid-layer template="fill">
           <div class="bg-overlay"></div>
@@ -190,7 +194,7 @@ export async function GET(
       <!-- Fallback Page 3: Call to Action -->
       <amp-story-page id="page3">
         <amp-story-grid-layer template="fill">
-          <amp-img src="${coverImage}" width="720" height="1280" layout="responsive" alt="CTA background"></amp-img>
+          <amp-img src="${img2}" width="720" height="1280" layout="responsive" alt="CTA background"></amp-img>
         </amp-story-grid-layer>
         <amp-story-grid-layer template="fill">
           <div class="bg-overlay"></div>
