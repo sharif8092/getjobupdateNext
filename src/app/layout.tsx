@@ -50,11 +50,11 @@ export default function RootLayout({
       className={`${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-brand-accent selection:text-brand-dark">
-        {/* Google Analytics Tag — lazyOnload so it doesn't block rendering */}
+        {/* Google Analytics Tag (Only in Production to prevent localhost cookie warnings) */}
         {process.env.NODE_ENV === 'production' && (
           <>
-            <Script strategy="lazyOnload" src="https://www.googletagmanager.com/gtag/js?id=G-XD4FQTDP9X" />
-            <Script id="google-analytics" strategy="lazyOnload">
+            <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-XD4FQTDP9X" />
+            <Script id="google-analytics" strategy="afterInteractive">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
