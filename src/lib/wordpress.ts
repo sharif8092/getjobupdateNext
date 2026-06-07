@@ -554,7 +554,7 @@ export async function getPostBySlug(
   try {
     const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state,faq,howto';
     const endpoint = `/wp-json/wp/v2/${wpType}?slug=${slug}&_fields=${fields}`;
-    const posts = await fetchWP<WordPressPost[]>(endpoint);
+    const posts = await fetchWP<WordPressPost[]>(endpoint, { next: { revalidate: 60 } });
     return posts.length > 0 ? posts[0] : null;
   } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Falling back to Mock Data for single post: ${slug}`);

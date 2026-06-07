@@ -26,7 +26,7 @@ export default async function WebStoriesArchive() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {posts.map((post) => {
             const meta = post.custom_meta || {};
-            const featuredImage = post.seo_meta?.og_image || 'https://getjobupdate.co.in/default-story-bg.jpg';
+            const featuredImage = (meta as any).web_story_cover || post.seo_meta?.og_image || 'https://getjobupdate.co.in/default-story-bg.jpg';
             
             return (
               <Link 
