@@ -113,6 +113,23 @@ export async function GET(
         publisher-logo-src="${logo}"
         poster-portrait-src="${coverImage}">
       
+      <!-- Page 1: Cover -->
+      <amp-story-page id="page1">
+        <amp-story-grid-layer template="fill">
+          <amp-img src="${(meta as any).web_story_cover || coverImage}" width="720" height="1280" layout="responsive" alt="Cover background"></amp-img>
+        </amp-story-grid-layer>
+        <amp-story-grid-layer template="fill">
+          <div class="bg-overlay"></div>
+        </amp-story-grid-layer>
+        <amp-story-grid-layer template="vertical">
+          <div class="content">
+            <span class="tag">New Notification</span>
+            <h1>${post.title.rendered}</h1>
+            <p>${meta.aziz_department || 'Govt Department'} has released a new recruitment notification.</p>
+          </div>
+        </amp-story-grid-layer>
+      </amp-story-page>
+
       ${Array.isArray((meta as any).web_story_slides) && (meta as any).web_story_slides.length > 0 ? 
         (meta as any).web_story_slides.map((slide: any, index: number) => {
           const slideImage = slide.slide_image || coverImage;
@@ -127,10 +144,10 @@ export async function GET(
             </amp-story-page-outlink>` : '';
 
           return `
-      <!-- Dynamic Slide ${index + 1} -->
-      <amp-story-page id="page${index + 1}">
+      <!-- Dynamic Slide ${index + 2} -->
+      <amp-story-page id="page${index + 2}">
         <amp-story-grid-layer template="fill">
-          <amp-img src="${slideImage}" width="720" height="1280" layout="responsive" alt="Slide ${index + 1} Background"></amp-img>
+          <amp-img src="${slideImage}" width="720" height="1280" layout="responsive" alt="Slide ${index + 2} Background"></amp-img>
         </amp-story-grid-layer>
         <amp-story-grid-layer template="fill">
           <div class="bg-overlay"></div>
@@ -145,27 +162,10 @@ export async function GET(
       </amp-story-page>`;
         }).join('\\n')
       : `
-      <!-- Fallback Page 1: Cover -->
-      <amp-story-page id="page1">
-        <amp-story-grid-layer template="fill">
-          <amp-img src="${coverImage}" width="720" height="1280" layout="responsive" alt="Cover background"></amp-img>
-        </amp-story-grid-layer>
-        <amp-story-grid-layer template="fill">
-          <div class="bg-overlay"></div>
-        </amp-story-grid-layer>
-        <amp-story-grid-layer template="vertical">
-          <div class="content">
-            <span class="tag">New Notification</span>
-            <h1>${post.title.rendered}</h1>
-            <p>${meta.aziz_department || 'Govt Department'} has released a new recruitment notification.</p>
-          </div>
-        </amp-story-grid-layer>
-      </amp-story-page>
-
       <!-- Fallback Page 2: Key Details -->
       <amp-story-page id="page2">
         <amp-story-grid-layer template="fill">
-          <amp-img src="${img1}" width="720" height="1280" layout="responsive" alt="Details background"></amp-img>
+          <amp-img src="${contentImages[0] || coverImage}" width="720" height="1280" layout="responsive" alt="Details background"></amp-img>
         </amp-story-grid-layer>
         <amp-story-grid-layer template="fill">
           <div class="bg-overlay"></div>
