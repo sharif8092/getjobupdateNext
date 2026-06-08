@@ -116,10 +116,30 @@ export async function GET(
       ${Array.isArray((meta as any).web_story_slides) && (meta as any).web_story_slides.length > 0 ? 
         (meta as any).web_story_slides.map((slide: any, index: number) => {
           const slideImage = slide.slide_image || coverImage;
-          const heading = slide.slide_heading || '';
-          const text = slide.slide_text || '';
-          const ctaText = slide.slide_cta_text || 'Read More';
-          const ctaLink = slide.slide_cta_link || '';
+          let heading = slide.slide_heading || '';
+          let text = slide.slide_text || '';
+          let ctaText = slide.slide_cta_text || '';
+          let ctaLink = slide.slide_cta_link || '';
+          
+          // Smart Auto-fill if user left fields blank
+          if (!heading) {
+            if (index === 0) heading = post.title.rendered.replace(/<[^>]+>/g, '');
+            else if (index === 1) heading = meta.aziz_total_posts ? `${meta.aziz_total_posts}` : 'Vacancy Details';
+            else if (index === 2) heading = meta.aziz_apply_end ? `Last Date: ${meta.aziz_apply_end}` : 'Important Dates';
+            else heading = 'Latest Update';
+          }
+          if (!text) {
+            if (index === 0) text = `${meta.aziz_department || 'Govt Department'} has released a new recruitment notification.`;
+            else if (index === 1) text = `Qualification: ${meta.aziz_qualification || 'Check Notification'}\\nAge Limit: ${meta.aziz_age_limit || 'As per rules'}\\nSalary: ${meta.aziz_salary || 'As per norms'}`;
+            else if (index === 2) text = `Don't miss out on this opportunity. Read the full syllabus, exam pattern, and apply online before the deadline.`;
+            else text = `Visit our website to get the complete details and official notification link.`;
+          }
+          if (!ctaText) {
+             ctaText = index === 2 ? 'Apply Now / Details' : 'Read More';
+          }
+          if (!ctaLink) {
+             ctaLink = canonicalUrl;
+          }
           
           const ctaHtml = ctaLink ? `
             <amp-story-page-outlink layout="nodisplay">

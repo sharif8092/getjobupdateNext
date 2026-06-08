@@ -8,11 +8,10 @@ import {
   extractPostMeta,
   getDeadlineStatus
 } from '@/lib/wordpress';
-import InteractiveStateBrowser from '@/components/InteractiveStateBrowser';
+import { InteractiveStateBrowser, AgeCalculator, JobMatcher } from '@/components/DynamicWrappers';
+
 import FAQAccordion from '@/components/FAQAccordion';
 import PushNotificationCard from '@/components/PushNotificationCard';
-import AgeCalculator from '@/components/AgeCalculator';
-import JobMatcher from '@/components/JobMatcher';
 import LiveSearch from '@/components/LiveSearch';
 
 const HOME_FAQS = [

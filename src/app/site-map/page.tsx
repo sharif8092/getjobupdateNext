@@ -71,7 +71,7 @@ const SECTIONS = [
 
 export default function SiteMapPage() {
   return (
-    <>
+    <div className="flex-1 w-full flex flex-col bg-slate-50 font-sans">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -95,7 +95,7 @@ export default function SiteMapPage() {
           }),
         }}
       />
-      <header className="relative bg-[#0b1120] border-b border-slate-800 pt-16 pb-12 sm:pt-24 sm:pb-20 overflow-hidden font-sans">
+      <header className="relative bg-[#0b1120] border-b border-slate-800 pt-16 pb-12 sm:pt-24 sm:pb-20 overflow-hidden font-sans shrink-0">
         <div className="absolute inset-0 opacity-[0.035] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle at 1px 1px,white 1px,transparent 0)`, backgroundSize: '28px 28px' }} />
         <div className="absolute -top-20 -left-20 w-72 h-72 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-60 h-60 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -114,7 +114,7 @@ export default function SiteMapPage() {
         </div>
       </header>
 
-      <main className="container mx-auto max-w-7xl px-4 py-16 sm:py-24 group/main font-sans bg-slate-50">
+      <div className="container mx-auto max-w-7xl px-4 py-16 sm:py-24 group/main flex-1">
         <div className="space-y-0">
           {SECTIONS.map((section, idx) => (
             <section key={idx} className="group relative border-b border-slate-200 py-12 sm:py-16 transition-all duration-500 hover:z-10 hover:bg-white hover:opacity-100 group-hover/main:opacity-50">
@@ -130,7 +130,7 @@ export default function SiteMapPage() {
                   {section.links.map((link, linkIdx) => (
                     <Link key={linkIdx} href={link.href} className="glass-card group/link flex items-center justify-between p-4 rounded-xl border border-[var(--border)] hover:border-orange-400 hover:shadow-md transition-all bg-white">
                       <div className="flex items-center gap-3">
-                        <span className="w-2 h-2 rounded-full bg-slate-300 group-hover/link:bg-orange-500 transition-all"></span>
+                         <span className="w-2 h-2 rounded-full bg-slate-300 group-hover/link:bg-orange-500 transition-all"></span>
                         <span className="text-[15px] font-black text-slate-700 group-hover/link:text-orange-600 transition-colors font-rajdhani uppercase tracking-wide">{link.title}</span>
                       </div>
                       {link.tag ? (
@@ -147,7 +147,7 @@ export default function SiteMapPage() {
             </section>
           ))}
         </div>
-      </main>
-    </>
+      </div>
+    </div>
   );
 }
