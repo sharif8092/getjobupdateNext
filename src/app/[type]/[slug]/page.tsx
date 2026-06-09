@@ -128,7 +128,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     ? (post.howto as any).blocks
     : (((post.howto as any)?.items && Array.isArray((post.howto as any).items) && (post.howto as any).items.length > 0)
       ? [{ parsed: (post.howto as any).items }]
-      : (meta.howtos || []));
+      : (Array.isArray(meta.howtos) && meta.howtos.length > 0 ? [{ parsed: meta.howtos }] : []));
   
   const hasRankMathToc = !!meta.rank_math_toc_html;
   const { headings, content: processedHtml } = processContentAndHeadings(post.content.rendered, post.title.rendered.replace(/<[^>]*>?/gm, ''));
