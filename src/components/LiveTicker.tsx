@@ -22,7 +22,11 @@ export default function LiveTicker() {
         .catch(() => {});
     };
 
-    fetchTicker();
+    if (document.readyState === 'complete') {
+      setTimeout(fetchTicker, 1500);
+    } else {
+      window.addEventListener('load', () => setTimeout(fetchTicker, 1500), { once: true });
+    }
   }, []);
 
   if (posts.length === 0) {
