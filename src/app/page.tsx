@@ -8,7 +8,9 @@ import {
   extractPostMeta,
   getDeadlineStatus
 } from '@/lib/wordpress';
-import { InteractiveStateBrowser, AgeCalculator, JobMatcher } from '@/components/DynamicWrappers';
+import InteractiveStateBrowser from '@/components/InteractiveStateBrowser';
+import AgeCalculator from '@/components/AgeCalculator';
+import JobMatcher from '@/components/JobMatcher';
 
 import FAQAccordion from '@/components/FAQAccordion';
 import PushNotificationCard from '@/components/PushNotificationCard';
