@@ -108,6 +108,10 @@ export function extractPostMeta(post: WordPressPost) {
   let qual = cleanMetaText(post.custom_meta?.aziz_qualification);
   let lastDate = cleanMetaText(post.custom_meta?.aziz_apply_end);
 
+  if (post.type !== 'web-story') {
+    return { dept, totalPosts, qual, lastDate };
+  }
+
   const title = post.title?.rendered || '';
   const excerpt = post.excerpt?.rendered || '';
   const textContent = `${title} ${excerpt}`.replace(/<[^>]+>/g, '').replace(/&#\d+;/g, ' ');
