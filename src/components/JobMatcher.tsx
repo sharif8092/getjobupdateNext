@@ -146,7 +146,7 @@ export default function JobMatcher() {
                 
                 {/* 1. Academic Qualification */}
                 <div className="flex flex-col gap-2 group/input">
-                  <label htmlFor="jm-qual" className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest group-focus-within/input:text-orange-500 transition-colors">🎓 Academic Background</label>
+                  <label htmlFor="jm-qual" className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest group-focus-within/input:text-orange-600 transition-colors">🎓 Academic Background</label>
                   <div className="relative">
                     <select
                       id="jm-qual"
@@ -160,14 +160,14 @@ export default function JobMatcher() {
                         <option key={q.slug} value={q.slug}>{q.name}</option>
                       ))}
                     </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">▼</div>
                   </div>
                 </div>
 
                 {/* Grid of Category and Age */}
                 <div className="grid grid-cols-2 gap-5">
                   <div className="flex flex-col gap-2 group/input">
-                    <label htmlFor="jm-category" className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest group-focus-within/input:text-orange-500 transition-colors">🛡️ Category</label>
+                    <label htmlFor="jm-category" className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest group-focus-within/input:text-orange-600 transition-colors">🛡️ Category</label>
                     <div className="relative">
                       <select
                         id="jm-category"
@@ -180,12 +180,12 @@ export default function JobMatcher() {
                         <option value="SC">SC</option>
                         <option value="ST">ST</option>
                       </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">▼</div>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-2 group/input">
-                    <label htmlFor="jm-age" className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest group-focus-within/input:text-orange-500 transition-colors">📅 Age (Years)</label>
+                    <label htmlFor="jm-age" className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest group-focus-within/input:text-orange-600 transition-colors">📅 Age (Years)</label>
                     <input
                       id="jm-age"
                       required
@@ -201,7 +201,7 @@ export default function JobMatcher() {
 
                 {/* State of Residence */}
                 <div className="flex flex-col gap-2 group/input">
-                  <label htmlFor="jm-state" className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest group-focus-within/input:text-orange-500 transition-colors">📍 State of Residence</label>
+                  <label htmlFor="jm-state" className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest group-focus-within/input:text-orange-600 transition-colors">📍 State of Residence</label>
                   <div className="relative">
                     <select
                       id="jm-state"
@@ -215,7 +215,7 @@ export default function JobMatcher() {
                         <option key={s.slug} value={s.slug}>{s.name}</option>
                       ))}
                     </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">▼</div>
                   </div>
                 </div>
 
@@ -255,7 +255,7 @@ export default function JobMatcher() {
 
                 <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar relative z-10">
                   {!hasSearched ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 animate-in fade-in duration-700">
+                    <div className="h-full flex flex-col items-center justify-center text-center text-slate-500 animate-in fade-in duration-700">
                       <div className="w-20 h-20 mb-6 bg-white shadow-sm rounded-full flex items-center justify-center border border-slate-100">
                         <span className="text-4xl filter drop-shadow-sm">📋</span>
                       </div>
@@ -263,12 +263,12 @@ export default function JobMatcher() {
                       <p className="text-sm font-medium text-slate-500 max-w-sm">We will analyze official age limits and categories instantly when you search.</p>
                     </div>
                   ) : loading ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 space-y-4">
+                    <div className="h-full flex flex-col items-center justify-center text-center text-slate-500 space-y-4">
                       <div className="relative">
                         <div className="h-12 w-12 rounded-full border-4 border-orange-200"></div>
                         <div className="h-12 w-12 rounded-full border-4 border-orange-500 border-t-transparent animate-spin absolute inset-0"></div>
                       </div>
-                      <p className="text-sm font-black font-rajdhani tracking-widest uppercase text-orange-500 animate-pulse">Running Scripts...</p>
+                      <p className="text-sm font-black font-rajdhani tracking-widest uppercase text-orange-600 animate-pulse">Running Scripts...</p>
                     </div>
                   ) : matchedJobs.length > 0 ? (
                     <div className="space-y-4">
@@ -301,7 +301,7 @@ export default function JobMatcher() {
                             
                             <Link
                               href={`/${postTypeSlug}/${post.slug}`}
-                              className="w-full sm:w-auto text-center shrink-0 rounded-xl bg-orange-50 hover:bg-orange-500 text-orange-600 hover:text-white font-rajdhani font-black text-[13px] px-5 py-3 uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-sm border border-orange-100 hover:border-orange-500"
+                              className="w-full sm:w-auto text-center shrink-0 rounded-xl bg-orange-50 hover:bg-orange-600 text-orange-600 hover:text-white font-rajdhani font-black text-[13px] px-5 py-3 uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-sm border border-orange-100 hover:border-orange-600"
                             >
                               Check
                             </Link>

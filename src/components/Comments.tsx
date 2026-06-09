@@ -111,7 +111,7 @@ export default function Comments({ postId }: CommentsProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 pl-1">Name <span className="text-rose-500">*</span></label>
+              <label className="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2 pl-1">Name <span className="text-rose-500">*</span></label>
               <input 
                 type="text" 
                 required
@@ -122,7 +122,7 @@ export default function Comments({ postId }: CommentsProps) {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 pl-1">Email <span className="text-rose-500">*</span></label>
+              <label className="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2 pl-1">Email <span className="text-rose-500">*</span></label>
               <input 
                 type="email" 
                 required
@@ -135,7 +135,7 @@ export default function Comments({ postId }: CommentsProps) {
           </div>
 
           <div className="mb-6">
-            <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 pl-1">Your Message <span className="text-rose-500">*</span></label>
+            <label className="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2 pl-1">Your Message <span className="text-rose-500">*</span></label>
             <textarea 
               required
               rows={3}
@@ -176,7 +176,7 @@ export default function Comments({ postId }: CommentsProps) {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-4">
             <div className="w-10 h-10 border-4 border-slate-200 border-t-orange-600 rounded-full animate-spin"></div>
-            <p className="text-slate-400 text-sm font-medium animate-pulse">Loading comments...</p>
+            <p className="text-slate-500 text-sm font-medium animate-pulse">Loading comments...</p>
           </div>
         ) : comments.length > 0 ? (
           <div className="space-y-8">

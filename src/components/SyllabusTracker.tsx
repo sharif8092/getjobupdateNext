@@ -103,7 +103,7 @@ export default function SyllabusTracker({ keySlug }: SyllabusTrackerProps) {
               {subject.title}
             </h5>
             
-            <div className="space-y-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="space-y-2 text-xs font-semibold text-slate-500 dark:text-slate-500">
               {subject.topics.map((topic, tIdx) => {
                 const isChecked = !!checkedTopics[topic];
                 return (
@@ -117,7 +117,7 @@ export default function SyllabusTracker({ keySlug }: SyllabusTrackerProps) {
                       onChange={() => toggleTopic(topic)}
                       className="rounded border-[var(--border)] text-emerald-500 focus:ring-emerald-500/20 cursor-pointer h-3.5 w-3.5"
                     />
-                    <span className={isChecked ? 'line-through text-slate-400 dark:text-slate-600' : ''}>
+                    <span className={isChecked ? 'line-through text-slate-500 dark:text-slate-600' : ''}>
                       {topic}
                     </span>
                   </label>

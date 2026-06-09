@@ -29,7 +29,7 @@ export default function MobileStickyCTA({ applyLink, pdfLink, officialLink, isRe
           href={applyLink}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex-1 flex flex-col items-center justify-center gap-0.5 text-white font-bold text-[10px] rounded-lg py-1.5 transition-colors shadow-sm ${isResult ? 'bg-green-600 hover:bg-green-700' : 'bg-orange-500 hover:bg-orange-600'}`}
+          className={`flex-1 flex flex-col items-center justify-center gap-0.5 text-white font-bold text-[10px] rounded-lg py-1.5 transition-colors shadow-sm ${isResult ? 'bg-green-700 hover:bg-green-800' : 'bg-orange-700 hover:bg-orange-800'}`}
         >
           {isResult ? (
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

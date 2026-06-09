@@ -122,7 +122,7 @@ export default function AgeCalculator({ applyEnd = '', ageLimitStr = '18-30', de
         <h4 className="text-2xl md:text-3xl font-black font-rajdhani uppercase tracking-wide text-slate-900 dark:text-white">
           Sarkari Age Calculator
         </h4>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-500 dark:text-slate-500">
           Check if you fit the age criteria on the official cut-off date (<strong>{applyEnd || 'notice date'}</strong>).
         </p>
       </div>
@@ -172,11 +172,11 @@ export default function AgeCalculator({ applyEnd = '', ageLimitStr = '18-30', de
       {calculated && result && (
         <div className="relative z-10 pt-6 mt-6 border-t border-slate-200 dark:border-slate-800 space-y-4 animate-fade-in text-xs font-baloo max-w-xl mx-auto">
           <div className="text-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/60 dark:to-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
-            <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest block font-rajdhani mb-2">
+            <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest block font-rajdhani mb-2">
               Your precise age on Cut-Off Date
             </span>
             <div className="text-2xl md:text-3xl font-black font-rajdhani text-slate-900 dark:text-white tracking-wide">
-              <span className="text-orange-600">{result.years}</span> Yrs <span className="text-slate-300 mx-1">|</span> <span className="text-orange-600">{result.months}</span> Mos <span className="text-slate-300 mx-1">|</span> <span className="text-orange-600">{result.days}</span> Days
+              <span className="text-orange-600">{result.years}</span> Yrs <span className="text-slate-400 mx-1">|</span> <span className="text-orange-600">{result.months}</span> Mos <span className="text-slate-400 mx-1">|</span> <span className="text-orange-600">{result.days}</span> Days
             </div>
           </div>
 
@@ -198,7 +198,7 @@ export default function AgeCalculator({ applyEnd = '', ageLimitStr = '18-30', de
 
       {/* Age Relaxation Quick Guide */}
       <div className="relative z-10 mt-10 pt-8 border-t border-slate-200/60 max-w-2xl mx-auto hidden sm:block">
-        <h5 className="text-[11px] font-black font-rajdhani uppercase tracking-widest text-slate-400 text-center mb-5">Standard Sarkari Age Relaxations</h5>
+        <h5 className="text-[11px] font-black font-rajdhani uppercase tracking-widest text-slate-500 text-center mb-5">Standard Sarkari Age Relaxations</h5>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white/50 backdrop-blur-sm border border-slate-200/80 rounded-2xl p-4 text-center shadow-sm hover:border-orange-300 transition-colors">
             <div className="text-orange-600 font-black text-xl mb-1">+3 Yrs</div>

@@ -20,12 +20,12 @@ export default function AffiliateShowcase() {
             <h2 className="text-2xl md:text-3xl font-extrabold font-rajdhani text-[var(--foreground)] uppercase mt-2">
               Best Preparation Books & Syllabus Guides
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Boost your selection chances with top-rated guide books curated by verified academic experts.
             </p>
           </div>
           
-          <span className="text-xs font-semibold text-slate-400 mt-2 md:mt-0 font-rajdhani uppercase tracking-wider block">
+          <span className="text-xs font-semibold text-slate-500 mt-2 md:mt-0 font-rajdhani uppercase tracking-wider block">
             ⭐ 4.5+ Average Rating
           </span>
         </div>
@@ -65,7 +65,7 @@ export default function AffiliateShowcase() {
                         </svg>
                       ))}
                     </div>
-                    <span className="text-[10px] font-bold text-slate-400 font-mono">
+                    <span className="text-[10px] font-bold text-slate-500 font-mono">
                       {book.rating}
                     </span>
                   </div>
@@ -75,13 +75,13 @@ export default function AffiliateShowcase() {
                     <h3 className="font-rajdhani font-black text-base text-[var(--foreground)] uppercase leading-tight line-clamp-2 group-hover:text-amber-500 transition-colors">
                       {book.title}
                     </h3>
-                    <p className="text-[11px] font-bold text-slate-400 font-rajdhani uppercase tracking-wide">
+                    <p className="text-[11px] font-bold text-slate-500 font-rajdhani uppercase tracking-wide">
                       By {book.author}
                     </p>
                   </div>
 
                   {/* Description snippet */}
-                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-500 line-clamp-2 leading-relaxed">
                     {book.description}
                   </p>
                 </div>
@@ -90,7 +90,7 @@ export default function AffiliateShowcase() {
               {/* Price and CTA Block */}
               <div className="pt-4 border-t border-[var(--border)] mt-4 flex items-center justify-between gap-2">
                 <div className="flex flex-col">
-                  <span className="text-sm font-black font-rajdhani text-slate-400 line-through leading-none">
+                  <span className="text-sm font-black font-rajdhani text-slate-500 line-through leading-none">
                     {book.originalPrice}
                   </span>
                   <span className="text-xl font-black font-rajdhani text-emerald-600 dark:text-emerald-400 leading-none mt-1">

@@ -46,7 +46,7 @@ export default function LiveSearch() {
     <div className="relative w-full max-w-3xl mx-auto" ref={containerRef}>
       <form action="/search" className="bg-white rounded-2xl p-2 flex items-center shadow-2xl border border-slate-100 relative z-20">
         <div className="flex-1 flex items-center pl-4 border-r border-slate-200">
-          <svg className={`w-5 h-5 shrink-0 ${isPending ? 'text-orange-500 animate-spin' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className={`w-5 h-5 shrink-0 ${isPending ? 'text-orange-500 animate-spin' : 'text-slate-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             {isPending ? (
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             ) : (
@@ -62,11 +62,11 @@ export default function LiveSearch() {
             onFocus={() => { if (results.length > 0) setIsOpen(true); }}
             aria-label="Search jobs" 
             placeholder="Search by job title or organization..." 
-            className="w-full px-3 py-2.5 outline-none text-slate-800 bg-transparent text-sm font-medium placeholder:text-slate-400" 
+            className="w-full px-3 py-2.5 outline-none text-slate-800 bg-transparent text-sm font-medium placeholder:text-slate-500" 
           />
         </div>
         <div className="hidden sm:flex items-center px-4 w-44 border-r border-slate-200 cursor-pointer gap-2">
-          <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          <svg className="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
           <select 
             name="state" 
             value={stateFilter}
@@ -88,7 +88,7 @@ export default function LiveSearch() {
       {isOpen && results.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden z-50 text-left">
           <div className="p-2 flex flex-col">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-3 py-2">Instant Results</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 px-3 py-2">Instant Results</span>
             {results.map((post) => {
               const typeSlug = POST_TYPE_MAP[post.type] || 'jobs';
               return (

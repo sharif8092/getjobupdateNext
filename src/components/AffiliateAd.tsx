@@ -82,7 +82,7 @@ export default function AffiliateAd({ tags, customProduct, globalAmazonId, varia
                   <p className="hidden sm:block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Our Price</p>
                   <div className="flex items-baseline gap-1 sm:gap-2">
                     <span className="text-base sm:text-2xl font-black text-slate-900 tracking-tight leading-none">{book.price}</span>
-                    {book.originalPrice && <span className="text-[9px] sm:text-[12px] font-bold text-slate-400 line-through">{book.originalPrice}</span>}
+                    {book.originalPrice && <span className="text-[9px] sm:text-[12px] font-bold text-slate-500 line-through">{book.originalPrice}</span>}
                   </div>
                 </div>
                 <a href={book.buyLink} target="_blank" rel="noopener noreferrer" className="bg-[#1849d6] hover:bg-blue-800 text-white px-3 sm:px-6 py-1.5 sm:py-3 rounded-[6px] sm:rounded-[12px] font-black text-[10px] sm:text-[12px] tracking-wide uppercase transition-all shadow-md sm:shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1.5 group shrink-0">
@@ -129,7 +129,7 @@ export default function AffiliateAd({ tags, customProduct, globalAmazonId, varia
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="text-[14px] sm:text-[17px] font-black text-slate-900">{book.price}</span>
                 {book.originalPrice && (
-                  <span className="text-[11px] sm:text-[12px] font-bold text-slate-400 line-through">{book.originalPrice}</span>
+                  <span className="text-[11px] sm:text-[12px] font-bold text-slate-500 line-through">{book.originalPrice}</span>
                 )}
               </div>
             </div>

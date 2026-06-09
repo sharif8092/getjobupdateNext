@@ -52,10 +52,10 @@ export default async function RelatedJobs({ department, qualification, postType 
             <Link key={post.id} href={`/${typeSlug}/${post.slug}`} className={`group bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[140px] ${isResult ? 'hover:border-green-300' : 'hover:border-orange-300'}`}>
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`text-[10px] font-black text-white px-2 py-0.5 rounded uppercase tracking-wider ${isResult ? 'bg-green-500' : 'bg-orange-500'}`}>
+                  <span className={`text-[10px] font-black text-white px-2 py-0.5 rounded uppercase tracking-wider ${isResult ? 'bg-green-700' : 'bg-orange-700'}`}>
                     {isResult ? 'RESULT' : (meta.aziz_badge_type || 'JOB')}
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400">
+                  <span className="text-[10px] font-bold text-slate-500">
                     {new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                   </span>
                 </div>
