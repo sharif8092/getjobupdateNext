@@ -3,17 +3,14 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import OneSignalInit from '@/components/OneSignalInit'; // Kept static if it needs immediate init, but wait, let's make them dynamic
+import OneSignalInit from '@/components/OneSignalInit';
+import LiveTicker from '@/components/LiveTicker';
 import FloatingSocial from '@/components/FloatingSocial';
-import dynamic from 'next/dynamic';
-
-const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
-const OneSignalInitDynamic = dynamic(() => import('@/components/OneSignalInit'));
 
 // Load Inter Google Font for maximum readability and a clean, premium look
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-sans', display: 'swap',
   display: 'swap',
 });
 
@@ -76,7 +73,7 @@ export default function RootLayout({
           </>
         )}
         
-        <OneSignalInitDynamic />
+        <OneSignalInit />
         <LiveTicker />
         <Navbar />
         <main className="flex-1 w-full flex flex-col">

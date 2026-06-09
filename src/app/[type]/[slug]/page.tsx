@@ -5,25 +5,20 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts, getAffiliateSettings, getDeadlineStatus } from '@/lib/wordpress';
-import dynamic from 'next/dynamic';
-import Script from 'next/script';
-
-// Static Server Components (Keep static)
+import FAQAccordion from '@/components/FAQAccordion';
+import SyllabusTracker from '@/components/SyllabusTracker';
 import AffiliateSlot from '@/components/AffiliateSlot';
 import AffiliateAd from '@/components/AffiliateAd';
 import RecentPosts from '@/components/RecentPosts';
+import PushNotificationCard from '@/components/PushNotificationCard';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import ShareWidget from '@/components/ShareWidget';
+import MobileStickyCTA from '@/components/MobileStickyCTA';
+import TableOfContents from '@/components/TableOfContents';
 import RelatedJobs from '@/components/RelatedJobs';
 import Breadcrumbs from '@/components/Breadcrumbs';
-
-// Heavy Client Components (Lazy loaded)
-const FAQAccordion = dynamic(() => import('@/components/FAQAccordion'));
-const SyllabusTracker = dynamic(() => import('@/components/SyllabusTracker'));
-const PushNotificationCard = dynamic(() => import('@/components/PushNotificationCard'));
-const LanguageSwitcher = dynamic(() => import('@/components/LanguageSwitcher'));
-const ShareWidget = dynamic(() => import('@/components/ShareWidget'));
-const MobileStickyCTA = dynamic(() => import('@/components/MobileStickyCTA'));
-const TableOfContents = dynamic(() => import('@/components/TableOfContents'));
-const Comments = dynamic(() => import('@/components/Comments'));
+import Comments from '@/components/Comments';
+import Script from 'next/script';
 interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;
 }

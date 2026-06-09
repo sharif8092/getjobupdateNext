@@ -9,11 +9,10 @@ import {
   getDeadlineStatus
 } from '@/lib/wordpress';
 import { InteractiveStateBrowser, AgeCalculator, JobMatcher } from '@/components/DynamicWrappers';
-import dynamic from 'next/dynamic';
 
-const FAQAccordion = dynamic(() => import('@/components/FAQAccordion'));
-const PushNotificationCard = dynamic(() => import('@/components/PushNotificationCard'));
-const LiveSearch = dynamic(() => import('@/components/LiveSearch'));
+import FAQAccordion from '@/components/FAQAccordion';
+import PushNotificationCard from '@/components/PushNotificationCard';
+import LiveSearch from '@/components/LiveSearch';
 
 const HOME_FAQS = [
   { q: 'What is Get Job Update and how does it help candidates?', a: 'Get Job Update is India\'s most trusted portal for the latest <strong>Sarkari Naukri</strong>, <strong>Free Job Alerts</strong>, and government exam updates. We aggregate official notifications, admit cards, and results into one easy-to-use platform.' },
@@ -54,18 +53,18 @@ function FeedCard({
             <Link prefetch={false} key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
               <div className="flex items-start justify-between gap-2">
                 <h3 className={`text-[13px] font-semibold text-slate-800 leading-snug ${hoverText} transition-colors line-clamp-2 flex-1`} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                {isNew && <span className="text-[9px] font-black text-white bg-rose-600 px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide">New</span>}
+                {isNew && <span className="text-[9px] font-black text-white bg-rose-500 px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide">New</span>}
               </div>
               {(dept || totalPosts || qual || lastDate) && (
                 <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-1.5 text-[10px] font-medium text-slate-500 bg-slate-50/50 group-hover:bg-white p-2.5 rounded-lg border border-slate-100 group-hover:border-slate-200 transition-colors">
-                  {dept && <div className="col-span-2 flex items-start gap-1"><span className="text-slate-500 font-bold shrink-0">Dept:</span> <span className="text-slate-700 font-semibold truncate">{dept}</span></div>}
-                  {totalPosts && <div className="flex items-center gap-1"><span className="text-slate-500 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 font-semibold truncate">{totalPosts}</span></div>}
-                  {qual && <div className="flex items-center gap-1"><span className="text-slate-500 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 font-semibold truncate">{qual}</span></div>}
+                  {dept && <div className="col-span-2 flex items-start gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 font-semibold truncate">{dept}</span></div>}
+                  {totalPosts && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 font-semibold truncate">{totalPosts}</span></div>}
+                  {qual && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 font-semibold truncate">{qual}</span></div>}
                   {lastDate && (() => {
                     const status = getDeadlineStatus(lastDate);
                     return (
                       <div className={`col-span-2 flex items-center gap-1 mt-0.5 pt-1.5 border-t border-slate-200/50 group-hover:border-slate-200`}>
-                        <span className={`${status.text} font-bold shrink-0`}>Deadline:</span> 
+                        <span className={`${status.text} opacity-70 font-bold shrink-0`}>Deadline:</span> 
                         <span className={`${status.text} font-bold`}>{lastDate}</span>
                       </div>
                     );
@@ -205,7 +204,7 @@ export default async function HomePage() {
               </div>
               <div>
                 <p className="text-slate-900 font-bold text-sm leading-tight">{cat.name}</p>
-                <p className="text-slate-500 font-black text-[10px] uppercase tracking-wider mt-0.5">{cat.label}</p>
+                <p className="text-slate-400 font-black text-[10px] uppercase tracking-wider mt-0.5">{cat.label}</p>
               </div>
             </Link>
           ))}
@@ -232,7 +231,7 @@ export default async function HomePage() {
               icon={<svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 0 1 9 9v.375M10.125 2.25A3.375 3.375 0 0 1 13.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 0 1 3.375 3.375M9 15l2.25 2.25L15 12" /></svg>}
             />
             <FeedCard title="Admit Card" typeSlug="admit-cards" posts={admits} accentColor="text-rose-400"
-              iconBg="bg-rose-600" hoverText="group-hover:text-rose-600"
+              iconBg="bg-rose-500" hoverText="group-hover:text-rose-600"
               icon={<svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" /></svg>}
             />
             <FeedCard title="Sarkari Yojana" typeSlug="sarkari-yojana" posts={yojanas} accentColor="text-purple-400"
@@ -282,14 +281,14 @@ export default async function HomePage() {
                         <h4 className="text-[13px] font-semibold text-slate-700 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                         {(dept || totalPosts || qual || lastDate) && (
                           <div className="mt-2 text-[9px] font-medium text-slate-500 bg-white group-hover:bg-slate-50 p-2 rounded border border-slate-100 transition-colors space-y-1">
-                            {dept && <div className="flex gap-1"><span className="text-slate-500 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
-                            {totalPosts && <div className="flex gap-1"><span className="text-slate-500 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
-                            {qual && <div className="flex gap-1"><span className="text-slate-500 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
+                            {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
+                            {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
+                            {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
                             {lastDate && (() => {
                               const status = getDeadlineStatus(lastDate);
                               return (
                                 <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100">
-                                  <span className={`${status.text} font-bold shrink-0`}>Deadline:</span> 
+                                  <span className={`${status.text} opacity-80 font-bold shrink-0`}>Deadline:</span> 
                                   <span className={`${status.text} font-bold`}>{lastDate}</span>
                                 </div>
                               );
@@ -329,14 +328,14 @@ export default async function HomePage() {
                       </div>
                       {(dept || totalPosts || qual || lastDate) && (
                         <div className="text-[9px] font-medium text-slate-500 bg-white group-hover:bg-orange-50/50 p-2 rounded border border-slate-100 transition-colors space-y-1">
-                            {dept && <div className="flex gap-1"><span className="text-slate-500 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
-                            {totalPosts && <div className="flex gap-1"><span className="text-slate-500 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
-                            {qual && <div className="flex gap-1"><span className="text-slate-500 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
+                            {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
+                            {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
+                            {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
                             {lastDate && (() => {
                               const status = getDeadlineStatus(lastDate);
                               return (
                                 <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100">
-                                  <span className={`${status.text} font-bold shrink-0`}>Deadline:</span> 
+                                  <span className={`${status.text} opacity-80 font-bold shrink-0`}>Deadline:</span> 
                                   <span className={`${status.text} font-bold`}>{lastDate}</span>
                                 </div>
                               );
