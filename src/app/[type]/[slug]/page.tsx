@@ -447,14 +447,18 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
       if (group.parsed) {
         group.parsed.forEach((faq: any) => {
           if (faq.q && faq.a) {
-            faqEntities.push({
-              "@type": "Question",
-              "name": faq.q.replace(/<[^>]*>?/gm, ''),
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": faq.a.replace(/<[^>]*>?/gm, '')
-              }
-            });
+            const cleanQ = faq.q.replace(/<[^>]*>?/gm, '').trim();
+            const cleanA = faq.a.replace(/<[^>]*>?/gm, '').trim();
+            if (cleanQ && cleanA) {
+              faqEntities.push({
+                "@type": "Question",
+                "name": cleanQ,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": cleanA
+                }
+              });
+            }
           }
         });
       }
