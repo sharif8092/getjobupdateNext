@@ -14,18 +14,36 @@ export default function LiveTicker() {
   const [posts, setPosts] = useState<TickerPost[]>([]);
 
   useEffect(() => {
-    // Fetch immediately to prevent late visual changes (improves Speed Index)
+    // 1. Immediately load old cached data from localStorage if available
+    try {
+      const cached = localStorage.getItem('gju_ticker_data');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setPosts(parsed);
+        }
+      }
+    } catch (e) {}
+
+    // 2. Fetch fresh data after 4.5 seconds
     const fetchTicker = () => {
       fetch('/api/ticker')
         .then(r => r.json())
-        .then(data => { if (Array.isArray(data)) setPosts(data); })
+        .then(data => { 
+          if (Array.isArray(data) && data.length > 0) {
+            setPosts(data);
+            try {
+              localStorage.setItem('gju_ticker_data', JSON.stringify(data));
+            } catch (e) {}
+          }
+        })
         .catch(() => {});
     };
 
     if (document.readyState === 'complete') {
-      setTimeout(fetchTicker, 1500);
+      setTimeout(fetchTicker, 4500);
     } else {
-      window.addEventListener('load', () => setTimeout(fetchTicker, 1500), { once: true });
+      window.addEventListener('load', () => setTimeout(fetchTicker, 4500), { once: true });
     }
   }, []);
 
