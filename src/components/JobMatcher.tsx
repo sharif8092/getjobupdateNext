@@ -121,25 +121,28 @@ export default function JobMatcher() {
 
   return (
     <div className="w-full relative group">
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-slate-200 dark:border-white/10 p-6 md:p-10 shadow-sm relative overflow-hidden transition-all duration-500">
+      {/* Subtle background glow for premium feel */}
+      <div className="absolute -inset-2 bg-gradient-to-r from-orange-500/10 via-rose-500/10 to-indigo-500/10 rounded-[3rem] blur-xl opacity-50 group-hover:opacity-100 transition duration-1000 group-hover:duration-500"></div>
+      
+      <div className="bg-white/90 backdrop-blur-2xl rounded-[2.5rem] border border-slate-200/60 p-6 md:p-10 shadow-[0_8px_40px_rgba(0,0,0,0.04)] relative overflow-hidden transition-all duration-500">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start relative z-10">
             
             {/* Form Wizard Column (5 Columns) */}
             <div className="lg:col-span-5 space-y-8">
               <div className="space-y-3 relative">
-                <span className="inline-flex items-center gap-2 text-[10px] font-black tracking-widest text-slate-500 bg-slate-100 border border-slate-200 px-3.5 py-1.5 rounded-full shadow-sm">
+                <span className="inline-flex items-center gap-2 text-[10px] font-black tracking-widest text-orange-600 bg-orange-50 border border-orange-100/50 px-3.5 py-1.5 rounded-full shadow-sm">
                   <span>✨</span> AI Integration
                 </span>
-                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight leading-none">
+                <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tight leading-none">
                   Eligibility Matcher
                 </h3>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="text-sm font-medium text-slate-500 leading-relaxed">
                   Enter your details to dynamically scan active gazettes and discover matched openings instantly.
                 </p>
               </div>
 
-              <form onSubmit={handleMatch} className="space-y-5 text-sm font-bold font-rajdhani text-slate-700 dark:text-slate-300 tracking-wide">
+              <form onSubmit={handleMatch} className="space-y-5 text-sm font-bold font-rajdhani text-slate-700 tracking-wide">
                 
                 {/* 1. Academic Qualification */}
                 <div className="flex flex-col gap-2 group/input">
@@ -150,7 +153,7 @@ export default function JobMatcher() {
                       required
                       value={qual}
                       onChange={(e) => setQual(e.target.value)}
-                      className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
+                      className="w-full appearance-none rounded-2xl border-2 border-slate-100 bg-slate-50/50 px-4 py-3.5 text-slate-800 outline-none focus:border-orange-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
                     >
                       <option value="" disabled>-- Choose Qualification --</option>
                       {QUALIFICATIONS_LIST.map((q) => (
@@ -170,7 +173,7 @@ export default function JobMatcher() {
                         id="jm-category"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
+                        className="w-full appearance-none rounded-2xl border-2 border-slate-100 bg-slate-50/50 px-4 py-3.5 text-slate-800 outline-none focus:border-orange-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
                       >
                         <option value="General">General / UR</option>
                         <option value="OBC">OBC</option>
@@ -191,7 +194,7 @@ export default function JobMatcher() {
                       max="60"
                       value={age}
                       onChange={(e) => setAge(e.target.value)}
-                      className="w-full rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] transition-all font-sans font-bold"
+                      className="w-full rounded-2xl border-2 border-slate-100 bg-slate-50/50 px-4 py-3.5 text-slate-800 outline-none focus:border-orange-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] transition-all font-sans font-bold"
                     />
                   </div>
                 </div>
@@ -205,7 +208,7 @@ export default function JobMatcher() {
                       required
                       value={stateSlug}
                       onChange={(e) => setStateSlug(e.target.value)}
-                      className="w-full appearance-none rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 px-4 py-3.5 text-[var(--foreground)] outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
+                      className="w-full appearance-none rounded-2xl border-2 border-slate-100 bg-slate-50/50 px-4 py-3.5 text-slate-800 outline-none focus:border-orange-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(251,191,36,0.1)] cursor-pointer transition-all uppercase"
                     >
                       <option value="" disabled>-- Choose Location --</option>
                       {STATES_LIST.map((s) => (
@@ -220,8 +223,9 @@ export default function JobMatcher() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base tracking-wider uppercase px-6 py-4 shadow-lg shadow-slate-900/10 cursor-pointer transition-all flex items-center justify-center gap-2 relative overflow-hidden"
+                  className="w-full mt-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base tracking-wider uppercase px-6 py-4 shadow-lg shadow-slate-900/10 cursor-pointer transition-all flex items-center justify-center gap-2 relative overflow-hidden group/btn"
                 >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[150%] group-hover/btn:translate-x-[150%] transition-transform duration-700 ease-in-out"></div>
                   {loading ? (
                     <>
                       <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
@@ -237,13 +241,13 @@ export default function JobMatcher() {
 
             {/* Results Column (7 Columns) */}
             <div className="lg:col-span-7 h-full flex flex-col">
-              <div className="bg-slate-50/50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/50 rounded-[2rem] p-6 md:p-8 flex-1 flex flex-col relative overflow-hidden h-[540px]">
-                <div className="border-b-2 border-slate-200/60 dark:border-slate-800 pb-4 mb-4 flex justify-between items-center z-10 relative">
-                  <span className="text-[13px] font-black font-rajdhani tracking-widest text-slate-500 dark:text-slate-400 uppercase">
+              <div className="bg-slate-50 border border-slate-200/50 rounded-[2rem] p-6 md:p-8 flex-1 flex flex-col relative overflow-hidden h-[540px]">
+                <div className="border-b-2 border-slate-200/60 pb-4 mb-4 flex justify-between items-center z-10 relative">
+                  <span className="text-[13px] font-black font-rajdhani tracking-widest text-slate-500 uppercase">
                     🔍 Matched Results
                   </span>
                   {hasSearched && (
-                    <span className="text-[11px] font-extrabold font-rajdhani bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                     <span className="text-[11px] font-extrabold font-rajdhani bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
                       {matchedJobs.length} Jobs
                     </span>
                   )}
@@ -252,16 +256,16 @@ export default function JobMatcher() {
                 <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar relative z-10">
                   {!hasSearched ? (
                     <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 animate-in fade-in duration-700">
-                      <div className="w-20 h-20 mb-6 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                      <div className="w-20 h-20 mb-6 bg-white shadow-sm rounded-full flex items-center justify-center border border-slate-100">
                         <span className="text-4xl filter drop-shadow-sm">📋</span>
                       </div>
-                      <h4 className="text-lg font-black font-rajdhani text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1">Awaiting Credentials</h4>
+                      <h4 className="text-lg font-black font-rajdhani text-slate-700 uppercase tracking-wide mb-1">Awaiting Credentials</h4>
                       <p className="text-sm font-medium text-slate-500 max-w-sm">We will analyze official age limits and categories instantly when you search.</p>
                     </div>
                   ) : loading ? (
                     <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 space-y-4">
                       <div className="relative">
-                        <div className="h-12 w-12 rounded-full border-4 border-orange-500/20"></div>
+                        <div className="h-12 w-12 rounded-full border-4 border-orange-200"></div>
                         <div className="h-12 w-12 rounded-full border-4 border-orange-500 border-t-transparent animate-spin absolute inset-0"></div>
                       </div>
                       <p className="text-sm font-black font-rajdhani tracking-widest uppercase text-orange-500 animate-pulse">Running Scripts...</p>
@@ -273,31 +277,31 @@ export default function JobMatcher() {
                         return (
                           <div 
                             key={post.id}
-                            className="group/card rounded-2xl border-2 border-white dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all cursor-default"
+                            className="group/card rounded-2xl border border-slate-100 bg-white p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 hover:border-orange-300 hover:shadow-[0_8px_30px_rgba(251,191,36,0.12)] transition-all cursor-default"
                             style={{ animationDelay: `${idx * 100}ms` }}
                           >
                             <div className="flex-1 space-y-2.5 w-full">
                               <div className="flex flex-wrap items-center gap-2">
-                                <span className="text-[10px] font-black font-rajdhani tracking-widest text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md uppercase">
+                                <span className="text-[10px] font-black font-rajdhani tracking-widest text-slate-600 bg-slate-100 px-2 py-1 rounded-md uppercase border border-slate-200">
                                   🏢 {dept || 'Govt Board'}
                                 </span>
-                                <span className={`text-[9px] font-black font-rajdhani tracking-widest uppercase px-2 py-1 rounded-md ${relaxationApplied ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-500' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'}`}>
+                                <span className={`text-[9px] font-black font-rajdhani tracking-widest uppercase px-2 py-1 rounded-md border ${relaxationApplied ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'}`}>
                                   {relaxationApplied ? 'Relaxation Applied' : 'Direct Match'}
                                 </span>
                               </div>
                               <Link 
                                 href={`/${postTypeSlug}/${post.slug}`}
-                                className="block font-bold text-base md:text-sm text-slate-800 dark:text-slate-100 hover:text-orange-500 transition-colors line-clamp-2 leading-snug"
+                                className="block font-bold text-base md:text-sm text-slate-800 hover:text-orange-600 transition-colors line-clamp-2 leading-snug"
                                 dangerouslySetInnerHTML={{ __html: post.title.rendered }}
                               />
-                              <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 font-sans bg-slate-50 dark:bg-slate-950 p-2 rounded-lg inline-block border border-slate-100 dark:border-slate-800">
+                              <p className="text-[11px] font-medium text-slate-500 font-sans bg-slate-50 p-2 rounded-lg inline-block border border-slate-100">
                                 ⚡ <span className="opacity-90">{reason}</span>
                               </p>
                             </div>
                             
                             <Link
                               href={`/${postTypeSlug}/${post.slug}`}
-                              className="w-full sm:w-auto text-center shrink-0 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-900 font-rajdhani font-black text-[13px] px-5 py-3 uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+                              className="w-full sm:w-auto text-center shrink-0 rounded-xl bg-orange-50 hover:bg-orange-500 text-orange-600 hover:text-white font-rajdhani font-black text-[13px] px-5 py-3 uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-sm border border-orange-100 hover:border-orange-500"
                             >
                               Check
                             </Link>
@@ -307,11 +311,11 @@ export default function JobMatcher() {
                     </div>
                   ) : (
                     <div className="h-full flex flex-col items-center justify-center p-8 text-center text-rose-500 animate-in slide-in-from-bottom-4">
-                      <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mb-4">
+                      <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mb-4 border border-rose-100">
                         <span className="text-3xl">❌</span>
                       </div>
-                      <h4 className="text-lg font-black font-rajdhani uppercase tracking-wide mb-1">No matches found</h4>
-                      <p className="text-sm font-medium text-rose-400/80 max-w-xs">Age requirements or qualifications did not match. Adjust your inputs to try again.</p>
+                      <h4 className="text-lg font-black font-rajdhani uppercase tracking-wide mb-1 text-rose-600">No matches found</h4>
+                      <p className="text-sm font-medium text-rose-500/80 max-w-xs">Age requirements or qualifications did not match. Adjust your inputs to try again.</p>
                     </div>
                   )}
                 </div>
