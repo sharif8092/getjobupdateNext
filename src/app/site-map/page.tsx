@@ -71,7 +71,7 @@ const SECTIONS = [
 
 export default function SiteMapPage() {
   return (
-    <div className="flex-1 w-full flex flex-col bg-slate-50 font-sans">
+    <div className="flex-1 w-full flex flex-col bg-slate-50 font-sans min-h-screen py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -83,69 +83,69 @@ export default function SiteMapPage() {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://getjobupdate.com"
+                "item": "https://getjobupdate.co.in"
               },
               {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Sitemap",
-                "item": "https://getjobupdate.com/site-map"
+                "item": "https://getjobupdate.co.in/site-map"
               }
             ]
           }),
         }}
       />
-      <header className="relative bg-[#0b1120] border-b border-slate-800 pt-16 pb-12 sm:pt-24 sm:pb-20 overflow-hidden font-sans shrink-0">
-        <div className="absolute inset-0 opacity-[0.035] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle at 1px 1px,white 1px,transparent 0)`, backgroundSize: '28px 28px' }} />
-        <div className="absolute -top-20 -left-20 w-72 h-72 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-60 h-60 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="container relative mx-auto max-w-7xl px-4 text-center z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-orange-500/10 border border-orange-500/20 mb-6 shadow-lg">
-            <Compass className="w-4 h-4 text-orange-500" />
-            <span className="text-[11px] font-black uppercase tracking-widest text-orange-400 font-rajdhani">Platform Directory</span>
-          </div>
-          <h1 className="text-4xl font-black text-white sm:text-6xl mb-4 tracking-tight font-rajdhani uppercase">
-            Complete <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-500">Site Map.</span>
-          </h1>
-          <p className="mx-auto max-w-2xl text-base sm:text-lg text-slate-400 font-medium leading-relaxed">
-            Institutional Navigation for all job updates, results, tools and platform policies.
-          </p>
-        </div>
-      </header>
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+          <header className="bg-slate-900 px-8 py-10 md:px-12 text-center border-b border-slate-800 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-[0.035] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle at 1px 1px,white 1px,transparent 0)`, backgroundSize: '28px 28px' }} />
+            
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-orange-500/10 border border-orange-500/20 mb-6 shadow-lg">
+              <Compass className="w-4 h-4 text-orange-500" />
+              <span className="text-[11px] font-black uppercase tracking-widest text-orange-400 font-rajdhani">Platform Directory</span>
+            </div>
+            
+            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight uppercase font-rajdhani">
+              Complete <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-500">Site Map</span>
+            </h1>
+            <p className="mt-3 text-slate-400 font-medium">
+              Institutional Navigation for all job updates, results, tools and platform policies.
+            </p>
+          </header>
 
-      <div className="container mx-auto max-w-7xl px-4 py-16 sm:py-24 group/main flex-1">
-        <div className="space-y-0">
-          {SECTIONS.map((section, idx) => (
-            <section key={idx} className="group relative border-b border-slate-200 py-12 sm:py-16 transition-all duration-500 hover:z-10 hover:bg-white hover:opacity-100 group-hover/main:opacity-50">
-              <div className="grid gap-12 lg:grid-cols-12 items-start px-4">
-                <div className="lg:col-span-4 space-y-4">
-                  <div className={`inline-flex p-3 rounded-2xl ${section.iconColor} text-white shadow-lg`}>
-                    <section.icon className="w-6 h-6 stroke-[2]" />
+          <div className="p-6 md:p-12 space-y-10">
+            {SECTIONS.map((section, idx) => (
+              <section key={idx} className="group relative border-b border-slate-100 last:border-0 pb-10 last:pb-0 transition-all duration-500">
+                <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+                  <div className="md:w-1/3 space-y-3 shrink-0">
+                    <div className={`inline-flex p-3 rounded-2xl ${section.iconColor} text-white shadow-md`}>
+                      <section.icon className="w-5 h-5 stroke-[2]" />
+                    </div>
+                    <h2 className="text-xl font-bold text-slate-900 tracking-tight font-rajdhani uppercase">{section.title}</h2>
+                    <p className="text-sm font-medium text-slate-500 leading-relaxed">{section.description}</p>
                   </div>
-                  <h2 className="text-3xl font-black text-slate-900 tracking-tight font-rajdhani uppercase">{section.title}</h2>
-                  <p className="text-sm font-bold text-slate-500 leading-relaxed max-w-xs">{section.description}</p>
+                  <div className="md:w-2/3 grid sm:grid-cols-2 gap-4 w-full">
+                    {section.links.map((link, linkIdx) => (
+                      <Link key={linkIdx} href={link.href} className="group/link flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:border-orange-400 hover:shadow-sm transition-all bg-slate-50 hover:bg-white w-full">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                           <span className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover/link:bg-orange-500 transition-all shrink-0"></span>
+                          <span className="text-sm font-bold text-slate-700 group-hover/link:text-orange-600 transition-colors truncate">{link.title}</span>
+                        </div>
+                        {link.tag ? (
+                          <span className="text-[10px] font-black uppercase tracking-widest text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md border border-orange-100 shrink-0 ml-2">
+                            {link.tag}
+                          </span>
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-slate-300 opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all group-hover/link:text-orange-500 shrink-0 ml-2" />
+                        )}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-                <div className="lg:col-span-8 grid sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-4">
-                  {section.links.map((link, linkIdx) => (
-                    <Link key={linkIdx} href={link.href} className="glass-card group/link flex items-center justify-between p-4 rounded-xl border border-[var(--border)] hover:border-orange-400 hover:shadow-md transition-all bg-white">
-                      <div className="flex items-center gap-3">
-                         <span className="w-2 h-2 rounded-full bg-slate-300 group-hover/link:bg-orange-500 transition-all"></span>
-                        <span className="text-[15px] font-black text-slate-700 group-hover/link:text-orange-600 transition-colors font-rajdhani uppercase tracking-wide">{link.title}</span>
-                      </div>
-                      {link.tag ? (
-                        <span className="text-[10px] font-black uppercase tracking-widest text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md border border-orange-100">
-                          {link.tag}
-                        </span>
-                      ) : (
-                        <ChevronRight className="w-4 h-4 text-slate-300 opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all group-hover/link:text-orange-500" />
-                      )}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </section>
-          ))}
+              </section>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -535,25 +535,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   else if (post.type === 'aziz_syllabus') generatedTags.add('Syllabus');
   else if (post.type === 'aziz_admission') generatedTags.add('Admission');
   
-  if (meta.aziz_department) {
-    const cleanDept = meta.aziz_department.split(/[-(]/)[0].trim();
-    if (cleanDept && cleanDept.length > 2) generatedTags.add(cleanDept);
-  }
-  if (meta.job_type) {
-    generatedTags.add(cleanText(meta.job_type));
-  }
-  if (meta.aziz_qualification) {
-    const quals = meta.aziz_qualification.split(/[,/]/).map((q: string) => cleanText(q).trim()).filter(Boolean);
-    quals.forEach((q: string) => {
-      if (q.toLowerCase() !== 'any') generatedTags.add(`${q} Pass Jobs`);
-    });
-  }
-  if (meta.application_mode) {
-    generatedTags.add(`${cleanText(meta.application_mode)} Form`);
-  }
-  
   generatedTags.add('Get Job Update');
-  const finalTagsList = Array.from(generatedTags).slice(0, 10).filter(Boolean);
+  const finalTagsList = Array.from(generatedTags).slice(0, 5).filter(Boolean);
 
   return (
     <div className="w-full font-sans min-h-screen bg-slate-50">
