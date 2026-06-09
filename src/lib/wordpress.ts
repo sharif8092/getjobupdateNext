@@ -517,9 +517,14 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
-      },
-      next: { tags: ['wordpress'] }, // Cache indefinitely, rely on Webhook for on-demand revalidation
-    });
+      }
+    };
+
+    if (fetchOptions.next?.revalidate !== undefined) {
+      delete fetchOptions.cache;
+    }
+
+    const res = await fetch(url, fetchOptions);
 
     if (!res.ok) {
       throw new Error(`WordPress REST API returned status: ${res.status}`);
