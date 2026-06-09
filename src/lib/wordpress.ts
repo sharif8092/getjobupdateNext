@@ -94,11 +94,19 @@ export interface WordPressTerm {
 
 const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://api.getjobupdate.co.in';
 
+const cleanMetaText = (text: string | undefined | null): string | undefined => {
+  if (!text) return undefined;
+  let cleaned = text.replace(/<[^>]*>?/gm, '').trim();
+  cleaned = cleaned.replace(/&quot;/gi, '"').replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
+  cleaned = cleaned.replace(/^[\/\"\>\,\-\s]+/, '');
+  return cleaned.trim() || undefined;
+};
+
 export function extractPostMeta(post: WordPressPost) {
-  let dept = post.custom_meta?.aziz_department;
-  let totalPosts = post.custom_meta?.aziz_total_posts?.replace(/posts?/i, '').trim();
-  let qual = post.custom_meta?.aziz_qualification;
-  let lastDate = post.custom_meta?.aziz_apply_end;
+  let dept = cleanMetaText(post.custom_meta?.aziz_department);
+  let totalPosts = cleanMetaText(post.custom_meta?.aziz_total_posts?.replace(/posts?/i, '').trim());
+  let qual = cleanMetaText(post.custom_meta?.aziz_qualification);
+  let lastDate = cleanMetaText(post.custom_meta?.aziz_apply_end);
 
   const title = post.title?.rendered || '';
   const excerpt = post.excerpt?.rendered || '';
@@ -107,7 +115,7 @@ export function extractPostMeta(post: WordPressPost) {
   if (!dept) {
     const deptMatch = title.match(/^(.+?)(?:\s+(?:Recruitment|Online Form|Admit Card|Result|Vacancy|Bharti|Notification|-|&#))/i);
     if (deptMatch && deptMatch[1]) {
-      dept = deptMatch[1].trim();
+      dept = cleanMetaText(deptMatch[1].trim());
     }
   }
 

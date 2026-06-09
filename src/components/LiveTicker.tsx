@@ -14,7 +14,7 @@ export default function LiveTicker() {
   const [posts, setPosts] = useState<TickerPost[]>([]);
 
   useEffect(() => {
-    // Fetch after page load to not block initial render
+    // Fetch immediately to prevent late visual changes (improves Speed Index)
     const fetchTicker = () => {
       fetch('/api/ticker')
         .then(r => r.json())
@@ -22,11 +22,7 @@ export default function LiveTicker() {
         .catch(() => {});
     };
 
-    if (document.readyState === 'complete') {
-      setTimeout(fetchTicker, 1500);
-    } else {
-      window.addEventListener('load', () => setTimeout(fetchTicker, 1500), { once: true });
-    }
+    fetchTicker();
   }, []);
 
   if (posts.length === 0) {

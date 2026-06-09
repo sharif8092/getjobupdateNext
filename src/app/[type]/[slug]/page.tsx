@@ -276,8 +276,12 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     }
     // Remove HTML tags completely so UI doesn't break
     cleaned = cleaned.replace(/<[^>]*>?/gm, '').trim();
+    // Convert entities so we can strip them
+    cleaned = cleaned.replace(/&quot;/gi, '"').replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
+    // Remove lingering HTML attribute artifacts and punctuation (like /">, ">, or leading commas/hyphens)
+    cleaned = cleaned.replace(/^[\/\"\>\,\-\s]+/, '');
     // Replace non-breaking spaces
-    cleaned = cleaned.replace(/&nbsp;/g, ' ');
+    cleaned = cleaned.replace(/&nbsp;/g, ' ').trim();
     return cleaned;
   };
 
