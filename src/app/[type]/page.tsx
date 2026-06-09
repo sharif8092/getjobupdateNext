@@ -89,12 +89,12 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
       <div className="w-full bg-slate-50 min-h-screen flex flex-col font-sans">
         
         {/* Brand Hero Section */}
-        <div className="bg-slate-900 w-full pt-16 pb-28 md:pb-36 relative overflow-hidden">
-          {/* Dot grid */}
-          <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
-          {/* Glow blobs */}
-          <div className="absolute -top-40 -left-40 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-600/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-slate-900 w-full pt-16 pb-28 md:pb-36 relative overflow-hidden z-0">
+          {/* Performant dot grid */}
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none z-[-1]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
+          {/* Optimized Glow blobs */}
+          <div className="absolute -top-40 -left-40 w-[600px] h-[600px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(234,88,12,0.12) 0%, rgba(234,88,12,0) 70%)' }} />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(79,70,229,0) 70%)' }} />
           
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             {/* Breadcrumbs */}

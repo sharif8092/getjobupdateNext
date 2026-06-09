@@ -748,6 +748,9 @@ export function processContentAndHeadings(html: string, postTitle: string = ''):
   // Remove RankMath TOC if it exists in the content to avoid duplicates
   modifiedHtml = modifiedHtml.replace(/<div[^>]*id="rank-math-toc"[^>]*>[\s\S]*?<\/div>/gi, '');
 
+  // Strip any injected JSON-LD scripts from the content to prevent duplicate schema errors (e.g. FAQPage) in Google Search Console
+  modifiedHtml = modifiedHtml.replace(/<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi, '');
+
   const headingRegex = /<(h[23])\b([^>]*)>([\s\S]*?)<\/h[23]>/gi;
   const idRegex = /id="([^"]+)"/i;
 
