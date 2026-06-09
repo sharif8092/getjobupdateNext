@@ -62,6 +62,14 @@ export default function RootLayout({
                 gtag('config', 'G-XD4FQTDP9X');
               `}
             </Script>
+            
+            {/* Google AdSense Verification & Auto Ads (Lazy Loaded) */}
+            <Script
+              id="adsbygoogle-init"
+              strategy="lazyOnload"
+              crossOrigin="anonymous"
+              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4677190099981876"
+            />
           </>
         )}
         
