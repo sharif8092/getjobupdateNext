@@ -545,7 +545,7 @@ export async function getPosts(
     const fields = 'id,date,modified,slug,status,type,link,title,excerpt,custom_meta,seo_meta,job_category,job_state';
     // Order by modified to bump updated posts to top, and set revalidate to 60 seconds
     const endpoint = `/wp-json/wp/v2/${wpType}?per_page=${count}&page=${page}&orderby=modified&_fields=${fields}${additionalParams}`;
-    return await fetchWP<WordPressPost[]>(endpoint, { next: { revalidate: 60 } });
+    return await fetchWP<WordPressPost[]>(endpoint, { next: { revalidate: 300 } });
   } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Falling back to Mock Data for ${postTypeSlug}`);
     const mocks = MOCK_POSTS[wpType] || [];
@@ -603,7 +603,8 @@ export async function getPostsByState(stateSlug: string, count = 30): Promise<Wo
       try {
         const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state';
         const posts = await fetchWP<WordPressPost[]>(
-          `/wp-json/wp/v2/${type}?job_state=${idString}&per_page=${Math.ceil(count / 3)}&_fields=${fields}`
+          `/wp-json/wp/v2/${type}?job_state=${idString}&per_page=${Math.ceil(count / 3)}&_fields=${fields}`,
+          { next: { revalidate: 600 } }
         );
         allPosts.push(...posts);
       } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
