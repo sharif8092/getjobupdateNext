@@ -748,8 +748,37 @@ export function processContentAndHeadings(html: string, postTitle: string = ''):
   // Remove RankMath TOC if it exists in the content to avoid duplicates
   modifiedHtml = modifiedHtml.replace(/<div[^>]*id="rank-math-toc"[^>]*>[\s\S]*?<\/div>/gi, '');
 
-  // Strip any injected JSON-LD scripts from the content to prevent duplicate schema errors (e.g. FAQPage) in Google Search Console
-  modifiedHtml = modifiedHtml.replace(/<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi, '');
+  // Surgically strip ONLY FAQPage schemas from injected JSON-LD to prevent duplicates, while preserving HowTo, Video, etc.
+  modifiedHtml = modifiedHtml.replace(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi, (match, jsonString) => {
+    try {
+      let data = JSON.parse(jsonString);
+      let changed = false;
+      
+      const filterItems = (items: any[]) => {
+        const initialLength = items.length;
+        const filtered = items.filter(item => item['@type'] !== 'FAQPage');
+        if (filtered.length !== initialLength) changed = true;
+        return filtered;
+      };
+
+      if (Array.isArray(data)) {
+        data = filterItems(data);
+      } else if (data && data['@graph'] && Array.isArray(data['@graph'])) {
+        data['@graph'] = filterItems(data['@graph']);
+      } else if (data && data['@type'] === 'FAQPage') {
+        return ''; // Remove entirely if it's just an FAQPage object
+      }
+      
+      if (changed) {
+        if (Array.isArray(data) && data.length === 0) return '';
+        if (data && data['@graph'] && data['@graph'].length === 0) return '';
+        return `<script type="application/ld+json">${JSON.stringify(data)}</script>`;
+      }
+      return match;
+    } catch (e) {
+      return match; // If invalid JSON, leave it alone
+    }
+  });
 
   const headingRegex = /<(h[23])\b([^>]*)>([\s\S]*?)<\/h[23]>/gi;
   const idRegex = /id="([^"]+)"/i;
