@@ -36,6 +36,16 @@ export interface WordPressPost {
     aziz_salary: string;
     aziz_badge_type: string;
     aziz_dept_emoji: string;
+    aziz_exam_name?: string;
+    aziz_admit_status?: string;
+    aziz_admit_release_date?: string;
+    aziz_result_status?: string;
+    aziz_result_date?: string;
+    aziz_answerkey_status?: string;
+    aziz_objection_last_date?: string;
+    aziz_scheme_name?: string;
+    aziz_beneficiaries?: string;
+    aziz_benefit_amount?: string;
     faq_position?: string;
     howto_position?: string;
     rank_math_toc_html?: string;

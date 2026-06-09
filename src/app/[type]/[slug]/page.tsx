@@ -605,41 +605,172 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
           {/* Hero Quick Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-6 mb-6 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
-               <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📋 Vacancy</span>
-               <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_total_posts)}>{cleanText(meta.aziz_total_posts) || '-'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🎓 Qualification</span>
-               <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_qualification)}>{cleanText(meta.aziz_qualification) || '-'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💰 Salary</span>
-               <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_salary)}>{cleanText(meta.aziz_salary) || '-'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">⚡ Job Type</span>
-               <span className="text-indigo-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.job_type)}>{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💻 App Mode</span>
-               <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.application_mode)}>{cleanText(meta.application_mode) || 'Online Form'}</span>
-             </div>
-             <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-2">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Last Date / Status</span>
-               {(() => {
-                  const deadlineStr = cleanText(meta.aziz_apply_end);
-                  if (isResult) return <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3">Result Declared</span>;
-                  if (!deadlineStr) return <span className="text-slate-300 font-black text-sm break-words leading-snug line-clamp-3">-</span>;
-                  const status = getDeadlineStatus(deadlineStr);
-                  const colorClass = status.color === 'green' ? 'text-emerald-400' : status.color === 'yellow' ? 'text-amber-400' : 'text-rose-400';
-                  return <span className={`${colorClass} font-black text-sm break-words leading-snug line-clamp-3`} title={deadlineStr}>{deadlineStr}</span>;
-               })()}
-             </div>
+            {post.type === 'aziz_admit' && (
+              <>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
+                  <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📝 Exam Name</span>
+                  <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_exam_name)}>{cleanText(meta.aziz_exam_name) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Exam Date</span>
+                  <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_exam_date)}>{cleanText(meta.aziz_exam_date) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🎫 Admit Card Status</span>
+                  <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_admit_status)}>{cleanText(meta.aziz_admit_status) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-4">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Release Date</span>
+                  <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_admit_release_date)}>{cleanText(meta.aziz_admit_release_date) || '-'}</span>
+                </div>
+              </>
+            )}
+
+            {post.type === 'aziz_result' && (
+              <>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
+                  <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📝 Exam Name</span>
+                  <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_exam_name)}>{cleanText(meta.aziz_exam_name) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Exam Date</span>
+                  <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_exam_date)}>{cleanText(meta.aziz_exam_date) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📢 Result Status</span>
+                  <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_result_status)}>{cleanText(meta.aziz_result_status) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-4">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Result Date</span>
+                  <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_result_date)}>{cleanText(meta.aziz_result_date) || '-'}</span>
+                </div>
+              </>
+            )}
+
+            {post.type === 'aziz_answerkey' && (
+              <>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
+                  <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📝 Exam Name</span>
+                  <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_exam_name)}>{cleanText(meta.aziz_exam_name) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Exam Date</span>
+                  <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_exam_date)}>{cleanText(meta.aziz_exam_date) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📢 Status</span>
+                  <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_answerkey_status)}>{cleanText(meta.aziz_answerkey_status) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-4">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Objection Last Date</span>
+                  <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_objection_last_date)}>{cleanText(meta.aziz_objection_last_date) || '-'}</span>
+                </div>
+              </>
+            )}
+
+            {post.type === 'aziz_yojana' && (
+              <>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Ministry/Dept</span>
+                  <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏛 Scheme Name</span>
+                  <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_scheme_name)}>{cleanText(meta.aziz_scheme_name) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">👨‍👩‍👧‍👦 Beneficiaries</span>
+                  <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_beneficiaries)}>{cleanText(meta.aziz_beneficiaries) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💰 Benefit Amount</span>
+                  <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_benefit_amount)}>{cleanText(meta.aziz_benefit_amount) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-4">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Last Date</span>
+                  <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_apply_end)}>{cleanText(meta.aziz_apply_end) || '-'}</span>
+                </div>
+              </>
+            )}
+
+            {post.type === 'aziz_syllabus' && (
+              <>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
+                  <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-3">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📝 Exam Name</span>
+                  <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_exam_name)}>{cleanText(meta.aziz_exam_name) || '-'}</span>
+                </div>
+              </>
+            )}
+
+            {(post.type === 'aziz_job' || post.type === 'post') && (
+              <>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
+                  <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📋 Vacancy</span>
+                  <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_total_posts)}>{cleanText(meta.aziz_total_posts) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🎓 Qualification</span>
+                  <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_qualification)}>{cleanText(meta.aziz_qualification) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💰 Salary</span>
+                  <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_salary)}>{cleanText(meta.aziz_salary) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">⚡ Job Type</span>
+                  <span className="text-indigo-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.job_type)}>{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💻 App Mode</span>
+                  <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.application_mode)}>{cleanText(meta.application_mode) || 'Online Form'}</span>
+                </div>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-2">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Last Date / Status</span>
+                  {(() => {
+                    const deadlineStr = cleanText(meta.aziz_apply_end);
+                    if (isResult) return <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3">Result Declared</span>;
+                    if (!deadlineStr) return <span className="text-slate-300 font-black text-sm break-words leading-snug line-clamp-3">-</span>;
+                    const status = getDeadlineStatus(deadlineStr);
+                    const colorClass = status.color === 'green' ? 'text-emerald-400' : status.color === 'yellow' ? 'text-amber-400' : 'text-rose-400';
+                    return <span className={`${colorClass} font-black text-sm break-words leading-snug line-clamp-3`} title={deadlineStr}>{deadlineStr}</span>;
+                  })()}
+                </div>
+              </>
+            )}
+            
+            {/* Fallback for other unmapped types */}
+            {(!['aziz_admit', 'aziz_result', 'aziz_answerkey', 'aziz_yojana', 'aziz_syllabus', 'aziz_job', 'post'].includes(post.type)) && (
+              <>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
+                  <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-3">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Last Date / Status</span>
+                  <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_apply_end)}>{cleanText(meta.aziz_apply_end) || '-'}</span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Smart Tags (State, Qualification, Category, etc.) */}
