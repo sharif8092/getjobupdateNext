@@ -87,7 +87,7 @@ export default function SyllabusTracker({ keySlug }: SyllabusTrackerProps) {
             style={{ width: `${progressPercent}%` }}
           ></div>
         </div>
-        <span className="text-[10px] font-bold text-slate-400 font-mono block">
+        <span className="text-[10px] font-bold text-slate-500 font-mono block">
           Completed {completedTopics} of {totalTopics} chapters
         </span>
       </div>

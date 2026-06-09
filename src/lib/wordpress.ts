@@ -509,7 +509,10 @@ export const CATEGORIES_LIST = [
 async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_URL}${endpoint}`;
   try {
-    const res = await fetch(url, {
+    // Merge options to ensure aggressive caching by default (Next.js 15+ defaults to no-store)
+    const fetchOptions: RequestInit = {
+      cache: 'force-cache',
+      next: { tags: ['wordpress'], ...options.next },
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -576,7 +579,7 @@ export async function getPostBySlug(
   try {
     const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state,faq,howto';
     const endpoint = `/wp-json/wp/v2/${wpType}?slug=${slug}&_fields=${fields}`;
-    const posts = await fetchWP<WordPressPost[]>(endpoint, { next: { revalidate: 60 } });
+    const posts = await fetchWP<WordPressPost[]>(endpoint);
     return posts.length > 0 ? posts[0] : null;
   } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Falling back to Mock Data for single post: ${slug}`);

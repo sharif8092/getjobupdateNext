@@ -59,7 +59,7 @@ export default function Navbar() {
                   <span className="text-white">GETJOB</span>
                   <span className="text-orange-600">UPDATE</span>
                 </div>
-                <span className="text-[9px] font-bold tracking-widest text-slate-400 uppercase mt-1">
+                <span className="text-[9px] font-bold tracking-widest text-slate-500 uppercase mt-1">
                   #FAST JOB ALERTS <span className="mx-1">|</span> LATEST VACANCIES
                 </span>
               </div>

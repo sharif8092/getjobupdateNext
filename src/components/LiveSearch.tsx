@@ -78,7 +78,7 @@ export default function LiveSearch() {
             {STATES_LIST.map(s => <option key={s.slug} value={s.slug}>{s.name}</option>)}
           </select>
         </div>
-        <button type="submit" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl px-6 py-3 font-bold text-sm flex items-center gap-2 transition-colors ml-1.5 shadow-md shadow-orange-600/30">
+        <button type="submit" className="bg-orange-700 hover:bg-orange-800 text-white rounded-xl px-6 py-3 font-bold text-sm flex items-center gap-2 transition-colors ml-1.5 shadow-md shadow-orange-700/30">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           Search
         </button>

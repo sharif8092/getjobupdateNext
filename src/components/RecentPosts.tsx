@@ -29,7 +29,7 @@ export default function RecentPosts({ posts, title = "Recent Updates", icon }: P
           return (
             <Link key={post.id} href={`/${typeSlug}/${post.slug}`} className="group p-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
               <h4 className="text-xs font-bold text-slate-800 line-clamp-2 group-hover:text-orange-600 transition-colors leading-relaxed" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-              <div className="mt-1.5 flex items-center gap-2 text-[10px] font-semibold text-slate-400">
+              <div className="mt-1.5 flex items-center gap-2 text-[10px] font-semibold text-slate-500">
                 <span className="uppercase tracking-wider">{typeSlug.replace('-', ' ')}</span>
                 <span className="w-1 h-1 rounded-full bg-slate-300"></span>
                 <span>{new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
