@@ -501,7 +501,7 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
         'Content-Type': 'application/json',
         ...options.headers,
       },
-      next: { revalidate: options.next?.revalidate ?? 3600 }, // Cache response for 1 hour by default to reduce WP server load
+      next: { tags: ['wordpress'] }, // Cache indefinitely, rely on Webhook for on-demand revalidation
     });
 
     if (!res.ok) {
@@ -521,7 +521,7 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
 export async function getAffiliateSettings(): Promise<{ amazon_id: string }> {
   try {
     const url = `${process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://getjobupdate.com'}/wp-json/gju/v1/affiliate-settings`;
-    const res = await fetch(url, { next: { revalidate: 3600 } });
+    const res = await fetch(url, { next: { tags: ['wordpress'] } });
     if (!res.ok) {
       return { amazon_id: '' };
     }
@@ -545,7 +545,7 @@ export async function getPosts(
     const fields = 'id,date,modified,slug,status,type,link,title,excerpt,custom_meta,seo_meta,job_category,job_state';
     // Order by modified to bump updated posts to top, and set revalidate to 60 seconds
     const endpoint = `/wp-json/wp/v2/${wpType}?per_page=${count}&page=${page}&orderby=modified&_fields=${fields}${additionalParams}`;
-    return await fetchWP<WordPressPost[]>(endpoint, { next: { revalidate: 300 } });
+    return await fetchWP<WordPressPost[]>(endpoint, { next: { tags: ['wordpress'] } });
   } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.warn(`Falling back to Mock Data for ${postTypeSlug}`);
     const mocks = MOCK_POSTS[wpType] || [];
@@ -604,7 +604,7 @@ export async function getPostsByState(stateSlug: string, count = 30): Promise<Wo
         const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state';
         const posts = await fetchWP<WordPressPost[]>(
           `/wp-json/wp/v2/${type}?job_state=${idString}&per_page=${Math.ceil(count / 3)}&_fields=${fields}`,
-          { next: { revalidate: 600 } }
+          { next: { tags: ['wordpress'] } }
         );
         allPosts.push(...posts);
       } catch (e /* eslint-disable-line @typescript-eslint/no-explicit-any */) {

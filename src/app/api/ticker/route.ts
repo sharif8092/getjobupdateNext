@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPosts } from '@/lib/wordpress';
 
-export const revalidate = 300; // cache for 5 minutes
+export const revalidate = 10800; // cache for 3 hours
 
 export async function GET() {
   try {
@@ -13,7 +13,7 @@ export async function GET() {
     }));
     return NextResponse.json(slim, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'public, s-maxage=10800, stale-while-revalidate=86400',
       },
     });
   } catch {
