@@ -559,10 +559,10 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
       {/* ══════════════════════════════════════════════
           PREMIUM HERO SECTION
       ══════════════════════════════════════════════ */}
-      <div className="bg-[#0b1120] w-full py-8 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.035] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle at 1px 1px,white 1px,transparent 0)`, backgroundSize: '28px 28px' }} />
-        <div className="absolute -top-20 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-60 h-60 bg-indigo-600/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-[#0b1120] w-full py-8 relative overflow-hidden z-0">
+        <div className="absolute inset-0 opacity-[0.035] pointer-events-none z-[-1]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px,white 1px,transparent 0)`, backgroundSize: '28px 28px' }} />
+        <div className="absolute -top-20 -left-20 w-[400px] h-[400px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0) 70%)' }} />
+        <div className="absolute bottom-0 right-0 w-[350px] h-[350px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(79,70,229,0) 70%)' }} />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
