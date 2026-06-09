@@ -10,7 +10,7 @@ import FloatingSocial from '@/components/FloatingSocial';
 // Load Inter Google Font for maximum readability and a clean, premium look
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-sans', display: 'swap',
+  variable: '--font-sans',
   display: 'swap',
 });
 
