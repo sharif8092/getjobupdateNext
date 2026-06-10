@@ -55,7 +55,7 @@ export default function RootLayout({
             API calls that drive every page's LCP content. */}
         <link rel="preconnect" href="https://api.getjobupdate.co.in" />
         <link rel="dns-prefetch" href="https://api.getjobupdate.co.in" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
         <link rel="dns-prefetch" href="https://onesignal.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       </head>

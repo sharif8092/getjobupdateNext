@@ -48,9 +48,17 @@ export default function LiveTicker() {
   }, []);
 
   if (posts.length === 0) {
-    // Placeholder bar to prevent layout shift
     return (
-      <div className="bg-black h-[46px] border-b border-white/10" aria-hidden="true" />
+      <div className="h-[46px] bg-black border-b border-white/10 flex items-center px-4 overflow-hidden">
+        <div className="flex gap-2 items-center w-full max-w-[1200px] mx-auto animate-pulse">
+          <div className="w-16 h-5 bg-white/10 rounded"></div>
+          <div className="flex-1 flex gap-4 overflow-hidden">
+            <div className="w-48 h-4 bg-white/5 rounded"></div>
+            <div className="w-64 h-4 bg-white/5 rounded"></div>
+            <div className="w-56 h-4 bg-white/5 rounded hidden sm:block"></div>
+          </div>
+        </div>
+      </div>
     );
   }
 
