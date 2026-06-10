@@ -2,18 +2,6 @@
 
 import React, { useState } from 'react';
 
-const POST_TYPES = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_answerkey', 'aziz_yojana', 'aziz_syllabus', 'aziz_admission', 'post'];
-const POST_TYPE_MAP: Record<string, string> = {
-  aziz_job: 'jobs',
-  aziz_result: 'results',
-  aziz_admit: 'admit-cards',
-  aziz_answerkey: 'answer-keys',
-  aziz_yojana: 'yojana',
-  aziz_syllabus: 'syllabus',
-  aziz_admission: 'admissions',
-  post: 'articles',
-};
-
 export default function CacheWarmerPage() {
   const [status, setStatus] = useState<string>('Idle');
   const [urls, setUrls] = useState<string[]>([]);
@@ -23,24 +11,23 @@ export default function CacheWarmerPage() {
   const [isRunning, setIsRunning] = useState(false);
 
   const fetchUrls = async () => {
-    setStatus('Fetching all post URLs from WordPress...');
+    setStatus('Fetching all URLs from Sitemap...');
     setIsRunning(true);
     const allUrls: string[] = [];
 
     try {
-      const res = await fetch('/api/warm-all?secret=gju-auto-update-2026');
+      const res = await fetch('/sitemap.xml');
       if (res.ok) {
-        const data = await res.json();
-        if (data.urls) {
-          allUrls.push(...data.urls);
+        const text = await res.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text, 'text/xml');
+        const locs = xmlDoc.getElementsByTagName('loc');
+        for (let i = 0; i < locs.length; i++) {
+          if (locs[i].textContent) {
+            allUrls.push(locs[i].textContent as string);
+          }
         }
       }
-      
-      // Add category pages
-      Object.values(POST_TYPE_MAP).forEach(slug => {
-        allUrls.push(`https://getjobupdate.co.in/${slug}`);
-      });
-      allUrls.push('https://getjobupdate.co.in/');
 
       setUrls(allUrls);
       setTotal(allUrls.length);
@@ -72,7 +59,7 @@ export default function CacheWarmerPage() {
       await new Promise(r => setTimeout(r, 2000));
     }
     
-    setStatus('✅ All pages have been successfully cached! Your site is now blazing fast.');
+    setStatus('? All pages have been successfully cached! Your site is now blazing fast.');
     setCurrentUrl('');
     setIsRunning(false);
   };
@@ -81,12 +68,12 @@ export default function CacheWarmerPage() {
     <div className="min-h-screen bg-slate-50 p-8 font-sans text-slate-800">
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-3xl">🔥</span>
+          <span className="text-3xl">??</span>
           <h1 className="text-2xl font-black text-slate-900">Smart Cache Warmer</h1>
         </div>
         
         <p className="text-slate-600 mb-8 leading-relaxed">
-          This tool will fetch all your old posts and categories one by one to permanently cache them in Next.js. 
+          This tool will fetch all your URLs securely from the Sitemap to permanently cache them in Next.js. 
           It does this slowly (2 seconds delay) so your Hostinger server doesn't crash from overload.
         </p>
 
@@ -96,7 +83,7 @@ export default function CacheWarmerPage() {
             disabled={isRunning}
             className="px-6 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 disabled:opacity-50 transition-colors"
           >
-            1. Scan All Posts
+            1. Scan Sitemap
           </button>
           
           <button 
@@ -136,5 +123,4 @@ export default function CacheWarmerPage() {
     </div>
   );
 }
-
 
