@@ -28,14 +28,11 @@ export default function CacheWarmerPage() {
     const allUrls: string[] = [];
 
     try {
-      for (const wpType of POST_TYPES) {
-        const res = await fetch(`https://api.getjobupdate.co.in/wp-json/wp/v2/${wpType}?per_page=100&_fields=slug,type`);
-        if (res.ok) {
-          const posts = await res.json();
-          for (const post of posts) {
-            const typeSlug = POST_TYPE_MAP[post.type] || 'jobs';
-            allUrls.push(`https://getjobupdate.co.in/${typeSlug}/${post.slug}`);
-          }
+      const res = await fetch('/api/warm-all?secret=gju-auto-update-2026');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.urls) {
+          allUrls.push(...data.urls);
         }
       }
       
@@ -139,3 +136,5 @@ export default function CacheWarmerPage() {
     </div>
   );
 }
+
+
