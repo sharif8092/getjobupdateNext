@@ -35,7 +35,7 @@ function FeedCard({
   accentColor: string; iconBg: string; icon: React.ReactNode; hoverText?: string;
 }) {
   return (
-    <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 350px' }} className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-shadow duration-300">
+    <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-shadow duration-300">
       {/* Header */}
       <Link prefetch={false} href={`/${typeSlug}`} className="flex items-center justify-between px-5 py-3.5 bg-slate-900 group/header">
         <div className="flex items-center gap-3">
@@ -51,25 +51,35 @@ function FeedCard({
       </Link>
       {/* List */}
       <div className="flex flex-col flex-1 divide-y divide-slate-50">
-        {posts.length === 0 ? (
-          <p className="text-center text-slate-400 text-sm py-8">No updates found.</p>
-        ) : (
-          posts.map((post) => {
-            const meta = extractPostMeta(post);
-            const deadlineStatus = getDeadlineStatus(meta.applyEnd);
-            const routePrefix = POST_TYPE_MAP[post.type] || 'blog';
-            return (
-              <Link prefetch={false} key={post.id} href={`/${routePrefix}/${post.slug}`} className={`flex items-start gap-3 px-4 py-3 ${hoverText} hover:bg-slate-50 transition-colors group/item`}>
-                {meta.badgeType && (
-                  <span className={`mt-0.5 shrink-0 inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-slate-100 text-slate-500`}>
-                    {meta.badgeType}
-                  </span>
-                )}
-                <span className="text-sm font-semibold text-slate-800 group-hover/item:text-inherit leading-snug line-clamp-2 flex-1" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                {deadlineStatus && <span className={`shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-md ${deadlineStatus.color}`}>{deadlineStatus.label}</span>}
-              </Link>
-            );
-          })
+        {posts.length > 0 ? posts.slice(0, 5).map(post => {
+          const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
+          const isNew = (Date.now() - new Date(post.modified).getTime()) < 3 * 24 * 60 * 60 * 1000;
+          return (
+            <Link prefetch={false} key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className={`text-[13px] font-semibold text-slate-800 leading-snug ${hoverText} transition-colors line-clamp-2 flex-1`} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                {isNew && <span className="text-[9px] font-black text-white bg-rose-500 px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide">New</span>}
+              </div>
+              {(dept || totalPosts || qual || lastDate) && (
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-1.5 text-[10px] font-medium text-slate-500 bg-slate-50/50 group-hover:bg-white p-2.5 rounded-lg border border-slate-100 group-hover:border-slate-200 transition-colors">
+                  {dept && <div className="col-span-2 flex items-start gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 font-semibold truncate">{dept}</span></div>}
+                  {totalPosts && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 font-semibold truncate">{totalPosts}</span></div>}
+                  {qual && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 font-semibold truncate">{qual}</span></div>}
+                  {lastDate && (() => {
+                    const status = getDeadlineStatus(lastDate);
+                    return (
+                      <div className={`col-span-2 flex items-center gap-1 mt-0.5 pt-1.5 border-t border-slate-200/50 group-hover:border-slate-200`}>
+                        <span className={`${status.text} opacity-70 font-bold shrink-0`}>Deadline:</span> 
+                        <span className={`${status.text} font-bold`}>{lastDate}</span>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+            </Link>
+          );
+        }) : (
+          <div className="p-8 text-center text-xs text-slate-400 italic">No active updates found.</div>
         )}
       </div>
     </div>
@@ -196,30 +206,43 @@ async function SidebarFeed() {
       <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
         <div className="flex items-center justify-between px-5 py-3.5 bg-slate-900">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-rose-500 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
             </div>
             <h2 className="font-black text-white text-sm tracking-wide">Latest Notifications</h2>
           </div>
-          <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span></span>
+          <Link prefetch={false} href="/jobs" className="text-[10px] font-black uppercase tracking-widest text-orange-400 flex items-center gap-1 hover:text-orange-300 transition-colors">
+            All <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+          </Link>
         </div>
-        <div className="flex flex-col divide-y divide-slate-50">
-          {latestNotifications.map((post) => {
-            const meta = extractPostMeta(post);
-            const deadlineStatus = getDeadlineStatus(meta.applyEnd);
+        <div className="p-4 space-y-1">
+          {latestNotifications.length > 0 ? latestNotifications.map((post, idx) => {
+            const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
             return (
-              <Link prefetch={false} key={post.id} href={`/${post.routePrefix}/${post.slug}`}
-                className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group">
-                <div className={`mt-0.5 w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 text-[10px] font-black ${meta.badgeType === 'result' ? 'bg-emerald-100 text-emerald-700' : meta.badgeType === 'admit' ? 'bg-rose-100 text-rose-700' : meta.badgeType === 'yojana' ? 'bg-amber-100 text-amber-700' : 'bg-orange-100 text-orange-700'}`}>
-                  {meta.badgeType === 'result' ? '📋' : meta.badgeType === 'admit' ? '🪪' : meta.badgeType === 'yojana' ? '⭐' : '🏛️'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-800 group-hover:text-orange-600 transition-colors leading-snug line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                  {deadlineStatus && <span className={`mt-1 inline-flex text-[9px] font-black px-1.5 py-0.5 rounded-md ${deadlineStatus.color}`}>{deadlineStatus.label}</span>}
+              <Link prefetch={false} key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-slate-50 px-3 py-3 -mx-1 rounded-xl transition-colors">
+                <span className="text-lg font-black text-slate-100 group-hover:text-orange-200 transition-colors leading-none w-6 shrink-0 text-center">{idx + 1}</span>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[13px] font-semibold text-slate-700 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                  {(dept || totalPosts || qual || lastDate) && (
+                    <div className="mt-2 text-[9px] font-medium text-slate-500 bg-white group-hover:bg-slate-50 p-2 rounded border border-slate-100 transition-colors space-y-1">
+                      {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
+                      {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
+                      {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
+                      {lastDate && (() => {
+                        const status = getDeadlineStatus(lastDate);
+                        return (
+                          <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100">
+                            <span className={`${status.text} opacity-80 font-bold shrink-0`}>Deadline:</span> 
+                            <span className={`${status.text} font-bold`}>{lastDate}</span>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
                 </div>
               </Link>
             );
-          })}
+          }) : <div className="text-xs text-slate-400 italic text-center py-4">No recent updates.</div>}
         </div>
       </div>
 
