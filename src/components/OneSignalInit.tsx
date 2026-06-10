@@ -43,20 +43,30 @@ function loadOneSignal() {
 
 export default function OneSignalInit() {
   useEffect(() => {
-    // Delay OneSignal loading by 5s after page load to keep it off the critical path
-    const onIdle = () => {
-      if ('requestIdleCallback' in window) {
-        (window as any).requestIdleCallback(() => setTimeout(loadOneSignal, 2000));
-      } else {
-        setTimeout(loadOneSignal, 5000);
-      }
+    let triggered = false;
+
+    const startOneSignal = () => {
+      if (triggered) return;
+      triggered = true;
+      loadOneSignal();
+      
+      window.removeEventListener('scroll', startOneSignal);
+      window.removeEventListener('click', startOneSignal);
+      window.removeEventListener('keydown', startOneSignal);
+      window.removeEventListener('touchstart', startOneSignal);
     };
 
-    if (document.readyState === 'complete') {
-      onIdle();
-    } else {
-      window.addEventListener('load', onIdle, { once: true });
-    }
+    window.addEventListener('scroll', startOneSignal, { passive: true, once: true });
+    window.addEventListener('click', startOneSignal, { passive: true, once: true });
+    window.addEventListener('keydown', startOneSignal, { passive: true, once: true });
+    window.addEventListener('touchstart', startOneSignal, { passive: true, once: true });
+
+    return () => {
+      window.removeEventListener('scroll', startOneSignal);
+      window.removeEventListener('click', startOneSignal);
+      window.removeEventListener('keydown', startOneSignal);
+      window.removeEventListener('touchstart', startOneSignal);
+    };
   }, []);
 
   return null;

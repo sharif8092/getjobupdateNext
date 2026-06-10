@@ -92,7 +92,7 @@ export default function LiveSearch() {
             {results.map((post) => {
               const typeSlug = POST_TYPE_MAP[post.type] || 'jobs';
               return (
-                <Link 
+                <Link prefetch={false} 
                   key={post.id} 
                   href={`/${typeSlug}/${post.slug}`}
                   onClick={() => setIsOpen(false)}

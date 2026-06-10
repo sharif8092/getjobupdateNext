@@ -55,7 +55,7 @@ export default async function SearchPage({ searchParams }: SearchProps) {
         
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-1.5 text-xs font-bold font-rajdhani uppercase text-slate-400 mb-6 tracking-wide">
-          <Link href="/" className="hover:text-[var(--color-brand-blue)]">HOME</Link>
+          <Link prefetch={false} href="/" className="hover:text-[var(--color-brand-blue)]">HOME</Link>
           <span>›</span>
           <span className="text-slate-500">Search Results</span>
         </nav>
@@ -109,7 +109,7 @@ export default async function SearchPage({ searchParams }: SearchProps) {
                         )}
                       </div>
 
-                      <Link 
+                      <Link prefetch={false} 
                         href={`/${postTypeSlug}/${post.slug}`}
                         className="block text-base md:text-lg font-bold text-[var(--foreground)] group-hover:text-[var(--color-brand-blue)] dark:group-hover:text-[var(--color-brand-blue)] transition-colors"
                         dangerouslySetInnerHTML={{ __html: post.title.rendered }}
@@ -132,7 +132,7 @@ export default async function SearchPage({ searchParams }: SearchProps) {
                       </div>
                     </div>
 
-                    <Link
+                    <Link prefetch={false}
                       href={`/${postTypeSlug}/${post.slug}`}
                       className="w-full md:w-auto flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-[var(--color-brand-blue)] dark:hover:bg-[var(--color-brand-blue)] hover:text-white text-white px-5 py-2.5 text-xs font-black font-rajdhani tracking-wider uppercase transition-colors shadow-sm"
                     >
@@ -159,7 +159,7 @@ export default async function SearchPage({ searchParams }: SearchProps) {
               </h4>
               <div className="flex flex-col gap-2 font-rajdhani font-black text-sm uppercase">
                 {CATEGORIES_LIST.map((cat) => (
-                  <Link
+                  <Link prefetch={false}
                     key={cat.slug}
                     href={`/${cat.slug}`}
                     className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-slate-50 dark:bg-slate-900/10 p-3 hover:border-[var(--color-brand-blue)] hover:text-[var(--color-brand-blue)] dark:hover:text-[var(--color-brand-blue)] transition-all group"

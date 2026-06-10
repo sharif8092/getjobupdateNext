@@ -20,22 +20,26 @@ export interface WordPressPost {
     protected: boolean;
   };
   custom_meta: {
-    aziz_department: string;
-    aziz_total_posts: string;
-    aziz_qualification: string;
-    aziz_job_location: string;
-    aziz_apply_end: string;
-    aziz_apply_link: string;
-    aziz_notification: string;
-    aziz_official_site: string;
-    aziz_seo_desc: string;
-    aziz_apply_start: string;
-    aziz_exam_date: string;
-    aziz_result_link: string;
-    aziz_age_limit: string;
-    aziz_salary: string;
-    aziz_badge_type: string;
-    aziz_dept_emoji: string;
+    aziz_department?: string;
+    aziz_total_posts?: string;
+    aziz_qualification?: string;
+    aziz_job_location?: string;
+    aziz_apply_end?: string;
+    aziz_apply_link?: string;
+    aziz_notification?: string;
+    aziz_official_site?: string;
+    aziz_seo_desc?: string;
+    aziz_apply_start?: string;
+    aziz_exam_date?: string;
+    aziz_result_link?: string;
+    aziz_age_limit?: string;
+    aziz_salary?: string;
+    aziz_badge_type?: string;
+    aziz_dept_emoji?: string;
+    aziz_exam_name?: string;
+    aziz_exam_mode?: string;
+    aziz_exam_duration?: string;
+    aziz_total_marks?: string;
     faq_position?: string;
     howto_position?: string;
     rank_math_toc_html?: string;
@@ -103,51 +107,28 @@ const cleanMetaText = (text: string | undefined | null): string | undefined => {
 };
 
 export function extractPostMeta(post: WordPressPost) {
-  let dept = cleanMetaText(post.custom_meta?.aziz_department);
-  let totalPosts = cleanMetaText(post.custom_meta?.aziz_total_posts?.replace(/posts?/i, '').trim());
-  let qual = cleanMetaText(post.custom_meta?.aziz_qualification);
-  let lastDate = cleanMetaText(post.custom_meta?.aziz_apply_end);
+  const meta = post.custom_meta || {};
+  const type = post.type;
+  const isExam = type === 'aziz_exam';
 
-  const title = post.title?.rendered || '';
-  const excerpt = post.excerpt?.rendered || '';
-  const textContent = `${title} ${excerpt}`.replace(/<[^>]+>/g, '').replace(/&#\d+;/g, ' ');
+  let dept = cleanMetaText(meta.aziz_department);
+  let totalPosts = cleanMetaText(meta.aziz_total_posts);
+  let qual = cleanMetaText(meta.aziz_qualification);
+  let lastDate = cleanMetaText(meta.aziz_apply_end);
+  let salary = cleanMetaText(meta.aziz_salary);
+  let examName = cleanMetaText(meta.aziz_exam_name);
+  let examDate = cleanMetaText(meta.aziz_exam_date);
 
-  if (!dept) {
-    const deptMatch = title.match(/^(.+?)(?:\s+(?:Recruitment|Online Form|Admit Card|Result|Vacancy|Bharti|Notification|-|&#))/i);
-    if (deptMatch && deptMatch[1]) {
-      dept = cleanMetaText(deptMatch[1].trim());
-    }
-  }
-
-  if (!totalPosts) {
-    const postMatch = textContent.match(/(\d+(?:,\d+)*)\s*(?:Posts|Vacancies|Vacancy|पदों)/i);
-    if (postMatch && postMatch[1]) {
-      totalPosts = postMatch[1] + (textContent.toLowerCase().includes('vacan') ? ' Vacancies' : ' Posts');
-    }
-  }
-
-  if (!qual) {
-    const quals = [];
-    if (/(?:10th|10वीं|दसवीं)/i.test(textContent)) quals.push('10th');
-    if (/(?:12th|12वीं|बारहवीं|Intermediate)/i.test(textContent)) quals.push('12th');
-    if (/ITI/i.test(textContent)) quals.push('ITI');
-    if (/(?:Degree|Graduate|Graduation|Bachelor)/i.test(textContent)) quals.push('Graduate');
-    if (/Diploma/i.test(textContent)) quals.push('Diploma');
-    if (/(?:B\.?Tech|B\.?E\.?)/i.test(textContent)) quals.push('B.Tech');
-    
-    if (quals.length > 0) {
-      qual = quals.join(' / ');
-    }
-  }
-
-  if (!lastDate) {
-    const dateMatch = textContent.match(/(?:last date|apply(?: online)? (?:till|before)|deadline)[^0-9]*(\d{1,2}(?:st|nd|rd|th)?\s+[a-z]{3,}\s+\d{4}|\d{4}-\d{2}-\d{2})/i);
-    if (dateMatch && dateMatch[1]) {
-      lastDate = dateMatch[1].replace(/(?:st|nd|rd|th)/i, '');
-    }
-  }
-
-  return { dept, totalPosts, qual, lastDate };
+  // Return the raw extracted fields. Let the components decide what to render based on post type.
+  return { 
+    dept, 
+    totalPosts, 
+    qual, 
+    lastDate,
+    salary,
+    examName,
+    examDate
+  };
 }
 
 export function getDeadlineStatus(dateString: string | undefined): { color: 'green' | 'yellow' | 'red', bg: string, text: string, border: string } {
@@ -499,6 +480,8 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json',
         ...options.headers,
       },
       next: { tags: ['wordpress'] }, // Cache indefinitely, rely on Webhook for on-demand revalidation
@@ -521,7 +504,13 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
 export async function getAffiliateSettings(): Promise<{ amazon_id: string }> {
   try {
     const url = `${process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://getjobupdate.com'}/wp-json/gju/v1/affiliate-settings`;
-    const res = await fetch(url, { next: { tags: ['wordpress'] } });
+    const res = await fetch(url, { 
+      next: { tags: ['wordpress'] },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json'
+      }
+    });
     if (!res.ok) {
       return { amazon_id: '' };
     }
@@ -828,7 +817,13 @@ export async function getTotalPostCount(): Promise<number> {
   await Promise.all(targetTypes.map(async (type) => {
     try {
       const url = `${API_URL}/wp-json/wp/v2/${type}?per_page=1`;
-      const res = await fetch(url, { next: { revalidate: 3600 } });
+      const res = await fetch(url, { 
+        next: { revalidate: 3600 },
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'application/json'
+        }
+      });
       if (res.ok) {
         const count = res.headers.get('x-wp-total');
         if (count) total += parseInt(count, 10);

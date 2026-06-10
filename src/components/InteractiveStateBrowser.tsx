@@ -20,7 +20,7 @@ export default function InteractiveStateBrowser() {
         </p>
         
         <div className="flex flex-wrap gap-4 pt-6">
-          <Link 
+          <Link prefetch={false} 
             href="/state/central" 
             className="flex items-center gap-3 bg-slate-100/90 backdrop-blur-xl border border-slate-200/80 rounded-full py-2.5 px-5 hover:border-orange-500 hover:shadow-[0_8px_20px_rgb(17,64,176,0.12)] hover:-translate-y-0.5 transition-all shadow-sm group"
           >
@@ -31,7 +31,7 @@ export default function InteractiveStateBrowser() {
           {STATES_LIST.slice(0, 7).map((state) => {
             const isHovered = activeSlug === state.slug;
             return (
-              <Link 
+              <Link prefetch={false} 
                 key={state.slug} 
                 href={`/state/${state.slug}`} 
                 onMouseEnter={() => setActiveSlug(state.slug)}
@@ -58,7 +58,7 @@ export default function InteractiveStateBrowser() {
             );
           })}
           
-          <Link href="/states" className="flex items-center gap-2 bg-slate-100/90 backdrop-blur-xl border border-slate-200 rounded-full py-3 px-6 hover:bg-orange-600 hover:text-white transition-all shadow-sm group">
+          <Link prefetch={false} href="/states" className="flex items-center gap-2 bg-slate-100/90 backdrop-blur-xl border border-slate-200 rounded-full py-3 px-6 hover:bg-orange-600 hover:text-white transition-all shadow-sm group">
             <span className="text-[15px] font-bold text-slate-800 group-hover:text-white transition-colors">View All States <span className="ml-1 text-lg leading-none group-hover:translate-x-1 inline-block transition-transform">→</span></span>
           </Link>
         </div>

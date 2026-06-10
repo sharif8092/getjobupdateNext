@@ -9,6 +9,9 @@ import {
   getDeadlineStatus
 } from '@/lib/wordpress';
 import { InteractiveStateBrowser, AgeCalculator, JobMatcher } from '@/components/DynamicWrappers';
+import dynamic from 'next/dynamic';
+
+const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
 
 import FAQAccordion from '@/components/FAQAccordion';
 import PushNotificationCard from '@/components/PushNotificationCard';
@@ -47,24 +50,40 @@ function FeedCard({
       {/* List */}
       <div className="flex flex-col flex-1 divide-y divide-slate-50">
         {posts.length > 0 ? posts.slice(0, 5).map(post => {
-          const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
+          const { dept, totalPosts, qual, lastDate, examName, examDate } = extractPostMeta(post);
           const isNew = (Date.now() - new Date(post.modified).getTime()) < 3 * 24 * 60 * 60 * 1000;
+          
+          let col1Label = 'Dept:';
+          let col1Value = dept;
+          let col2Label = 'Posts:';
+          let col2Value = totalPosts;
+          
+          if (post.type === 'aziz_exam') {
+            col1Label = 'Exam:';
+            col1Value = examName || totalPosts;
+            col2Label = 'Date:';
+            col2Value = examDate || lastDate;
+          } else if (post.type === 'aziz_admit' || post.type === 'aziz_result') {
+            col2Label = 'Post:';
+            col2Value = examName || totalPosts;
+          }
+          
           return (
             <Link prefetch={false} key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
               <div className="flex items-start justify-between gap-2">
                 <h3 className={`text-[13px] font-semibold text-slate-800 leading-snug ${hoverText} transition-colors line-clamp-2 flex-1`} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                 {isNew && <span className="text-[9px] font-black text-white bg-rose-500 px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide">New</span>}
               </div>
-              {(dept || totalPosts || qual || lastDate) && (
+              {(col1Value || col2Value || qual || lastDate) && (
                 <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-1.5 text-[10px] font-medium text-slate-500 bg-slate-50/50 group-hover:bg-white p-2.5 rounded-lg border border-slate-100 group-hover:border-slate-200 transition-colors">
-                  {dept && <div className="col-span-2 flex items-start gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 font-semibold truncate">{dept}</span></div>}
-                  {totalPosts && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 font-semibold truncate">{totalPosts}</span></div>}
-                  {qual && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 font-semibold truncate">{qual}</span></div>}
-                  {lastDate && (() => {
+                  {col1Value && <div className="col-span-2 flex items-start gap-1"><span className="text-slate-400 font-bold shrink-0">{col1Label}</span> <span className="text-slate-700 font-semibold truncate">{col1Value}</span></div>}
+                  {col2Value && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">{col2Label}</span> <span className="text-slate-700 font-semibold truncate">{col2Value}</span></div>}
+                  {qual && post.type === 'aziz_job' && <div className="flex items-center gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 font-semibold truncate">{qual}</span></div>}
+                  {lastDate && post.type !== 'aziz_result' && (() => {
                     const status = getDeadlineStatus(lastDate);
                     return (
                       <div className={`col-span-2 flex items-center gap-1 mt-0.5 pt-1.5 border-t border-slate-200/50 group-hover:border-slate-200`}>
-                        <span className={`${status.text} opacity-70 font-bold shrink-0`}>Deadline:</span> 
+                        <span className={`${status.text} opacity-70 font-bold shrink-0`}>{post.type === 'aziz_admit' ? 'Exam Date:' : 'Deadline:'}</span> 
                         <span className={`${status.text} font-bold`}>{lastDate}</span>
                       </div>
                     );
@@ -154,6 +173,7 @@ export default async function HomePage() {
 
   return (
     <div className="w-full flex flex-col font-sans bg-slate-50">
+      <LiveTicker />
 
       {/* ════════════════════════════════
           1. HERO
@@ -273,22 +293,37 @@ export default async function HomePage() {
               </div>
               <div className="p-4 space-y-1">
                 {latestNotifications.length > 0 ? latestNotifications.map((post, idx) => {
-                  const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
+                  const { dept, totalPosts, qual, lastDate, examName, examDate } = extractPostMeta(post);
+                  let col1Label = 'Dept:';
+                  let col1Value = dept;
+                  let col2Label = 'Posts:';
+                  let col2Value = totalPosts;
+                  
+                  if (post.type === 'aziz_exam') {
+                    col1Label = 'Exam:';
+                    col1Value = examName || totalPosts;
+                    col2Label = 'Date:';
+                    col2Value = examDate || lastDate;
+                  } else if (post.type === 'aziz_admit' || post.type === 'aziz_result') {
+                    col2Label = 'Post:';
+                    col2Value = examName || totalPosts;
+                  }
+
                   return (
                     <Link prefetch={false} key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-slate-50 px-3 py-3 -mx-1 rounded-xl transition-colors">
                       <span className="text-lg font-black text-slate-100 group-hover:text-orange-200 transition-colors leading-none w-6 shrink-0 text-center">{idx + 1}</span>
                       <div className="min-w-0 flex-1">
                         <h4 className="text-[13px] font-semibold text-slate-700 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                        {(dept || totalPosts || qual || lastDate) && (
+                        {(col1Value || col2Value || qual || lastDate) && (
                           <div className="mt-2 text-[9px] font-medium text-slate-500 bg-white group-hover:bg-slate-50 p-2 rounded border border-slate-100 transition-colors space-y-1">
-                            {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
-                            {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
-                            {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
-                            {lastDate && (() => {
+                            {col1Value && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">{col1Label}</span> <span className="text-slate-700 truncate">{col1Value}</span></div>}
+                            {col2Value && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">{col2Label}</span> <span className="text-slate-700 truncate">{col2Value}</span></div>}
+                            {qual && post.type === 'aziz_job' && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
+                            {lastDate && post.type !== 'aziz_result' && (() => {
                               const status = getDeadlineStatus(lastDate);
                               return (
                                 <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100">
-                                  <span className={`${status.text} opacity-80 font-bold shrink-0`}>Deadline:</span> 
+                                  <span className={`${status.text} opacity-80 font-bold shrink-0`}>{post.type === 'aziz_admit' ? 'Exam Date:' : 'Deadline:'}</span> 
                                   <span className={`${status.text} font-bold`}>{lastDate}</span>
                                 </div>
                               );
@@ -317,7 +352,22 @@ export default async function HomePage() {
               </div>
               <div className="p-4 space-y-1">
                 {examGuideUpdates.length > 0 ? examGuideUpdates.map((post, idx) => {
-                  const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
+                  const { dept, totalPosts, qual, lastDate, examName, examDate } = extractPostMeta(post);
+                  let col1Label = 'Dept:';
+                  let col1Value = dept;
+                  let col2Label = 'Posts:';
+                  let col2Value = totalPosts;
+                  
+                  if (post.type === 'aziz_exam') {
+                    col1Label = 'Exam:';
+                    col1Value = examName || totalPosts;
+                    col2Label = 'Date:';
+                    col2Value = examDate || lastDate;
+                  } else if (post.type === 'aziz_admit' || post.type === 'aziz_result') {
+                    col2Label = 'Post:';
+                    col2Value = examName || totalPosts;
+                  }
+
                   return (
                   <Link prefetch={false} key={post.id} href={`/${post.routePrefix}/${post.slug}`} className="flex gap-3 items-start group hover:bg-orange-50/80 px-3 py-3 -mx-1 rounded-xl transition-colors">
                     <span className="text-lg font-black text-slate-100 group-hover:text-orange-200 transition-colors leading-none w-6 shrink-0 text-center">{idx + 1}</span>
@@ -326,16 +376,16 @@ export default async function HomePage() {
                       <div className="flex gap-2 items-center mt-1.5 mb-1.5">
                         <span className="text-[9px] font-black text-orange-700 bg-orange-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider inline-block">Exam Guide</span>
                       </div>
-                      {(dept || totalPosts || qual || lastDate) && (
+                      {(col1Value || col2Value || qual || lastDate) && (
                         <div className="text-[9px] font-medium text-slate-500 bg-white group-hover:bg-orange-50/50 p-2 rounded border border-slate-100 transition-colors space-y-1">
-                            {dept && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Dept:</span> <span className="text-slate-700 truncate">{dept}</span></div>}
-                            {totalPosts && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Vacancies:</span> <span className="text-slate-700 truncate">{totalPosts}</span></div>}
-                            {qual && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
-                            {lastDate && (() => {
+                            {col1Value && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">{col1Label}</span> <span className="text-slate-700 truncate">{col1Value}</span></div>}
+                            {col2Value && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">{col2Label}</span> <span className="text-slate-700 truncate">{col2Value}</span></div>}
+                            {qual && post.type === 'aziz_job' && <div className="flex gap-1"><span className="text-slate-400 font-bold shrink-0">Eligibility:</span> <span className="text-slate-700 truncate">{qual}</span></div>}
+                            {lastDate && post.type !== 'aziz_result' && (() => {
                               const status = getDeadlineStatus(lastDate);
                               return (
                                 <div className="flex gap-1 pt-1 mt-1 border-t border-slate-100">
-                                  <span className={`${status.text} opacity-80 font-bold shrink-0`}>Deadline:</span> 
+                                  <span className={`${status.text} opacity-80 font-bold shrink-0`}>{post.type === 'aziz_admit' ? 'Exam Date:' : 'Deadline:'}</span> 
                                   <span className={`${status.text} font-bold`}>{lastDate}</span>
                                 </div>
                               );
@@ -486,3 +536,5 @@ export default async function HomePage() {
     </div>
   );
 }
+
+

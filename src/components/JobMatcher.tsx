@@ -289,7 +289,7 @@ export default function JobMatcher() {
                                   {relaxationApplied ? 'Relaxation Applied' : 'Direct Match'}
                                 </span>
                               </div>
-                              <Link 
+                              <Link prefetch={false} 
                                 href={`/${postTypeSlug}/${post.slug}`}
                                 className="block font-bold text-base md:text-sm text-slate-800 hover:text-orange-600 transition-colors line-clamp-2 leading-snug"
                                 dangerouslySetInnerHTML={{ __html: post.title.rendered }}
@@ -299,7 +299,7 @@ export default function JobMatcher() {
                               </p>
                             </div>
                             
-                            <Link
+                            <Link prefetch={false}
                               href={`/${postTypeSlug}/${post.slug}`}
                               className="w-full sm:w-auto text-center shrink-0 rounded-xl bg-orange-50 hover:bg-orange-500 text-orange-600 hover:text-white font-rajdhani font-black text-[13px] px-5 py-3 uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-sm border border-orange-100 hover:border-orange-500"
                             >

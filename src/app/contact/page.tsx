@@ -55,10 +55,10 @@ export default function ContactPage() {
                 </h3>
                 <p className="text-sm mb-4">Join our channels for instant updates on your smartphone.</p>
                 <div className="space-y-3">
-                  <Link href="https://t.me/getjobupdatefree" className="block w-full text-center bg-blue-50 text-blue-600 font-bold py-2.5 rounded-xl border border-blue-100 hover:bg-blue-100 transition-colors">
+                  <Link prefetch={false} href="https://t.me/getjobupdatefree" className="block w-full text-center bg-blue-50 text-blue-600 font-bold py-2.5 rounded-xl border border-blue-100 hover:bg-blue-100 transition-colors">
                     Join Telegram
                   </Link>
-                  <Link href="https://whatsapp.com/channel/0029VbCi7hW9RZAO5fRVKO0W" className="block w-full text-center bg-green-50 text-green-600 font-bold py-2.5 rounded-xl border border-green-100 hover:bg-green-100 transition-colors">
+                  <Link prefetch={false} href="https://whatsapp.com/channel/0029VbCi7hW9RZAO5fRVKO0W" className="block w-full text-center bg-green-50 text-green-600 font-bold py-2.5 rounded-xl border border-green-100 hover:bg-green-100 transition-colors">
                     Join WhatsApp
                   </Link>
                 </div>

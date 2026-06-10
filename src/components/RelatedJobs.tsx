@@ -49,7 +49,7 @@ export default async function RelatedJobs({ department, qualification, postType 
           const meta = post.custom_meta || {};
           
           return (
-            <Link key={post.id} href={`/${typeSlug}/${post.slug}`} className={`group bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[140px] ${isResult ? 'hover:border-green-300' : 'hover:border-orange-300'}`}>
+            <Link prefetch={false} key={post.id} href={`/${typeSlug}/${post.slug}`} className={`group bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[140px] ${isResult ? 'hover:border-green-300' : 'hover:border-orange-300'}`}>
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`text-[10px] font-black text-white px-2 py-0.5 rounded uppercase tracking-wider ${isResult ? 'bg-green-500' : 'bg-orange-500'}`}>

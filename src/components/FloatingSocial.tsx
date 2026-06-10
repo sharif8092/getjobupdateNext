@@ -1,11 +1,25 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 
 export default function FloatingSocial() {
+  const [visible, setVisible] = useState(false);
   const telegramUrl = 'https://t.me/getjobupdatefree';
   const whatsappUrl = 'https://whatsapp.com/channel/0029VbCi7hW9RZAO5fRVKO0W';
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (typeof window === 'undefined') return null;
+  if (!visible) return null;
+
   return (
-    <div className="fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-50 flex flex-col gap-3">
+    <div className="fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-50 flex flex-col gap-3 animate-fade-in-up">
       {/* WhatsApp Button */}
       <a
         href={whatsappUrl}

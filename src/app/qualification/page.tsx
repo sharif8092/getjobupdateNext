@@ -21,7 +21,7 @@ export default function QualificationDirectoryPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           {/* Breadcrumbs */}
           <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-1.5 text-[11px] font-black uppercase text-slate-400 mb-6 tracking-widest font-rajdhani">
-            <Link href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
+            <Link prefetch={false} href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
             <span>›</span>
             <span className="text-white">QUALIFICATION DIRECTORY</span>
           </nav>
@@ -40,7 +40,7 @@ export default function QualificationDirectoryPage() {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {QUALIFICATIONS_LIST.map((qual) => (
-            <Link
+            <Link prefetch={false}
               key={qual.slug}
               href={`/qualification/${qual.slug}`}
               className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:border-orange-500 hover:shadow-md transition-all group"

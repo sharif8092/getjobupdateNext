@@ -128,7 +128,7 @@ export default function SiteMapPage() {
                 </div>
                 <div className="lg:col-span-8 grid sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-4">
                   {section.links.map((link, linkIdx) => (
-                    <Link key={linkIdx} href={link.href} className="glass-card group/link flex items-center justify-between p-4 rounded-xl border border-[var(--border)] hover:border-orange-400 hover:shadow-md transition-all bg-white">
+                    <Link prefetch={false} key={linkIdx} href={link.href} className="glass-card group/link flex items-center justify-between p-4 rounded-xl border border-[var(--border)] hover:border-orange-400 hover:shadow-md transition-all bg-white">
                       <div className="flex items-center gap-3">
                          <span className="w-2 h-2 rounded-full bg-slate-300 group-hover/link:bg-orange-500 transition-all"></span>
                         <span className="text-[15px] font-black text-slate-700 group-hover/link:text-orange-600 transition-colors font-rajdhani uppercase tracking-wide">{link.title}</span>

@@ -49,7 +49,7 @@ export default function Navbar() {
           <div className="flex h-20 items-center justify-between">
             
             {/* Logo Section */}
-            <Link href="/" className="flex items-center gap-3 group relative z-[60]">
+            <Link prefetch={false} href="/" className="flex items-center gap-3 group relative z-[60]">
               {/* Brand Icon */}
               <BrandIcon className="w-12 h-12 flex-shrink-0 transform group-hover:scale-105 transition-transform" />
               
@@ -143,7 +143,7 @@ export default function Navbar() {
         >
           {/* Header inside drawer */}
           <div className="flex items-center justify-between p-4 border-b border-slate-800">
-            <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2 group">
+            <Link prefetch={false} href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2 group">
               <BrandIcon className="w-7 h-7 flex-shrink-0 transform group-hover:scale-105 transition-transform" />
               <div className="flex items-baseline gap-1 font-black font-rajdhani text-base tracking-wide uppercase leading-none">
                 <span className="text-white">GETJOB</span>
@@ -164,7 +164,7 @@ export default function Navbar() {
           {/* Links */}
           <nav className="flex-1 overflow-y-auto py-2 px-2 flex flex-col gap-0.5">
             {navLinks.map((link) => (
-              <Link 
+              <Link prefetch={false} 
                 key={link.name} 
                 href={link.href}
                 onClick={() => setIsOpen(false)}
@@ -181,7 +181,7 @@ export default function Navbar() {
             </div>
             
             {toolLinks.map((link) => (
-              <Link 
+              <Link prefetch={false} 
                 key={link.name} 
                 href={link.href}
                 onClick={() => setIsOpen(false)}

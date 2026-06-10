@@ -27,7 +27,7 @@ export default function RecentPosts({ posts, title = "Recent Updates", icon }: P
         {posts.map((post) => {
           const typeSlug = POST_TYPE_MAP[post.type] || post.type;
           return (
-            <Link key={post.id} href={`/${typeSlug}/${post.slug}`} className="group p-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
+            <Link prefetch={false} key={post.id} href={`/${typeSlug}/${post.slug}`} className="group p-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
               <h4 className="text-xs font-bold text-slate-800 line-clamp-2 group-hover:text-orange-600 transition-colors leading-relaxed" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
               <div className="mt-1.5 flex items-center gap-2 text-[10px] font-semibold text-slate-400">
                 <span className="uppercase tracking-wider">{typeSlug.replace('-', ' ')}</span>

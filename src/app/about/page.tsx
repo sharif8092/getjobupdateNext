@@ -58,7 +58,7 @@ export default function AboutPage() {
               <h2 className="text-xl font-bold text-slate-900">Join Our Community</h2>
               <p>
                 Don&apos;t miss out on life-changing opportunities. Join millions of students who trust our real-time alerts. 
-                Connect with us on our <Link href="https://t.me/getjobupdatefree" className="text-orange-600 font-bold hover:underline">Telegram Channel</Link> and <Link href="https://whatsapp.com/channel/0029VbCi7hW9RZAO5fRVKO0W" className="text-orange-600 font-bold hover:underline">WhatsApp Channel</Link> for instant notifications directly to your phone.
+                Connect with us on our <Link prefetch={false} href="https://t.me/getjobupdatefree" className="text-orange-600 font-bold hover:underline">Telegram Channel</Link> and <Link prefetch={false} href="https://whatsapp.com/channel/0029VbCi7hW9RZAO5fRVKO0W" className="text-orange-600 font-bold hover:underline">WhatsApp Channel</Link> for instant notifications directly to your phone.
               </p>
             </section>
           </div>

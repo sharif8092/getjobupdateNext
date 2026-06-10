@@ -24,7 +24,7 @@ export default function JobMatcherPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           {/* Breadcrumbs */}
           <nav className="flex items-center justify-center gap-1.5 text-[11px] font-black uppercase text-slate-400 mb-6 tracking-widest font-rajdhani">
-            <Link href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
+            <Link prefetch={false} href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
             <span>›</span>
             <span className="text-white">Smart Job Matcher</span>
           </nav>

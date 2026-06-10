@@ -40,22 +40,22 @@ export default async function Footer() {
             </h4>
             <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/jobs" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/jobs" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Latest Govt Jobs
                 </Link>
               </li>
               <li>
-                <Link href="/results" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/results" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Sarkari Result 2026
                 </Link>
               </li>
               <li>
-                <Link href="/admit-cards" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/admit-cards" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Exam Admit Cards
                 </Link>
               </li>
               <li>
-                <Link href="/answer-keys" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/answer-keys" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Answer Keys
                 </Link>
               </li>
@@ -69,27 +69,27 @@ export default async function Footer() {
             </h4>
             <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/age-calculator" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/age-calculator" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Age Calculator
                 </Link>
               </li>
               <li>
-                <Link href="/job-matcher" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/job-matcher" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> AI Job Matcher
                 </Link>
               </li>
               <li>
-                <Link href="/sarkari-yojana" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/sarkari-yojana" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Govt Yojana Schemes
                 </Link>
               </li>
               <li>
-                <Link href="/exams" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/exams" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Exam Guide
                 </Link>
               </li>
               <li>
-                <Link href="/syllabus" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/syllabus" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Exam Syllabus
                 </Link>
               </li>
@@ -103,12 +103,12 @@ export default async function Footer() {
             </h4>
             <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/state" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/state" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Browse Jobs by State
                 </Link>
               </li>
               <li>
-                <Link href="/qualification" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/qualification" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Jobs by Qualification
                 </Link>
               </li>
@@ -127,32 +127,32 @@ export default async function Footer() {
             </h4>
             <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/about" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/about" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/contact" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Contact Support
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/disclaimer" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Disclaimer
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/privacy-policy" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/terms" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/site-map" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
+                <Link prefetch={false} href="/site-map" className="hover:text-orange-400 text-slate-400 transition-colors flex items-center gap-2 group">
                   <span className="text-orange-500/50 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">→</span> Sitemap
                 </Link>
               </li>

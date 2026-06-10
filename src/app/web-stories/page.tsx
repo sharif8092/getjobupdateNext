@@ -29,7 +29,7 @@ export default async function WebStoriesArchive() {
             const featuredImage = post.seo_meta?.og_image || 'https://getjobupdate.co.in/default-story-bg.jpg';
             
             return (
-              <Link 
+              <Link prefetch={false} 
                 key={post.id} 
                 href={`/web-stories/${post.slug}`}
                 className="group relative rounded-2xl overflow-hidden aspect-[9/16] shadow-sm hover:shadow-xl transition-all duration-300 block"

@@ -77,7 +77,7 @@ export default function LiveTicker() {
             const routePrefix = badgeLabel === 'Sarkari Yojana' ? 'sarkari-yojana' : (POST_TYPE_MAP[post.type]?.toLowerCase() || 'jobs');
 
             return (
-              <Link key={i} href={`/${routePrefix}/${post.slug}`} className="hover:opacity-80 transition-opacity flex items-center gap-2">
+              <Link prefetch={false} key={i} href={`/${routePrefix}/${post.slug}`} className="hover:opacity-80 transition-opacity flex items-center gap-2">
                 <span className="text-amber-500">🔥</span>
                 <span className="text-amber-500 font-bold tracking-tight" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                 <span className="text-pink-400 font-bold text-[11px] uppercase">[{badgeLabel}]</span>

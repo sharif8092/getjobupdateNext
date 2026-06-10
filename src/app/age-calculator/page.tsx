@@ -22,7 +22,7 @@ export default function AgeCalculatorPage() {
         
         <div className="container relative mx-auto max-w-7xl px-4 text-center z-10">
           <nav className="flex items-center justify-center gap-1.5 text-xs font-bold font-rajdhani uppercase text-slate-400 mb-6 tracking-wide">
-            <Link href="/" className="hover:text-orange-400 transition-colors">HOME</Link>
+            <Link prefetch={false} href="/" className="hover:text-orange-400 transition-colors">HOME</Link>
             <span>›</span>
             <span className="text-slate-500">Age Calculator</span>
           </nav>

@@ -14,11 +14,13 @@ import PushNotificationCard from '@/components/PushNotificationCard';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ShareWidget from '@/components/ShareWidget';
 import MobileStickyCTA from '@/components/MobileStickyCTA';
-import TableOfContents from '@/components/TableOfContents';
+import dynamic from 'next/dynamic';
+const TableOfContents = dynamic(() => import('@/components/TableOfContents'));
 import RelatedJobs from '@/components/RelatedJobs';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import Comments from '@/components/Comments';
+const Comments = dynamic(() => import('@/components/Comments'));
 import Script from 'next/script';
+import ArticleContent from '@/components/article/ArticleContent';
 interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;
 }
@@ -605,41 +607,74 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
           {/* Hero Quick Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-6 mb-6 p-5 bg-white/5 border border-white/10 rounded-2xl max-w-4xl">
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
-               <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📋 Vacancy</span>
-               <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_total_posts)}>{cleanText(meta.aziz_total_posts) || '-'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🎓 Qualification</span>
-               <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_qualification)}>{cleanText(meta.aziz_qualification) || '-'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💰 Salary</span>
-               <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_salary)}>{cleanText(meta.aziz_salary) || '-'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">⚡ Job Type</span>
-               <span className="text-indigo-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.job_type)}>{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
-             </div>
-             <div className="flex flex-col min-w-0">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💻 App Mode</span>
-               <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.application_mode)}>{cleanText(meta.application_mode) || 'Online Form'}</span>
-             </div>
-             <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-2">
-               <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📅 Last Date / Status</span>
-               {(() => {
-                  const deadlineStr = cleanText(meta.aziz_apply_end);
-                  if (isResult) return <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3">Result Declared</span>;
-                  if (!deadlineStr) return <span className="text-slate-300 font-black text-sm break-words leading-snug line-clamp-3">-</span>;
-                  const status = getDeadlineStatus(deadlineStr);
-                  const colorClass = status.color === 'green' ? 'text-emerald-400' : status.color === 'yellow' ? 'text-amber-400' : 'text-rose-400';
-                  return <span className={`${colorClass} font-black text-sm break-words leading-snug line-clamp-3`} title={deadlineStr}>{deadlineStr}</span>;
-               })()}
-             </div>
+             {cleanText(meta.aziz_department) && (
+               <div className="flex flex-col min-w-0">
+                 <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">
+                   🏢 {type === 'aziz_exam' ? 'Organisation' : (type === 'aziz_yojana' || type === 'aziz_scholarship' ? 'Scheme By' : 'Department')}
+                 </span>
+                 <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department)}</span>
+               </div>
+             )}
+             
+             {cleanText(meta.aziz_exam_name || meta.aziz_total_posts) && (
+               <div className="flex flex-col min-w-0">
+                 <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">
+                   {type === 'aziz_exam' ? '📝 Exam Name' : (type === 'aziz_admit' || type === 'aziz_result' || type === 'aziz_syllabus' || type === 'aziz_answerkey' ? '📝 Post Name' : (type === 'aziz_yojana' || type === 'aziz_scholarship' ? '🎯 Beneficiary' : '📋 Vacancy'))}
+                 </span>
+                 <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(type === 'aziz_exam' ? meta.aziz_exam_name : meta.aziz_total_posts)}>{cleanText(type === 'aziz_exam' ? meta.aziz_exam_name : meta.aziz_total_posts)}</span>
+               </div>
+             )}
+             
+             {cleanText(type === 'aziz_exam' ? meta.aziz_exam_date : (type === 'aziz_admit' || type === 'aziz_result' || type === 'aziz_answerkey' ? meta.aziz_exam_date : meta.aziz_qualification)) && (
+               <div className="flex flex-col min-w-0">
+                 <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">
+                   {type === 'aziz_exam' || type === 'aziz_admit' || type === 'aziz_result' || type === 'aziz_answerkey' ? '📅 Exam Date' : '🎓 Qualification'}
+                 </span>
+                 <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(type === 'aziz_exam' || type === 'aziz_admit' || type === 'aziz_result' || type === 'aziz_answerkey' ? meta.aziz_exam_date : meta.aziz_qualification)}>{cleanText(type === 'aziz_exam' || type === 'aziz_admit' || type === 'aziz_result' || type === 'aziz_answerkey' ? meta.aziz_exam_date : meta.aziz_qualification)}</span>
+               </div>
+             )}
+             
+             {cleanText(type === 'aziz_exam' ? meta.aziz_total_marks : meta.aziz_salary) && (
+               <div className="flex flex-col min-w-0">
+                 <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">
+                   {type === 'aziz_exam' ? '💯 Total Marks' : (type === 'aziz_yojana' || type === 'aziz_scholarship' ? '💰 Amount / Benefits' : '💰 Salary')}
+                 </span>
+                 <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(type === 'aziz_exam' ? meta.aziz_total_marks : meta.aziz_salary)}>{cleanText(type === 'aziz_exam' ? meta.aziz_total_marks : meta.aziz_salary)}</span>
+               </div>
+             )}
+             
+             {cleanText(type === 'aziz_exam' ? meta.aziz_exam_duration : meta.job_type) && (
+               <div className="flex flex-col min-w-0">
+                 <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">
+                   {type === 'aziz_exam' ? '⏱️ Exam Duration' : '⚡ Job Type'}
+                 </span>
+                 <span className="text-indigo-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(type === 'aziz_exam' ? meta.aziz_exam_duration : meta.job_type)}>{cleanText(type === 'aziz_exam' ? meta.aziz_exam_duration : meta.job_type)}</span>
+               </div>
+             )}
+             
+             {cleanText(type === 'aziz_exam' ? meta.aziz_exam_mode : meta.application_mode) && (
+               <div className="flex flex-col min-w-0">
+                 <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">
+                   {type === 'aziz_exam' ? '💻 Exam Mode' : '💻 App Mode'}
+                 </span>
+                 <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(type === 'aziz_exam' ? meta.aziz_exam_mode : meta.application_mode)}>{cleanText(type === 'aziz_exam' ? meta.aziz_exam_mode : meta.application_mode)}</span>
+               </div>
+             )}
+             
+             {type !== 'aziz_exam' && cleanText(meta.aziz_apply_end) && (
+               <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-2">
+                 <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">
+                   📅 {type === 'aziz_result' ? 'Result Date' : (type === 'aziz_admit' ? 'Admit Card Status' : 'Last Date / Status')}
+                 </span>
+                 {(() => {
+                    const deadlineStr = cleanText(meta.aziz_apply_end);
+                    if (isResult) return <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3">{deadlineStr}</span>;
+                    const status = getDeadlineStatus(deadlineStr);
+                    const colorClass = status.color === 'green' ? 'text-emerald-400' : status.color === 'yellow' ? 'text-amber-400' : 'text-rose-400';
+                    return <span className={`${colorClass} font-black text-sm break-words leading-snug line-clamp-3`} title={deadlineStr}>{deadlineStr}</span>;
+                 })()}
+               </div>
+             )}
           </div>
 
           {/* Smart Tags (State, Qualification, Category, etc.) */}
@@ -714,134 +749,18 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             {faqPosition === 'before_content' && renderFaq()}
             {howtoPosition === 'before_content' && renderHowTo()}
 
-            {/* Full Article Body */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
-              
-              {/* Featured Image (if available) */}
-              {featuredImageUrl && (
-                <div className="w-full border-b border-slate-200 bg-slate-50 relative flex justify-center">
-                  <Image 
-                    src={featuredImageUrl} 
-                    alt={post.title.rendered.replace(/<[^>]*>?/gm, '')} 
-                    width={1200}
-                    height={500}
-                    className="w-full max-h-[500px] object-contain" 
-                    priority={true}
-                  />
-                </div>
-              )}
-
-              <div className="px-6 py-6 md:px-8 md:py-8">
-                <div id="full-article-content" className="post-content prose prose-slate max-w-none text-slate-700 text-[17px] leading-8 prose-headings:font-bold prose-h2:text-2xl">
-                  {parse(finalHtml, {
-                    replace: (domNode: any) => {
-                      // Optimize WordPress images automatically with Next.js Image component
-                      if (domNode.name === 'img' && domNode.attribs && domNode.attribs.src) {
-                        return (
-                          <Image
-                            src={domNode.attribs.src}
-                            alt={domNode.attribs.alt || ''}
-                            width={domNode.attribs.width ? parseInt(domNode.attribs.width, 10) : 800}
-                            height={domNode.attribs.height ? parseInt(domNode.attribs.height, 10) : 450}
-                            style={{ width: '100%', height: 'auto' }}
-                            className={domNode.attribs.class || 'rounded-xl shadow-sm my-6 mx-auto'}
-                            loading="lazy"
-                          />
-                        );
-                      }
-                      if (domNode.attribs && domNode.attribs['data-schema'] === 'faq') {
-                        return renderFaq(true, domNode.attribs['data-id']);
-                      }
-                      if (domNode.attribs && domNode.attribs['data-schema'] === 'howto') {
-                        return renderHowTo(true, domNode.attribs['data-id']);
-                      }
-                      if (domNode.attribs && domNode.attribs.id === 'react-faq-placeholder') {
-                        return renderFaq(true);
-                      }
-                      if (domNode.attribs && domNode.attribs.id === 'react-howto-placeholder') {
-                        return renderHowTo(true);
-                      }
-                      if (domNode.attribs && domNode.attribs.class && domNode.attribs.class.includes('react-affiliate-placeholder')) {
-                        return renderInlineAffiliate(domNode.attribs);
-                      }
-                      
-                      // Intercept raw Gutenberg SEO blocks and replace them with our premium React components inline
-                      if (domNode.attribs) {
-                        const classes = domNode.attribs.class || '';
-                        const id = domNode.attribs.id || '';
-                        
-                        if (classes.includes('wp-block-yoast-faq-block') || classes.includes('schema-faq') || id === 'rank-math-faq' || classes.includes('rank-math-faq')) {
-                          return renderFaq(true);
-                        }
-                        if (classes.includes('schema-how-to') || classes.includes('rank-math-howto-block') || classes.includes('wp-block-yoast-how-to-block')) {
-                          return renderHowTo(true);
-                        }
-                      }
-                      
-                      // Inject Global Amazon Affiliate ID into any existing Amazon links in content
-                      if (domNode.name === 'a' && domNode.attribs && domNode.attribs.href && globalAmazonId) {
-                        const href = domNode.attribs.href;
-                        if (href.includes('amazon.') || href.includes('amzn.to')) {
-                           let finalLink = href.replace(/([?&])tag=[^&]+(&|$)/, '$1');
-                           finalLink = finalLink.replace(/[?&]$/, '');
-                           finalLink += (finalLink.includes('?') ? '&' : '?') + 'tag=' + encodeURIComponent(globalAmazonId);
-                           domNode.attribs.href = finalLink;
-                           return domNode;
-                        }
-                      }
-                      
-                      // Make tables responsive on mobile by wrapping them in a scrollable container
-                      if (domNode.name === 'table') {
-                        // We do a simple React element creation to avoid infinite recursion
-                        // We map basic attributes manually (class -> className, etc)
-                        const props: any = {};
-                        if (domNode.attribs) {
-                          for (const key in domNode.attribs) {
-                             if (key === 'class') props.className = domNode.attribs[key];
-                             else if (key === 'colspan') props.colSpan = domNode.attribs[key];
-                             else if (key === 'rowspan') props.rowSpan = domNode.attribs[key];
-                             else props[key] = domNode.attribs[key];
-                          }
-                        }
-                        // We want to process the children normally, so we don't pass 'replace' again to avoid complexity.
-                        // For tables, domToReact is usually fine without recursive replacements inside.
-                        return (
-                          <div className="responsive-table-wrapper">
-                            <table {...props}>
-                              {domToReact(domNode.children as any)}
-                            </table>
-                          </div>
-                        );
-                      }
-                    }
-                  })}
-
-                  {/* If position is after_content, integrate them seamlessly at the end of the article text */}
-                  {faqPosition === 'after_content' && renderFaq(true)}
-                  {howtoPosition === 'after_content' && renderHowTo(true)}
-
-                  {/* Smart Tags Section */}
-                  {finalTagsList.length > 0 && (
-                    <div className="mt-10 pt-8 border-t border-slate-100">
-                      <div className="flex items-center gap-2 mb-4">
-                        <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                        </svg>
-                        <h3 className="text-sm font-black text-slate-700 uppercase tracking-widest">Related Tags</h3>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {finalTagsList.map((tag, idx) => (
-                          <span key={idx} className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition-colors cursor-default">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
+            <ArticleContent 
+              finalHtml={finalHtml} 
+              featuredImageUrl={featuredImageUrl} 
+              post={post} 
+              globalAmazonId={globalAmazonId} 
+              renderFaq={renderFaq} 
+              renderHowTo={renderHowTo} 
+              renderInlineAffiliate={renderInlineAffiliate} 
+              faqPosition={faqPosition} 
+              howtoPosition={howtoPosition} 
+              finalTagsList={finalTagsList} 
+            />
             {/* Dynamic Zone: After Content */}
             <AffiliateSlot position="after_content" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
 
@@ -1049,3 +968,4 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     </div>
   );
 }
+

@@ -99,7 +99,7 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             {/* Breadcrumbs */}
             <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-1.5 text-[11px] font-black uppercase text-slate-400 mb-6 tracking-widest">
-              <Link href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
+              <Link prefetch={false} href="/" className="hover:text-orange-500 transition-colors">HOME</Link>
               <span>›</span>
               <span className="text-white">{categoryTitle}</span>
             </nav>
@@ -129,7 +129,7 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
                   </div>
                   <div className="flex flex-col">
                     {CATEGORIES_LIST.filter((c) => c.slug !== type).map((cat) => (
-                      <Link
+                      <Link prefetch={false}
                         key={cat.slug}
                         href={`/${cat.slug}`}
                         className="px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 text-slate-600 hover:text-blue-600 text-sm font-medium transition-colors flex items-center gap-3"
@@ -170,11 +170,26 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {posts.map((post) => {
                     const postTypeSlug = POST_TYPE_MAP[post.type] || 'jobs';
-                    const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
+                    const { dept, totalPosts, qual, lastDate, examName, examDate } = extractPostMeta(post);
                     const isNew = (Date.now() - new Date(post.date).getTime()) < 3 * 24 * 60 * 60 * 1000;
                     
+                    let col1Label = 'Dept:';
+                    let col1Value = dept;
+                    let col2Label = 'Posts:';
+                    let col2Value = totalPosts;
+                    
+                    if (post.type === 'aziz_exam') {
+                      col1Label = 'Exam:';
+                      col1Value = examName || totalPosts;
+                      col2Label = 'Date:';
+                      col2Value = examDate || lastDate;
+                    } else if (post.type === 'aziz_admit' || post.type === 'aziz_result') {
+                      col2Label = 'Post:';
+                      col2Value = examName || totalPosts;
+                    }
+
                     return (
-                      <Link 
+                      <Link prefetch={false} 
                         key={post.id}
                         href={`/${postTypeSlug}/${post.slug}`}
                         className="group flex flex-col bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-orange-200 transition-all duration-300 overflow-hidden h-full relative"
@@ -201,30 +216,30 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
                           />
 
                           <div className="mt-auto space-y-2.5 pt-4 border-t border-slate-100">
-                            {dept && (
+                            {col1Value && (
                               <div className="flex items-start gap-2 text-xs">
-                                <span className="font-bold text-slate-400 shrink-0 w-16">Dept:</span>
-                                <span className="font-semibold text-slate-700 line-clamp-1">{dept}</span>
+                                <span className="font-bold text-slate-400 shrink-0 w-16">{col1Label}</span>
+                                <span className="font-semibold text-slate-700 line-clamp-1">{col1Value}</span>
                               </div>
                             )}
-                            {totalPosts && (
+                            {col2Value && (
                               <div className="flex items-start gap-2 text-xs">
-                                <span className="font-bold text-slate-400 shrink-0 w-16">Posts:</span>
-                                <span className="font-semibold text-slate-700">{totalPosts} Vacancies</span>
+                                <span className="font-bold text-slate-400 shrink-0 w-16">{col2Label}</span>
+                                <span className="font-semibold text-slate-700">{col2Value}</span>
                               </div>
                             )}
-                            {qual && (
+                            {qual && post.type === 'aziz_job' && (
                               <div className="flex items-start gap-2 text-xs">
                                 <span className="font-bold text-slate-400 shrink-0 w-16">Eligible:</span>
                                 <span className="font-semibold text-slate-700 line-clamp-1">{qual}</span>
                               </div>
                             )}
-                            {lastDate && (() => {
+                            {lastDate && post.type !== 'aziz_result' && (() => {
                               const status = getDeadlineStatus(lastDate);
                               return (
                                 <div className={`flex items-start gap-2 text-xs px-2.5 py-1.5 rounded-lg mt-2 border ${status.bg} ${status.text} ${status.border}`}>
                                   <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                  <span className="font-bold">Deadline: {lastDate}</span>
+                                  <span className="font-bold">{post.type === 'aziz_admit' ? 'Exam Date:' : 'Deadline:'} {lastDate}</span>
                                 </div>
                               );
                             })()}
@@ -249,7 +264,7 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
               {posts.length > 0 && (
                 <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm mt-8">
                   {page > 1 ? (
-                    <Link href={`/${type}?page=${page - 1}`} className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-orange-600 transition-colors">
+                    <Link prefetch={false} href={`/${type}?page=${page - 1}`} className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-orange-600 transition-colors">
                       &larr; Previous
                     </Link>
                   ) : (
@@ -261,7 +276,7 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
                   <span className="text-sm font-bold text-slate-600">Page {page}</span>
                   
                   {posts.length === 40 ? (
-                    <Link href={`/${type}?page=${page + 1}`} className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-orange-600 transition-colors">
+                    <Link prefetch={false} href={`/${type}?page=${page + 1}`} className="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-orange-600 transition-colors">
                       Next &rarr;
                     </Link>
                   ) : (
@@ -291,7 +306,7 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
               </h3>
               <div className="flex flex-wrap gap-2.5">
                 {['10th Pass Jobs', 'Railway Recruitment 2026', 'Police Bharti', 'Bank PO Vacancies', 'SSC CGL Updates', 'State PSC Exams', 'Teaching Jobs'].map((tag) => (
-                  <Link key={tag} href="#" className="inline-block px-3 py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-colors border border-slate-200 hover:border-orange-200">{tag}</Link>
+                  <Link prefetch={false} key={tag} href="#" className="inline-block px-3 py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-colors border border-slate-200 hover:border-orange-200">{tag}</Link>
                 ))}
               </div>
             </div>
