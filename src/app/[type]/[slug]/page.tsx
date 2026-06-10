@@ -14,10 +14,11 @@ import PushNotificationCard from '@/components/PushNotificationCard';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ShareWidget from '@/components/ShareWidget';
 import MobileStickyCTA from '@/components/MobileStickyCTA';
-import TableOfContents from '@/components/TableOfContents';
+import dynamic from 'next/dynamic';
+const TableOfContents = dynamic(() => import('@/components/TableOfContents'));
 import RelatedJobs from '@/components/RelatedJobs';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import Comments from '@/components/Comments';
+const Comments = dynamic(() => import('@/components/Comments'));
 import Script from 'next/script';
 
 // Cache the post HTML (SSG) indefinitely to enable blazing fast TTFB.
@@ -1169,3 +1170,4 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     </div>
   );
 }
+

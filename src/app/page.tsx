@@ -8,6 +8,10 @@ import {
   extractPostMeta,
   getDeadlineStatus
 } from '@/lib/wordpress';
+import dynamic from 'next/dynamic';
+const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
+import dynamic from 'next/dynamic';
+const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
 import InteractiveStateBrowser from '@/components/InteractiveStateBrowser';
 import AgeCalculator from '@/components/AgeCalculator';
 import JobMatcher from '@/components/JobMatcher';
@@ -280,6 +284,7 @@ export const revalidate = 300;
 export default function HomePage() {
   return (
     <div className="w-full flex flex-col font-sans bg-slate-50">
+        <LiveTicker />
 
       {/* ════════════════════════════════
           1. HERO — renders instantly (zero API calls)
@@ -476,3 +481,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+
