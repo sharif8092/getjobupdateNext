@@ -29,7 +29,7 @@ export default function CacheWarmerPage() {
 
     try {
       for (const wpType of POST_TYPES) {
-        const res = await fetch(`https://getjobupdate.co.in/wp-json/wp/v2/${wpType}?per_page=100&_fields=slug,type`);
+        const res = await fetch(`https://api.getjobupdate.co.in/wp-json/wp/v2/${wpType}?per_page=100&_fields=slug,type`);
         if (res.ok) {
           const posts = await res.json();
           for (const post of posts) {

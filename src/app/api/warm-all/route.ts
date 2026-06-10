@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_URL = 'https://getjobupdate.co.in/wp-json/wp/v2';
+const API_URL = 'https://api.getjobupdate.co.in/wp-json/wp/v2';
 const POST_TYPES = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_answerkey', 'aziz_yojana', 'aziz_syllabus', 'aziz_admission', 'post'];
 
 // Map WP types to Next.js slugs
