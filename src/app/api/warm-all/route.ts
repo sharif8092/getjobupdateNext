@@ -41,9 +41,6 @@ export async function GET(request: NextRequest) {
         for (const post of posts) {
           const typeSlug = POST_TYPE_MAP[post.type] || 'jobs';
           const postUrl = `https://getjobupdate.co.in/${typeSlug}/${post.slug}`;
-          
-          // Fire and forget fetch to statically generate the page
-          fetch(postUrl).catch(() => {});
           warmedUrls.push(postUrl);
         }
       } catch (e) {
@@ -53,18 +50,31 @@ export async function GET(request: NextRequest) {
     
     // Also warm the category pages
     Object.values(POST_TYPE_MAP).forEach(slug => {
-      fetch(`https://getjobupdate.co.in/${slug}`).catch(() => {});
       warmedUrls.push(`https://getjobupdate.co.in/${slug}`);
     });
     
     // Warm homepage
-    fetch('https://getjobupdate.co.in/').catch(() => {});
     warmedUrls.push('https://getjobupdate.co.in/');
+
+    // PROCESSSING IN BATCHES TO PREVENT 503 SERVER CRASH
+    // We cannot send 400 concurrent requests, it will DDoS the Hostinger server.
+    // Instead, we will process them slowly in the background (or just trigger the first 10 for now).
+    // Actually, Vercel/Serverless limits execution to 15s-60s. We will just return the URLs to the client
+    // and let the client browser fetch them slowly via a script, OR we do a limited background batch.
+    
+    const urlsToProcess = warmedUrls.slice(0, 10); // Only do 10 at a time to be safe
+    
+    for (const url of urlsToProcess) {
+       await fetch(url).catch(() => {});
+       await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay between requests
+    }
 
     return NextResponse.json({ 
       success: true, 
-      message: `Proactive Cache Warming triggered for ${warmedUrls.length} pages. They are now building in the background!`,
-      count: warmedUrls.length
+      message: `Proactive Cache Warming triggered safely for top 10 pages to prevent server crash. Check the 'urls' array for the full list.`,
+      count: urlsToProcess.length,
+      total_found: warmedUrls.length,
+      urls: warmedUrls
     });
 
   } catch (err) {
