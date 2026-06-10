@@ -69,9 +69,9 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
   // Fetch all sidebar/footer data in parallel to significantly reduce network wait time
   const [recentJobs, recentResults, recentAdmitCards, affiliateSettings] = await Promise.all([
-    getPosts('aziz_job', 5),
-    getPosts('aziz_result', 5),
-    getPosts('aziz_admit', 5),
+    getPosts('aziz_job', 3),
+    getPosts('aziz_result', 3),
+    getPosts('aziz_admit', 3),
     getAffiliateSettings()
   ]);
 
@@ -554,7 +554,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           PREMIUM HERO SECTION
       ══════════════════════════════════════════════ */}
       <div className="bg-[#0b1120] w-full py-8 relative overflow-hidden z-0">
-        <div className="absolute inset-0 opacity-[0.035] pointer-events-none z-[-1]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px,white 1px,transparent 0)`, backgroundSize: '28px 28px' }} />
+        
         <div className="absolute -top-20 -left-20 w-[400px] h-[400px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0) 70%)' }} />
         <div className="absolute bottom-0 right-0 w-[350px] h-[350px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(79,70,229,0) 70%)' }} />
 
@@ -1170,4 +1170,5 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     </div>
   );
 }
+
 

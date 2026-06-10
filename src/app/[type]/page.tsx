@@ -51,7 +51,7 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
   // Fetch up to 40 posts to fill out the archive view beautifully
   let posts: WordPressPost[] = [];
   try {
-    posts = await getPosts(type, 40, page);
+    posts = await getPosts(type, 15, page);
   } catch (err) {
     console.error(`Failed to fetch archives for CPT type: ${type}`, err);
   }
@@ -91,7 +91,7 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
         {/* Brand Hero Section */}
         <div className="bg-slate-900 w-full pt-16 pb-28 md:pb-36 relative overflow-hidden z-0">
           {/* Performant dot grid */}
-          <div className="absolute inset-0 opacity-[0.04] pointer-events-none z-[-1]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
+          
           {/* Optimized Glow blobs */}
           <div className="absolute -top-40 -left-40 w-[600px] h-[600px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(234,88,12,0.12) 0%, rgba(234,88,12,0) 70%)' }} />
           <div className="absolute top-0 right-0 w-[500px] h-[500px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(79,70,229,0) 70%)' }} />
@@ -302,3 +302,5 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
     </>
   );
 }
+
+

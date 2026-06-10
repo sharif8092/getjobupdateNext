@@ -289,7 +289,7 @@ export default function HomePage() {
       ════════════════════════════════ */}
       <div className="bg-slate-900 w-full pt-16 pb-36 relative overflow-hidden z-0">
         {/* Performant dot grid */}
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none z-[-1]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
+        
         
         {/* Optimized Glow blobs */}
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] pointer-events-none z-[-1]" style={{ background: 'radial-gradient(circle, rgba(234,88,12,0.12) 0%, rgba(234,88,12,0) 70%)' }} />
@@ -479,6 +479,7 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
 
