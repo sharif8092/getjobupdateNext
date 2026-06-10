@@ -10,8 +10,6 @@ import {
 } from '@/lib/wordpress';
 import dynamic from 'next/dynamic';
 const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
-import dynamic from 'next/dynamic';
-const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
 import InteractiveStateBrowser from '@/components/InteractiveStateBrowser';
 import AgeCalculator from '@/components/AgeCalculator';
 import JobMatcher from '@/components/JobMatcher';
@@ -481,5 +479,6 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
