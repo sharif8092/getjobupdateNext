@@ -23,7 +23,7 @@ import Script from 'next/script';
 // Cache the post HTML (SSG) indefinitely to enable blazing fast TTFB.
 // Our WordPress webhook (/api/revalidate) will automatically clear this cache 
 // immediately whenever a post is published or updated in the backend.
-export const revalidate = false;
+export const revalidate = 31536000; // 1 year (Effectively indefinite, prevents Next.js crash on dynamic routes)
 
 interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;

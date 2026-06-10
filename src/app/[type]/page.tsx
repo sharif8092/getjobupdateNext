@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: ArchiveProps): Promise<Metada
   };
 }
 
-export const revalidate = false; // Cache indefinitely until webhook revalidates
+export const revalidate = 300; // Cannot be 'false' because this page uses searchParams, which would crash Next.js
 
 export default async function ArchivePage({ params, searchParams }: ArchiveProps) {
   const { type } = await params;
