@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import {
   getPosts,
@@ -86,41 +86,7 @@ function FeedCard({
   );
 }
 
-/* ── Feed Card Skeleton (shown while data loads) ── */
-function FeedCardSkeleton({ accent = 'bg-orange-500' }: { accent?: string }) {
-  return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col">
-      <div className={`flex items-center gap-3 px-5 py-3.5 bg-slate-900`}>
-        <div className={`w-8 h-8 rounded-lg ${accent} opacity-60`} />
-        <div className="h-3 w-28 bg-slate-700 rounded animate-pulse" />
-      </div>
-      <div className="flex flex-col divide-y divide-slate-50">
-        {[1,2,3,4].map(i => (
-          <div key={i} className="flex items-center gap-3 px-4 py-3">
-            <div className="h-2.5 bg-slate-100 rounded animate-pulse" style={{ width: `${65 + i * 7}%` }} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
-/* ── Sidebar Skeleton ── */
-function SidebarSkeleton() {
-  return (
-    <div className="space-y-4">
-      {[1,2,3,4,5,6].map(i => (
-        <div key={i} className="flex items-start gap-3 p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
-          <div className="w-8 h-8 rounded-lg bg-slate-100 animate-pulse shrink-0" />
-          <div className="flex-1 space-y-1.5">
-            <div className="h-2.5 bg-slate-100 rounded animate-pulse w-full" />
-            <div className="h-2 bg-slate-100 rounded animate-pulse w-3/4" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────
 // ASYNC SERVER COMPONENTS — each fetches independently
@@ -382,18 +348,7 @@ export default function HomePage() {
 
           {/* Left Column — Feed Grid */}
           <div className="lg:col-span-8 space-y-6">
-            <Suspense fallback={
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                <FeedCardSkeleton accent="bg-orange-500" />
-                <FeedCardSkeleton accent="bg-emerald-500" />
-                <FeedCardSkeleton accent="bg-rose-500" />
-                <FeedCardSkeleton accent="bg-purple-500" />
-                <FeedCardSkeleton accent="bg-cyan-500" />
-                <FeedCardSkeleton accent="bg-indigo-500" />
-              </div>
-            }>
-              <FeedGrid />
-            </Suspense>
+            <FeedGrid />
 
             {/* Smart Age Calculator Tool */}
             <div className="mt-8">
@@ -403,9 +358,7 @@ export default function HomePage() {
 
           {/* Right Column — Sidebar */}
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-20">
-            <Suspense fallback={<SidebarSkeleton />}>
-              <SidebarFeed />
-            </Suspense>
+            <SidebarFeed />
           </div>
 
         </div>
