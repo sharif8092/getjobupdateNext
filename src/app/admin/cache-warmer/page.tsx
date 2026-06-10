@@ -71,8 +71,8 @@ export default function CacheWarmerPage() {
       }
       count++;
       setProgress(count);
-      // Wait 500ms between requests to keep the server safe
-      await new Promise(r => setTimeout(r, 500));
+      // Wait 2000ms between requests to keep the server safe
+      await new Promise(r => setTimeout(r, 2000));
     }
     
     setStatus('✅ All pages have been successfully cached! Your site is now blazing fast.');
@@ -90,7 +90,7 @@ export default function CacheWarmerPage() {
         
         <p className="text-slate-600 mb-8 leading-relaxed">
           This tool will fetch all your old posts and categories one by one to permanently cache them in Next.js. 
-          It does this slowly (500ms delay) so your Hostinger server doesn't crash from overload.
+          It does this slowly (2 seconds delay) so your Hostinger server doesn't crash from overload.
         </p>
 
         <div className="flex gap-4 mb-8">

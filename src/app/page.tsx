@@ -103,13 +103,13 @@ async function FeedGrid() {
   let answerkeys: WordPressPost[] = [];
 
   try {
-    const data = await Promise.all([
-      getPosts('aziz_job', 4), getPosts('aziz_result', 4),
-      getPosts('aziz_admit', 4), getPosts('aziz_yojana', 4),
-      getPosts('aziz_syllabus', 4), getPosts('aziz_exam', 4),
-      getPosts('aziz_answerkey', 4)
-    ]);
-    [jobs, results, admits, yojanas, syllabus, exams, answerkeys] = data;
+    jobs = await getPosts('aziz_job', 4);
+    results = await getPosts('aziz_result', 4);
+    admits = await getPosts('aziz_admit', 4);
+    yojanas = await getPosts('aziz_yojana', 4);
+    syllabus = await getPosts('aziz_syllabus', 4);
+    exams = await getPosts('aziz_exam', 4);
+    answerkeys = await getPosts('aziz_answerkey', 4);
   } catch (err) { console.error('Failed to fetch posts', err); }
 
   return (
@@ -149,11 +149,10 @@ async function SidebarFeed() {
   let yojanas: WordPressPost[] = [];
 
   try {
-    const data = await Promise.all([
-      getPosts('aziz_job', 4), getPosts('aziz_result', 4),
-      getPosts('aziz_admit', 4), getPosts('aziz_yojana', 4),
-    ]);
-    [jobs, results, admits, yojanas] = data;
+    jobs = await getPosts('aziz_job', 4);
+    results = await getPosts('aziz_result', 4);
+    admits = await getPosts('aziz_admit', 4);
+    yojanas = await getPosts('aziz_yojana', 4);
   } catch (err) { console.error('Failed to fetch sidebar posts', err); }
 
   const latestNotifications = [...jobs, ...results, ...admits, ...yojanas]
