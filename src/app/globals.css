@@ -45,7 +45,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
-  scroll-behavior: smooth;
+  /* Removed scroll-behavior: smooth — it delays browser's native scroll restoration
+     and can worsen INP on anchor-link clicks. Use CSS scroll-snap instead if needed. */
 }
 
 /* Premium Scrollbar */
@@ -469,6 +470,28 @@ body {
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
+}
+
+/* ── Bell icon animation (defined once here, was previously injected 3× via inline SVG style) ── */
+@keyframes bell-ring {
+  0%, 100% { transform: rotate(0deg); }
+  5%        { transform: rotate(15deg); }
+  10%       { transform: rotate(-10deg); }
+  15%       { transform: rotate(5deg); }
+  20%       { transform: rotate(-5deg); }
+  25%       { transform: rotate(0deg); }
+}
+.bell-animated {
+  animation: bell-ring 2s ease-in-out infinite;
+  transform-origin: 256px 200px;
+  will-change: transform;
+}
+
+/* ── content-visibility: auto for below-the-fold heavy sections ── */
+/* Improves LCP by allowing browser to skip offscreen rendering work */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
 }
 
 /* ── Hide Google Translate Top Banner & Tooltips ── */

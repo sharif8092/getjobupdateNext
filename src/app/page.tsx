@@ -378,7 +378,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="py-24 bg-white relative overflow-hidden border-t border-slate-100">
+      <section className="py-24 bg-white relative overflow-hidden border-t border-slate-100 cv-auto">
         <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, black 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -390,14 +390,15 @@ export default async function HomePage() {
               Sarkari <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500">Resource Center</span>
             </h2>
             <p className="text-slate-500 text-sm md:text-base leading-relaxed">
-              Your central hub for navigating India's vast recruitment landscape. We hand-categorize official notifications into definitive, high-growth career pathways.
+              Your central hub for navigating India&apos;s vast recruitment landscape. We hand-categorize official notifications into definitive, high-growth career pathways.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {pathways.map((p, i) => (
               <div key={i} className="bg-white rounded-2xl border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-6 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none blur-2xl" />
+                {/* Removed `blur-2xl` on hover orb — blur filter triggers GPU compositing on every hover, worsening INP */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                 <div className={`w-12 h-12 rounded-xl ${p.iconBg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 flex-shrink-0 shadow-sm border border-white/50`}>{p.icon}</div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">{p.t}</h3>
                 <p className="text-sm text-slate-500 leading-relaxed flex-1">{p.d}</p>
@@ -410,7 +411,7 @@ export default async function HomePage() {
       {/* ════════════════════════════════
           5. STATE BROWSER
       ════════════════════════════════ */}
-      <section id="state-map-section" className="py-20 bg-slate-50">
+      <section id="state-map-section" className="py-20 bg-slate-50 cv-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <InteractiveStateBrowser />
         </div>
@@ -419,7 +420,7 @@ export default async function HomePage() {
       {/* ════════════════════════════════
           6. WHY CHOOSE US
       ════════════════════════════════ */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white cv-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-6">
@@ -454,9 +455,10 @@ export default async function HomePage() {
       {/* ════════════════════════════════
           7. TOOLS — JOB MATCHER + FAQ + AGE CALC
       ════════════════════════════════ */}
-      <section className="py-24 bg-slate-50 relative overflow-hidden">
+      <section className="py-24 bg-slate-50 relative overflow-hidden cv-auto">
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+        {/* Replaced blur-3xl with radial-gradient for better INP — CSS blur forces GPU stacking context on init */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.05) 0%, transparent 70%)' }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">

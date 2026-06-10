@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -37,8 +38,6 @@ export const metadata: Metadata = {
   },
 };
 
-import Script from 'next/script';
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,6 +48,17 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} h-full antialiased`}
     >
+      <head>
+        {/* ── Critical Resource Hints ──
+            These resolve DNS and open TCP connections before the browser
+            discovers the resource in HTML/JS — reduces fetch latency for
+            API calls that drive every page's LCP content. */}
+        <link rel="preconnect" href="https://api.getjobupdate.co.in" />
+        <link rel="dns-prefetch" href="https://api.getjobupdate.co.in" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://onesignal.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+      </head>
       <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-brand-accent selection:text-brand-dark">
         {/* Google Analytics Tag (Only in Production to prevent localhost cookie warnings) */}
         {process.env.NODE_ENV === 'production' && (
