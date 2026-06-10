@@ -118,9 +118,15 @@ export function extractPostMeta(post: WordPressPost) {
   let qual = cleanMetaText(post.custom_meta?.aziz_qualification);
   let lastDate = cleanMetaText(post.custom_meta?.aziz_apply_end);
 
-  if (post.type !== 'web-story') {
-    return { dept, totalPosts, qual, lastDate };
-  }
+  // Validate to prevent garbage JSON strings or extremely long text from the WP database
+  const isGarbage = (str: string | undefined) => !str || str.includes('{"') || str.includes('":') || str.includes('","');
+  
+  if (dept && (dept.length > 70 || isGarbage(dept))) dept = undefined;
+  if (totalPosts && (totalPosts.length > 40 || isGarbage(totalPosts))) totalPosts = undefined;
+  if (qual && (qual.length > 60 || isGarbage(qual))) qual = undefined;
+  if (lastDate && (lastDate.length > 40 || isGarbage(lastDate))) lastDate = undefined;
+
+
 
   const title = post.title?.rendered || '';
   const excerpt = post.excerpt?.rendered || '';
