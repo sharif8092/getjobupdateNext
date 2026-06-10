@@ -63,8 +63,8 @@ export default function RootLayout({
         {/* Google Analytics Tag (Only in Production to prevent localhost cookie warnings) */}
         {process.env.NODE_ENV === 'production' && (
           <>
-            <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-XD4FQTDP9X" />
-            <Script id="google-analytics" strategy="afterInteractive">
+            <Script strategy="lazyOnload" src="https://www.googletagmanager.com/gtag/js?id=G-XD4FQTDP9X" />
+            <Script id="google-analytics" strategy="lazyOnload">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -94,4 +94,5 @@ export default function RootLayout({
     </html>
   );
 }
+
 

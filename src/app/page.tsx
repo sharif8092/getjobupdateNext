@@ -9,7 +9,7 @@ import {
   getDeadlineStatus
 } from '@/lib/wordpress';
 import dynamic from 'next/dynamic';
-const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
+const LiveTicker = dynamic(() => import('@/components/LiveTicker'), { ssr: false, loading: () => <div className="h-[46px] bg-black border-b border-white/10 flex items-center px-4 overflow-hidden"><div className="flex gap-2 items-center w-full max-w-[1200px] mx-auto animate-pulse"><div className="w-16 h-5 bg-white/10 rounded"></div><div className="flex-1 flex gap-4 overflow-hidden"><div className="w-48 h-4 bg-white/5 rounded"></div></div></div></div> });
 import InteractiveStateBrowser from '@/components/InteractiveStateBrowser';
 import AgeCalculator from '@/components/AgeCalculator';
 import JobMatcher from '@/components/JobMatcher';
@@ -479,6 +479,7 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
 
