@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: ArchiveProps): Promise<Metada
   };
 }
 
-export const revalidate = 300; // Cache archive pages for 5 minutes
+export const revalidate = false; // Cache indefinitely until webhook revalidates
 
 export default async function ArchivePage({ params, searchParams }: ArchiveProps) {
   const { type } = await params;

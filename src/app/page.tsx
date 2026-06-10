@@ -310,7 +310,7 @@ const trustPoints = [
 // Feed cards stream in via Suspense after LCP is already painted
 // ─────────────────────────────────────────────
 
-export const revalidate = 300;
+export const revalidate = false;
 
 export default function HomePage() {
   return (

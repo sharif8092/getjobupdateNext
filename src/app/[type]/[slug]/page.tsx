@@ -20,10 +20,10 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import Comments from '@/components/Comments';
 import Script from 'next/script';
 
-// Cache the post HTML (ISR) for 24 hours to enable blazing fast TTFB.
+// Cache the post HTML (SSG) indefinitely to enable blazing fast TTFB.
 // Our WordPress webhook (/api/revalidate) will automatically clear this cache 
 // immediately whenever a post is published or updated in the backend.
-export const revalidate = 86400;
+export const revalidate = false;
 
 interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;
