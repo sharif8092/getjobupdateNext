@@ -52,6 +52,12 @@ export interface WordPressPost {
     highlight_text?: string;
     job_type?: string;
     application_mode?: string;
+    aziz_course_name?: string;
+    aziz_course_duration?: string;
+    aziz_entrance_exams?: string;
+    aziz_top_colleges?: string;
+    brand_name?: string;
+    price?: string;
     affiliate_slots?: Array<{
       position: string;
       tags: string[];
