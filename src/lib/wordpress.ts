@@ -216,6 +216,8 @@ export const POST_TYPE_MAP: Record<string, string> = {
   aziz_syllabus: 'syllabus',
   aziz_exam: 'exams',
   aziz_scholarship: 'scholarships',
+  aziz_career: 'careers',
+  aziz_affiliate: 'products',
   post: 'blog',
 };
 
@@ -228,6 +230,8 @@ export const REVERSE_POST_TYPE_MAP: Record<string, string> = {
   syllabus: 'aziz_syllabus',
   exams: 'aziz_exam',
   scholarships: 'aziz_scholarship',
+  careers: 'aziz_career',
+  products: 'aziz_affiliate',
   blog: 'post',
 };
 
