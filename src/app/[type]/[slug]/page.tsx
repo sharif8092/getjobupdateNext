@@ -533,6 +533,22 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
       }
     });
   }
+
+  // 6. Course Schema (Only for Careers)
+  if (post.type === 'aziz_career') {
+    schemas.push({
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": cleanText(meta.course_name) || post.title.rendered.replace(/<[^>]*>?/gm, ''),
+      "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]*>?/gm, ''),
+      "provider": {
+        "@type": "Organization",
+        "name": "Get Job Update",
+        "sameAs": "https://getjobupdate.co.in"
+      }
+    });
+  }
+
   // --- Smart Tags Generation ---
   const generatedTags = new Set<string>();
   if (post.type === 'aziz_job') generatedTags.add('Latest Govt Jobs');
@@ -541,6 +557,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   else if (post.type === 'aziz_answerkey') generatedTags.add('Answer Key');
   else if (post.type === 'aziz_syllabus') generatedTags.add('Syllabus');
   else if (post.type === 'aziz_admission') generatedTags.add('Admission');
+  else if (post.type === 'aziz_career') generatedTags.add('Career Guide');
   
   generatedTags.add('Get Job Update');
   const finalTagsList = Array.from(generatedTags).slice(0, 5).filter(Boolean);
@@ -747,9 +764,38 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                 </div>
               </>
             )}
+
+            {post.type === 'aziz_career' && (
+              <>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-4">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🎓 Course / Career Name</span>
+                  <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.course_name)}>{cleanText(meta.course_name) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🎯 Eligibility</span>
+                  <span className="text-blue-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.qualification)}>{cleanText(meta.qualification) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">⏱ Duration</span>
+                  <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.duration)}>{cleanText(meta.duration) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📝 Entrance Exams</span>
+                  <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.entrance_exams)}>{cleanText(meta.entrance_exams) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💰 Avg Salary</span>
+                  <span className="text-purple-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.salary)}>{cleanText(meta.salary) || '-'}</span>
+                </div>
+                <div className="flex flex-col min-w-0 col-span-1 sm:col-span-2 md:col-span-4">
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏛 Top Colleges</span>
+                  <span className="text-indigo-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.top_colleges)}>{cleanText(meta.top_colleges) || '-'}</span>
+                </div>
+              </>
+            )}
             
             {/* Fallback for other unmapped types */}
-            {(!['aziz_admit', 'aziz_result', 'aziz_answerkey', 'aziz_yojana', 'aziz_syllabus', 'aziz_job', 'post'].includes(post.type)) && (
+            {(!['aziz_admit', 'aziz_result', 'aziz_answerkey', 'aziz_yojana', 'aziz_syllabus', 'aziz_job', 'aziz_career', 'post'].includes(post.type)) && (
               <>
                 <div className="flex flex-col min-w-0">
                   <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
