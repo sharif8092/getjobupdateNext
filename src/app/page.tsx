@@ -10,10 +10,10 @@ import {
 } from '@/lib/wordpress';
 import dynamic from 'next/dynamic';
 const LiveTicker = dynamic(() => import('@/components/LiveTicker'), { ssr: false });
-import InteractiveStateBrowser from '@/components/InteractiveStateBrowser';
-import AgeCalculator from '@/components/AgeCalculator';
-import JobMatcher from '@/components/JobMatcher';
-import FAQAccordion from '@/components/FAQAccordion';
+const InteractiveStateBrowser = dynamic(() => import('@/components/InteractiveStateBrowser'), { ssr: false });
+const AgeCalculator = dynamic(() => import('@/components/AgeCalculator'), { ssr: false });
+const JobMatcher = dynamic(() => import('@/components/JobMatcher'), { ssr: false });
+const FAQAccordion = dynamic(() => import('@/components/FAQAccordion'));
 import PushNotificationCard from '@/components/PushNotificationCard';
 import LiveSearch from '@/components/LiveSearch';
 
