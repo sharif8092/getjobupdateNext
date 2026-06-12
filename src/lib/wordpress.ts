@@ -518,7 +518,8 @@ export const CATEGORIES_LIST = [
   { name: 'Syllabus', slug: 'syllabus', color: 'indigo', type: 'aziz_syllabus', emoji: '📖' },
   { name: 'Sarkari Yojana', slug: 'sarkari-yojana', color: 'rose', type: 'aziz_yojana', emoji: '🇮🇳' },
   { name: 'Scholarship', slug: 'scholarships', color: 'orange', type: 'aziz_scholarship', emoji: '💰' },
-  { name: 'Exams / Admissions', slug: 'exams', color: 'purple', type: 'aziz_exam', emoji: '📝' }
+  { name: 'Exams / Admissions', slug: 'exams', color: 'purple', type: 'aziz_exam', emoji: '📝' },
+  { name: 'Careers', slug: 'careers', color: 'pink', type: 'aziz_career', emoji: '🎓' },
 ];
 
 // Helper to make fetch calls to WordPress REST API

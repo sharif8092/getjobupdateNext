@@ -103,6 +103,7 @@ async function FeedGrid() {
   let syllabus: WordPressPost[] = [];
   let exams: WordPressPost[] = [];
   let answerkeys: WordPressPost[] = [];
+  let careers: WordPressPost[] = [];
 
   try {
     jobs = await getPosts('aziz_job', 4);
@@ -112,6 +113,7 @@ async function FeedGrid() {
     syllabus = await getPosts('aziz_syllabus', 4);
     exams = await getPosts('aziz_exam', 4);
     answerkeys = await getPosts('aziz_answerkey', 4);
+    careers = await getPosts('aziz_career', 4);
   } catch (err) { console.error('Failed to fetch posts', err); }
 
   return (
@@ -140,6 +142,10 @@ async function FeedGrid() {
         iconBg="bg-indigo-500" hoverText="group-hover:text-indigo-600"
         icon={<svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>}
       />
+      <FeedCard title="Career Updates" typeSlug="careers" posts={careers} accentColor="text-pink-400"
+        iconBg="bg-pink-500" hoverText="group-hover:text-pink-600"
+        icon={<svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6.75h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" /></svg>}
+      />
     </div>
   );
 }
@@ -149,15 +155,17 @@ async function SidebarFeed() {
   let results: WordPressPost[] = [];
   let admits: WordPressPost[] = [];
   let yojanas: WordPressPost[] = [];
+  let careers: WordPressPost[] = [];
 
   try {
     jobs = await getPosts('aziz_job', 4);
     results = await getPosts('aziz_result', 4);
     admits = await getPosts('aziz_admit', 4);
     yojanas = await getPosts('aziz_yojana', 4);
+    careers = await getPosts('aziz_career', 4);
   } catch (err) { console.error('Failed to fetch sidebar posts', err); }
 
-  const latestNotifications = [...jobs, ...results, ...admits, ...yojanas]
+  const latestNotifications = [...jobs, ...results, ...admits, ...yojanas, ...careers]
     .map(p => ({ ...p, routePrefix: POST_TYPE_MAP[p.type] || 'blog' }))
     .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
     .slice(0, 6);
@@ -252,6 +260,7 @@ const categories = [
   { href: '/syllabus', label: 'EXAM GUIDE', name: 'Syllabus', iconBg: 'bg-indigo-100 text-[var(--color-brand-blue)]', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.56 2.25h-3.12a2.25 2.25 0 00-2.104 1.638m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184m-7.332 0h7.332M8.25 8.25h7.5m-7.5 4.5h7.5m-7.5 4.5h7.5" /></svg> },
   { href: '/sarkari-yojana', label: 'SCHEMES', name: 'Sarkari Yojana', iconBg: 'bg-amber-100 text-amber-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg> },
   { href: '/exams', label: 'PREPARATION', name: 'Exam Guide', iconBg: 'bg-purple-100 text-purple-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg> },
+  { href: '/careers', label: 'CAREER GUIDE', name: 'Careers', iconBg: 'bg-pink-100 text-pink-600', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6.75h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" /></svg> },
 ];
 
 const pathways = [
