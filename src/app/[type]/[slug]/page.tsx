@@ -30,22 +30,7 @@ interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const types = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_career', 'aziz_syllabus', 'aziz_exam', 'aziz_answerkey'];
-  const params = [];
-  try {
-    for (const type of types) {
-      const posts = await getPosts(type, 10);
-      for (const p of posts) {
-        const typeSlug = Object.keys(REVERSE_POST_TYPE_MAP).find(key => REVERSE_POST_TYPE_MAP[key] === p.type) || p.type;
-        params.push({ type: typeSlug, slug: p.slug });
-      }
-    }
-  } catch (e) {
-    console.error('generateStaticParams error:', e);
-  }
-  return params;
-}
+// Removed generateStaticParams to avoid 100% CPU usage on WordPress hosting during Vercel build. Pages will generate on-demand instead.
 
 export async function generateMetadata({ params }: SinglePostProps): Promise<Metadata> {
   const { type, slug } = await params;
