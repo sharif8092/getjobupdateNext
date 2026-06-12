@@ -9,7 +9,12 @@ export const metadata: Metadata = {
 };
 
 export default async function WebStoriesArchive() {
-  const posts = await getPosts('aziz_job', 20);
+  const [jobs, careers] = await Promise.all([
+    getPosts('aziz_job', 20),
+    getPosts('aziz_career', 10)
+  ]);
+  
+  const posts = [...jobs, ...careers].sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime()).slice(0, 20);
 
   return (
     <div className="bg-slate-50 min-h-screen py-10">

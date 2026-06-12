@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getPostBySlug } from '@/lib/wordpress';
 
+export const revalidate = 60; // Revalidate every 60 seconds to ensure image updates are reflected
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
