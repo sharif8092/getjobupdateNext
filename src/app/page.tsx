@@ -9,10 +9,10 @@ import {
   getDeadlineStatus
 } from '@/lib/wordpress';
 import dynamic from 'next/dynamic';
-const LiveTicker = dynamic(() => import('@/components/LiveTicker'), { ssr: false });
-const InteractiveStateBrowser = dynamic(() => import('@/components/InteractiveStateBrowser'), { ssr: false });
-const AgeCalculator = dynamic(() => import('@/components/AgeCalculator'), { ssr: false });
-const JobMatcher = dynamic(() => import('@/components/JobMatcher'), { ssr: false });
+const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
+const InteractiveStateBrowser = dynamic(() => import('@/components/InteractiveStateBrowser'));
+const AgeCalculator = dynamic(() => import('@/components/AgeCalculator'));
+const JobMatcher = dynamic(() => import('@/components/JobMatcher'));
 const FAQAccordion = dynamic(() => import('@/components/FAQAccordion'));
 import PushNotificationCard from '@/components/PushNotificationCard';
 import LiveSearch from '@/components/LiveSearch';
