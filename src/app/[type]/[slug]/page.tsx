@@ -30,6 +30,23 @@ interface SinglePostProps {
   params: Promise<{ type: string; slug: string }>;
 }
 
+export async function generateStaticParams() {
+  const types = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_career', 'aziz_syllabus', 'aziz_exam', 'aziz_answerkey'];
+  const params = [];
+  try {
+    for (const type of types) {
+      const posts = await getPosts(type, 10);
+      for (const p of posts) {
+        const typeSlug = Object.keys(REVERSE_POST_TYPE_MAP).find(key => REVERSE_POST_TYPE_MAP[key] === p.type) || p.type;
+        params.push({ type: typeSlug, slug: p.slug });
+      }
+    }
+  } catch (e) {
+    console.error('generateStaticParams error:', e);
+  }
+  return params;
+}
+
 export async function generateMetadata({ params }: SinglePostProps): Promise<Metadata> {
   const { type, slug } = await params;
   const wpType = REVERSE_POST_TYPE_MAP[type];
@@ -354,7 +371,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
 
     return (
       <div id="article-faq-section" className={`mb-8 overflow-hidden not-prose ${isInline ? 'mt-8' : ''}`}>
-        <AffiliateSlot position="before_faq" slots={affiliateSlots} fallbackTags={['laptop', 'study-table']} department={meta.aziz_department} postType={post.type} />
+        <AffiliateSlot settings={affiliateSettings} position="before_faq" slots={affiliateSlots} fallbackTags={['laptop', 'study-table']} department={meta.aziz_department} postType={post.type} />
         <div className="mb-6 mt-10">
           <div className="text-center">
             <div role="heading" aria-level={2} className="text-2xl md:text-[28px] font-black text-slate-900 tracking-tight">
@@ -369,7 +386,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           ))}
         </div>
         
-        <AffiliateSlot position="after_faq" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
+        <AffiliateSlot settings={affiliateSettings} position="after_faq" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
       </div>
     );
   };
@@ -896,7 +913,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             <div className="mb-6"><ShareWidget /></div>
 
             {/* Top Affiliate Slot */}
-            <AffiliateSlot position="before_content" slots={affiliateSlots} fallbackTags={['laptop', 'study-table', 'printer']} department={meta.aziz_department} postType={post.type} />
+            <AffiliateSlot settings={affiliateSettings} position="before_content" slots={affiliateSlots} fallbackTags={['laptop', 'study-table', 'printer']} department={meta.aziz_department} postType={post.type} />
 
 
 
@@ -1048,7 +1065,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             </div>
 
             {/* Dynamic Zone: After Content */}
-            <AffiliateSlot position="after_content" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
+            <AffiliateSlot settings={affiliateSettings} position="after_content" slots={affiliateSlots} department={meta.aziz_department} postType={post.type} />
 
             {/* Trust Signals & Premium Author Box */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6 p-6 md:p-8">
@@ -1097,7 +1114,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             {howtoPosition === 'before_faq' && renderHowTo()}
 
             {/* Dynamic Zone: Before Related Posts */}
-            <AffiliateSlot position="before_related_posts" slots={affiliateSlots} fallbackTags={['study table', 'laptop']} department={meta.aziz_department} postType={post.type} />
+            <AffiliateSlot settings={affiliateSettings} position="before_related_posts" slots={affiliateSlots} fallbackTags={['study table', 'laptop']} department={meta.aziz_department} postType={post.type} />
             {faqPosition === 'before_related_posts' && renderFaq()}
             {howtoPosition === 'before_related_posts' && renderHowTo()}
 
@@ -1120,7 +1137,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           <aside className="lg:col-span-4 lg:sticky lg:top-24 self-start space-y-6 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto sidebar-scroll pr-2 pb-4">
 
             {/* Affiliate Ad Slot (Replaced Important Links Buttons) */}
-            <AffiliateSlot position="sidebar" slots={affiliateSlots} fallbackTags={['study table', 'laptop']} department={meta.aziz_department} postType={post.type} />
+            <AffiliateSlot settings={affiliateSettings} position="sidebar" slots={affiliateSlots} fallbackTags={['study table', 'laptop']} department={meta.aziz_department} postType={post.type} />
             
             {/* Sidebar Ordering: Jobs -> Results -> Admits */}
             {recentJobs.length > 0 && <RecentPosts posts={recentJobs} title="Latest Jobs" />}
@@ -1156,7 +1173,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             </div>
 
             {/* Affiliate Ad (Sidebar Placement) */}
-            <AffiliateSlot position="sidebar" slots={affiliateSlots} fallbackTags={[type, post.type, meta.aziz_department||'', meta.aziz_qualification||'']} department={meta.aziz_department} postType={post.type} />
+            <AffiliateSlot settings={affiliateSettings} position="sidebar" slots={affiliateSlots} fallbackTags={[type, post.type, meta.aziz_department||'', meta.aziz_qualification||'']} department={meta.aziz_department} postType={post.type} />
             {faqPosition === 'sidebar' && renderFaq()}
             {howtoPosition === 'sidebar' && renderHowTo()}
 
@@ -1171,78 +1188,6 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
         </div>
       </div>
 
-      {/* JSON-LD Schema Scripts */}
-      <Script
-        id="schema-main"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
-            post.type === 'aziz_job'
-              ? {
-                  "@context": "https://schema.org",
-                  "@type": "JobPosting",
-                  "title": post.title.rendered.replace(/<[^>]+>/g, '').trim(),
-                  "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]+>/g, '').trim(),
-                  "datePosted": post.date,
-                  "validThrough": (() => {
-                    const fallback = new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString();
-                    if ((meta as any).aziz_apply_end) {
-                      const d = new Date((meta as any).aziz_apply_end);
-                      return isNaN(d.getTime()) ? fallback : d.toISOString();
-                    }
-                    return fallback;
-                  })(),
-                  "employmentType": "FULL_TIME",
-                  "hiringOrganization": {
-                    "@type": "Organization",
-                    "name": meta.aziz_department || "Government Organization",
-                    "sameAs": "https://getjobupdate.co.in"
-                  },
-                  "jobLocation": {
-                    "@type": "Place",
-                    "address": {
-                      "@type": "PostalAddress",
-                      "addressCountry": "IN"
-                    }
-                  }
-                }
-              : {
-                  "@context": "https://schema.org",
-                  "@type": "Article",
-                  "headline": post.title.rendered.replace(/<[^>]+>/g, '').trim(),
-                  "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]+>/g, '').trim(),
-                  "image": post.seo_meta?.og_image || "https://getjobupdate.co.in/logo.png",
-                  "datePublished": post.date,
-                  "dateModified": post.modified,
-                  "author": [{
-                    "@type": "Person",
-                    "name": "Get Job Update",
-                    "url": "https://getjobupdate.co.in"
-                  }]
-                }
-          )
-        }}
-      />
-      {faqs && faqs.length > 0 && (
-        <Script
-          id="schema-faq"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": faqs.map((f: any) => ({
-                "@type": "Question",
-                "name": f.q?.replace(/<[^>]+>/g, '').trim() || '',
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": f.a?.replace(/<[^>]+>/g, '').trim() || ''
-                }
-              }))
-            })
-          }}
-        />
-      )}
 
       {/* Mobile Sticky Apply CTA */}
       <MobileStickyCTA

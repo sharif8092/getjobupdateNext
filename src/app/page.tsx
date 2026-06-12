@@ -103,11 +103,9 @@ async function FeedGrid() {
   let exams: WordPressPost[] = [];
   let answerkeys: WordPressPost[] = [];
   let careers: WordPressPost[] = [];
-  let exams: WordPressPost[] = [];
 
   try {
     jobs = await getPosts('aziz_job', 4);
-    exams = await getPosts('aziz_exam', 4);
     results = await getPosts('aziz_result', 4);
     admits = await getPosts('aziz_admit', 4);
     yojanas = await getPosts('aziz_yojana', 4);
@@ -116,6 +114,12 @@ async function FeedGrid() {
     answerkeys = await getPosts('aziz_answerkey', 4);
     careers = await getPosts('aziz_career', 4);
   } catch (err) { console.error('Failed to fetch posts', err); }
+
+  const examGuideUpdates = [...syllabus, ...exams, ...answerkeys].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6).map(p => ({
+    ...p,
+    routePrefix: POST_TYPE_MAP[p.type] || 'jobs',
+    badge: p.type === 'aziz_syllabus' ? 'SYLLABUS' : p.type === 'aziz_answerkey' ? 'ANSWER KEY' : 'EXAM'
+  }));
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -159,6 +163,9 @@ async function SidebarFeed() {
   let careers: WordPressPost[] = [];
   let exams: WordPressPost[] = [];
 
+  let syllabus: WordPressPost[] = [];
+  let answerkeys: WordPressPost[] = [];
+
   try {
     jobs = await getPosts('aziz_job', 4);
     exams = await getPosts('aziz_exam', 4);
@@ -166,12 +173,21 @@ async function SidebarFeed() {
     admits = await getPosts('aziz_admit', 4);
     yojanas = await getPosts('aziz_yojana', 4);
     careers = await getPosts('aziz_career', 4);
+    syllabus = await getPosts('aziz_syllabus', 4);
+    answerkeys = await getPosts('aziz_answerkey', 4);
   } catch (err) { console.error('Failed to fetch sidebar posts', err); }
 
   const latestNotifications = [...jobs, ...results, ...admits, ...yojanas, ...careers]
     .map(p => ({ ...p, routePrefix: POST_TYPE_MAP[p.type] || 'blog' }))
     .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
     .slice(0, 6);
+
+  const examGuideUpdates = [...syllabus, ...exams, ...answerkeys].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6).map(p => ({
+    ...p,
+    routePrefix: POST_TYPE_MAP[p.type] || 'jobs',
+    badge: p.type === 'aziz_syllabus' ? 'SYLLABUS' : p.type === 'aziz_answerkey' ? 'ANSWER KEY' : 'EXAM'
+  }));
+
 
 
 

@@ -8,9 +8,10 @@ interface AffiliateSlotProps {
   fallbackTags?: string[];
   department?: string;
   postType?: string;
+  settings?: { amazon_id: string };
 }
 
-export default async function AffiliateSlot({ position, slots, fallbackTags, department, postType }: AffiliateSlotProps) {
+export default async function AffiliateSlot({ position, slots, fallbackTags, department, postType, settings }: AffiliateSlotProps) {
   // Find matching slot from backend data if available
   const match = slots?.find(s => s.position === position);
   
@@ -26,8 +27,8 @@ export default async function AffiliateSlot({ position, slots, fallbackTags, dep
   if (postType) contextualTags.push(postType);
 
   // Fetch the global Amazon Affiliate ID from WordPress Settings
-  const settings = await getAffiliateSettings();
-  const amazonId = settings?.amazon_id || '';
+  const settingsToUse = settings || await getAffiliateSettings();
+  const amazonId = settingsToUse?.amazon_id || '';
 
   return (
     <div className="mb-6 affiliate-slot-container" data-position={position}>

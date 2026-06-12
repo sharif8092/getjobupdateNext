@@ -87,7 +87,7 @@ export default function LanguageSwitcher() {
     <div className="relative inline-block text-left z-50">
       <Script
         src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
       
       {/* Hidden google translate div */}

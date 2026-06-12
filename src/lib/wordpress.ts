@@ -1,4 +1,5 @@
 // TypeScript types for Get Job Update Headless WordPress integration
+import { cache } from 'react';
 
 export interface WordPressPost {
   id: number;
@@ -560,7 +561,7 @@ async function fetchWP<T>(endpoint: string, options: RequestInit = {}): Promise<
 export async function getAffiliateSettings(): Promise<{ amazon_id: string }> {
   try {
     const url = `${process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://getjobupdate.com'}/wp-json/gju/v1/affiliate-settings`;
-    const res = await fetch(url, { next: { tags: ['wordpress'] } });
+    const res = await fetch(url, { cache: 'force-cache', next: { tags: ['wordpress'] } });
     if (!res.ok) {
       return { amazon_id: '' };
     }
@@ -593,7 +594,7 @@ export async function getPosts(
 }
 
 // Fetch single post by slug
-export async function getPostBySlug(
+export const getPostBySlug = cache(async function getPostBySlug(
   postTypeSlug: string,
   slug: string
 ): Promise<WordPressPost | null> {
@@ -609,7 +610,7 @@ export async function getPostBySlug(
     const matched = mocks.find((p) => p.slug === slug);
     return matched || mocks[0] || null;
   }
-}
+});
 
 // Fetch all posts matching a state taxonomy term slug
 export async function getPostsByState(stateSlug: string, count = 30): Promise<WordPressPost[]> {
@@ -709,14 +710,10 @@ export async function getPostsByQualification(qualName: string, count = 30): Pro
   const searchKey = getSearchKey(qualName);
 
   try {
-    const posts = await getPosts('aziz_job', 100);
-    const filtered = posts.filter((p) => {
-      const q = p.custom_meta?.aziz_qualification?.toLowerCase() || '';
-      // Also check if textContent contains the keyword if meta is missing
-      const textContent = (p.title?.rendered + ' ' + p.excerpt?.rendered).toLowerCase();
-      return q.includes(searchKey) || textContent.includes(searchKey);
-    });
-    return filtered.slice(0, count);
+    const encodedSearch = encodeURIComponent(searchKey);
+    // Fetch directly with search param to avoid over-fetching 100 posts
+    const filtered = await getPosts('aziz_job', count, 1, `&search=${encodedSearch}`);
+    return filtered;
   } catch (err /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     const allMocks = Object.values(MOCK_POSTS).flat();
     return allMocks.filter((p) => {
@@ -867,7 +864,7 @@ export async function getTotalPostCount(): Promise<number> {
   await Promise.all(targetTypes.map(async (type) => {
     try {
       const url = `${API_URL}/wp-json/wp/v2/${type}?per_page=1`;
-      const res = await fetch(url, { next: { revalidate: 3600 } });
+      const res = await fetch(url, { cache: 'force-cache', next: { revalidate: 3600 } });
       if (res.ok) {
         const count = res.headers.get('x-wp-total');
         if (count) total += parseInt(count, 10);
