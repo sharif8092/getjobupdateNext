@@ -103,9 +103,11 @@ async function FeedGrid() {
   let exams: WordPressPost[] = [];
   let answerkeys: WordPressPost[] = [];
   let careers: WordPressPost[] = [];
+  let exams: WordPressPost[] = [];
 
   try {
     jobs = await getPosts('aziz_job', 4);
+    exams = await getPosts('aziz_exam', 4);
     results = await getPosts('aziz_result', 4);
     admits = await getPosts('aziz_admit', 4);
     yojanas = await getPosts('aziz_yojana', 4);
@@ -155,9 +157,11 @@ async function SidebarFeed() {
   let admits: WordPressPost[] = [];
   let yojanas: WordPressPost[] = [];
   let careers: WordPressPost[] = [];
+  let exams: WordPressPost[] = [];
 
   try {
     jobs = await getPosts('aziz_job', 4);
+    exams = await getPosts('aziz_exam', 4);
     results = await getPosts('aziz_result', 4);
     admits = await getPosts('aziz_admit', 4);
     yojanas = await getPosts('aziz_yojana', 4);
@@ -169,10 +173,7 @@ async function SidebarFeed() {
     .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
     .slice(0, 6);
 
-  const examGuideUpdates = [...jobs]
-    .map(p => ({ ...p, routePrefix: POST_TYPE_MAP[p.type] || 'blog' }))
-    .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
-    .slice(0, 5);
+
 
   return (
     <>
