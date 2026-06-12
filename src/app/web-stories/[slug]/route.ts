@@ -8,7 +8,12 @@ export async function GET(
   const { slug } = await params;
   
   // Fetch post (using aziz_job as primary, but you can extend to check others)
-  const post = await getPostBySlug('aziz_job', slug);
+    let post = null;
+  const typesToCheck = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_answerkey', 'aziz_yojana', 'aziz_syllabus', 'aziz_exam', 'aziz_scholarship', 'aziz_career'];
+  for (const t of typesToCheck) {
+    post = await getPostBySlug(t, slug);
+    if (post) break;
+  }
   
   if (!post) {
     return new NextResponse('Story not found', { status: 404 });

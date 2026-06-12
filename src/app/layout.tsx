@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import OneSignalInit from '@/components/OneSignalInit';
 import dynamic from 'next/dynamic';
 const FloatingSocial = dynamic(() => import('@/components/FloatingSocial'));
+const LiveTicker = dynamic(() => import('@/components/LiveTicker'));
 
 // Load Inter Google Font for maximum readability and a clean, premium look
 const inter = Inter({
@@ -84,6 +85,7 @@ export default function RootLayout({
         )}
         
         <OneSignalInit />
+        <LiveTicker />
         <Navbar />
         <main className="flex-1 w-full flex flex-col">
           {children}

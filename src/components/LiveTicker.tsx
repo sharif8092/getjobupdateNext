@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { POST_TYPE_MAP } from '@/lib/wordpress';
 
 interface TickerPost {
@@ -11,6 +12,7 @@ interface TickerPost {
 }
 
 export default function LiveTicker() {
+  const pathname = usePathname();
   const [posts, setPosts] = useState<TickerPost[]>([]);
 
   useEffect(() => {
@@ -46,6 +48,8 @@ export default function LiveTicker() {
       window.addEventListener('load', () => setTimeout(fetchTicker, 4500), { once: true });
     }
   }, []);
+
+  if (pathname !== '/') return null;
 
   if (posts.length === 0) {
     return (
