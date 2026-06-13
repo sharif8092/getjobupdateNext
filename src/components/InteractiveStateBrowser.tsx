@@ -21,7 +21,7 @@ export default function InteractiveStateBrowser() {
         
         <div className="flex flex-wrap gap-4 pt-6">
           <Link 
-            href="/state/central" 
+            href="/state/all-india" 
             className="flex items-center gap-3 bg-slate-100/90 backdrop-blur-xl border border-slate-200/80 rounded-full py-2.5 px-5 hover:border-orange-500 hover:shadow-[0_8px_20px_rgb(17,64,176,0.12)] hover:-translate-y-0.5 transition-all shadow-sm group"
           >
             <span className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px] font-black tracking-wider group-hover:bg-orange-600 group-hover:text-white transition-colors">IN</span>
