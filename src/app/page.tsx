@@ -53,11 +53,14 @@ function FeedCard({
       </Link>
       {/* List */}
       <div className="flex flex-col flex-1 divide-y divide-slate-50">
-        {posts.length > 0 ? posts.slice(0, 5).map(post => {
+        {posts.length > 0 ? posts.slice(0, 5).map((post, index) => {
           const { dept, totalPosts, qual, lastDate } = extractPostMeta(post);
           const isNew = (Date.now() - new Date(post.modified).getTime()) < 3 * 24 * 60 * 60 * 1000;
+          // Prefetch only the top 3 posts per category to save bandwidth while making them instant
+          const shouldPrefetch = index < 3;
+          
           return (
-            <Link prefetch={false} key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
+            <Link prefetch={shouldPrefetch} key={post.id} href={`/${typeSlug}/${post.slug}`} className="group px-4 py-3.5 hover:bg-slate-50/80 transition-colors flex flex-col gap-1.5">
               <div className="flex items-start justify-between gap-2">
                 <h3 className={`text-[13px] font-semibold text-slate-800 leading-snug ${hoverText} transition-colors line-clamp-2 flex-1`} dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                 {isNew && <span className="text-[9px] font-black text-white bg-rose-500 px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide">New</span>}

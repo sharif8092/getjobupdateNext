@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Heading {
   id: string;
@@ -13,6 +13,30 @@ interface Props {
 }
 
 export default function TableOfContents({ headings }: Props) {
+  const [activeId, setActiveId] = useState<string>('');
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the first intersecting heading
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+            break; // Stop after finding the first one
+          }
+        }
+      },
+      { rootMargin: '-100px 0px -60% 0px' }
+    );
+
+    headings.forEach((h) => {
+      const element = document.getElementById(h.id);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, [headings]);
+
   if (!headings || headings.length === 0) return null;
 
   return (
@@ -25,19 +49,22 @@ export default function TableOfContents({ headings }: Props) {
       </div>
       <nav className="p-4 bg-slate-50">
         <ul className="space-y-1 columns-1 sm:columns-2 gap-6">
-          {headings.map((h, idx) => (
-            <li key={idx} className={`${h.level === 3 ? 'pl-4' : ''} break-inside-avoid`}>
-              <a 
-                href={`#${h.id}`}
-                className="flex items-start gap-2 py-1.5 px-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-orange-600 hover:bg-orange-50/70 transition-all duration-150 group leading-snug"
-              >
-                <span className="text-orange-400 group-hover:text-orange-600 flex-shrink-0 text-xs font-black mt-0.5 min-w-[1.25rem]">
-                  {idx + 1}.
-                </span>
-                <span>{h.text}</span>
-              </a>
-            </li>
-          ))}
+          {headings.map((h, idx) => {
+            const isActive = activeId === h.id;
+            return (
+              <li key={idx} className={`${h.level === 3 ? 'pl-4' : ''} break-inside-avoid`}>
+                <a 
+                  href={`#${h.id}`}
+                  className={`flex items-start gap-2 py-1.5 px-2 rounded-lg text-sm font-semibold transition-all duration-150 group leading-snug ${isActive ? 'text-orange-700 bg-orange-100/80 shadow-sm border border-orange-200/50' : 'text-slate-600 hover:text-orange-600 hover:bg-orange-50/70'}`}
+                >
+                  <span className={`flex-shrink-0 text-xs font-black mt-0.5 min-w-[1.25rem] transition-colors ${isActive ? 'text-orange-600' : 'text-orange-400 group-hover:text-orange-600'}`}>
+                    {idx + 1}.
+                  </span>
+                  <span>{h.text}</span>
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </div>
