@@ -21,9 +21,12 @@ export async function GET(
     return new NextResponse('Story not found', { status: 404 });
   }
 
+  const fixImgUrl = (url: string | null | undefined) => url ? url.replace(/api\.getjobupdate\.co\.in/gi, 'getjobupdate.co.in') : '';
+
   const meta = post.custom_meta || {};
-  const coverImage = post.seo_meta?.og_image || 'https://getjobupdate.co.in/default-story-bg.jpg';
-  const contentImages = [...(post.content?.rendered || '').matchAll(/<img[^>]+src=["']([^"']+)["']/gi)].map(m => m[1]);
+  let webStoryCover = fixImgUrl((meta as any).web_story_cover);
+  const coverImage = webStoryCover || fixImgUrl(post.seo_meta?.og_image) || 'https://getjobupdate.co.in/default-story-bg.jpg';
+  const contentImages = [...(post.content?.rendered || '').matchAll(/<img[^>]+src=["']([^"']+)["']/gi)].map(m => fixImgUrl(m[1]));
   const img1 = contentImages[0] || coverImage;
   const img2 = contentImages[1] || img1;
   const img3 = contentImages[2] || img2;
@@ -123,7 +126,7 @@ export async function GET(
       <!-- Page 1: Cover -->
       <amp-story-page id="page1">
         <amp-story-grid-layer template="fill">
-          <amp-img src="${(meta as any).web_story_cover || coverImage}" width="720" height="1280" layout="responsive" alt="Cover background"></amp-img>
+          <amp-img src="${coverImage}" width="720" height="1280" layout="responsive" alt="Cover background"></amp-img>
         </amp-story-grid-layer>
         <amp-story-grid-layer template="fill">
           <div class="bg-overlay"></div>
@@ -139,7 +142,7 @@ export async function GET(
 
       ${Array.isArray((meta as any).web_story_slides) && (meta as any).web_story_slides.length > 0 ? 
         (meta as any).web_story_slides.map((slide: any, index: number) => {
-          const slideImage = slide.slide_image || coverImage;
+          const slideImage = fixImgUrl(slide.slide_image) || coverImage;
           let heading = slide.slide_heading || '';
           let text = slide.slide_text || '';
           let ctaText = slide.slide_cta_text || '';
