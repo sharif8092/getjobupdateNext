@@ -38,25 +38,29 @@ export async function generateMetadata({ params }: SinglePostProps): Promise<Met
   if (!wpType) return {};
   const post = await getPostBySlug(type, slug);
   if (!post || !post.seo_meta) return {};
+  // Helper to fix api. domain in image URLs from WordPress
+  const fixImgUrl = (url: string) => url ? url.replace('api.getjobupdate.co.in', 'getjobupdate.co.in') : '';
+  const pageUrl = `https://getjobupdate.co.in/${type}/${slug}`;
+
   return {
     title: post.seo_meta.title,
     description: post.seo_meta.description,
     robots: post.seo_meta.robots,
-    alternates: { canonical: `https://getjobupdate.co.in/${type}/${slug}` },
+    alternates: { canonical: (post.seo_meta as any).canonical || pageUrl },
     openGraph: {
       title: post.seo_meta.og_title,
       description: post.seo_meta.og_description,
-      url: `https://getjobupdate.co.in/${type}/${slug}`,
+      url: (post.seo_meta as any).og_url || pageUrl,
       type: 'article',
       publishedTime: post.date,
       modifiedTime: post.modified,
-      images: post.seo_meta.og_image ? [{ url: post.seo_meta.og_image }] : [],
+      images: post.seo_meta.og_image ? [{ url: fixImgUrl(post.seo_meta.og_image) }] : [],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.seo_meta.twitter_title,
       description: post.seo_meta.twitter_description,
-      images: post.seo_meta.twitter_image ? [post.seo_meta.twitter_image] : [],
+      images: post.seo_meta.twitter_image ? [fixImgUrl(post.seo_meta.twitter_image)] : [],
     },
   };
 }
@@ -411,10 +415,10 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   // ─── Schemas (Advanced Technical SEO) ────────────────────────
   let schemas: any[] = [];
   if (post.schemas && typeof post.schemas === 'object') {
-    // Inject Rank Math schemas but fix URLs!
+    // Inject Rank Math schemas but fix URLs and remove FAQPage/HowTo (Next.js controls those)
     const stringifiedSchemas = JSON.stringify(Object.values(post.schemas));
     const fixedUrls = stringifiedSchemas.replace(/api\.getjobupdate\.co\.in/g, 'getjobupdate.co.in');
-    schemas = JSON.parse(fixedUrls);
+    schemas = JSON.parse(fixedUrls).filter((s: any) => s['@type'] !== 'FAQPage' && s['@type'] !== 'HowTo');
     
     // Ensure JobPosting Schema is present (Rank Math often misses it)
     const hasJobPosting = schemas.some(s => s['@type'] === 'JobPosting');
