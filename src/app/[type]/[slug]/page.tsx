@@ -411,7 +411,49 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   // ─── Schemas (Advanced Technical SEO) ────────────────────────
   let schemas: any[] = [];
   if (post.schemas && typeof post.schemas === 'object') {
-    schemas = Object.values(post.schemas);
+    // Inject Rank Math schemas but fix URLs!
+    const stringifiedSchemas = JSON.stringify(Object.values(post.schemas));
+    const fixedUrls = stringifiedSchemas.replace(/api\.getjobupdate\.co\.in/g, 'getjobupdate.co.in');
+    schemas = JSON.parse(fixedUrls);
+    
+    // Ensure JobPosting Schema is present (Rank Math often misses it)
+    const hasJobPosting = schemas.some(s => s['@type'] === 'JobPosting');
+    if (!hasJobPosting && post.type === 'aziz_job') {
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        "title": post.title.rendered.replace(/<[^>]*>?/gm, ''),
+        "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]*>?/gm, ''),
+        "datePosted": post.date,
+        "validThrough": (() => {
+           if (!meta.aziz_apply_end) return new Date(new Date(post.date).getTime() + 30*24*60*60*1000).toISOString();
+           const d = new Date(cleanText(meta.aziz_apply_end));
+           return isNaN(d.getTime()) ? new Date(new Date(post.date).getTime() + 30*24*60*60*1000).toISOString() : d.toISOString();
+        })(),
+        "employmentType": meta.job_type ? (meta.job_type.toUpperCase().includes('PART') ? 'PART_TIME' : 'FULL_TIME') : "FULL_TIME",
+        "hiringOrganization": {
+          "@type": "Organization",
+          "name": cleanText(meta.aziz_department) || "Government Organization",
+          "sameAs": "https://getjobupdate.co.in"
+        },
+        "jobLocation": {
+          "@type": "Place",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "IN"
+          }
+        },
+        "baseSalary": {
+          "@type": "MonetaryAmount",
+          "currency": "INR",
+          "value": {
+            "@type": "QuantitativeValue",
+            "value": cleanText(meta.aziz_salary) || "Not Disclosed",
+            "unitText": "MONTH"
+          }
+        }
+      });
+    }
   } else {
     schemas.push({
       "@context": "https://schema.org",
@@ -1022,5 +1064,6 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     </div>
   );
 }
+
 
 
