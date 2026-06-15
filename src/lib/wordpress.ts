@@ -3,6 +3,7 @@ import { cache } from 'react';
 
 export interface WordPressPost {
   id: number;
+  schemas?: any;
   date: string;
   modified: string;
   slug: string;
@@ -600,7 +601,7 @@ export const getPostBySlug = cache(async function getPostBySlug(
 ): Promise<WordPressPost | null> {
   const wpType = REVERSE_POST_TYPE_MAP[postTypeSlug] || postTypeSlug;
   try {
-    const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,job_category,job_state,faq,howto';
+    const fields = 'id,date,modified,slug,status,type,link,title,content,excerpt,custom_meta,seo_meta,schemas,job_category,job_state,faq,howto';
     const endpoint = `/wp-json/wp/v2/${wpType}?slug=${slug}&_fields=${fields}`;
     const posts = await fetchWP<WordPressPost[]>(endpoint);
     return posts.length > 0 ? posts[0] : null;
