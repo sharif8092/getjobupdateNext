@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: SinglePostProps): Promise<Met
   const post = await getPostBySlug(type, slug);
   if (!post || !post.seo_meta) return {};
   return {
-    title: `${post.seo_meta.title} – Get Job Update`,
+    title: post.seo_meta.title,
     description: post.seo_meta.description,
     robots: post.seo_meta.robots,
     alternates: { canonical: `https://getjobupdate.co.in/${type}/${slug}` },
@@ -409,183 +409,21 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   };
 
   // ─── Schemas (Advanced Technical SEO) ────────────────────────
-  const schemas: any[] = [];
-
-  // 1. Article Schema
-  schemas.push({
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": post.seo_meta?.title || post.title.rendered.replace(/<[^>]*>?/gm, ''),
-    "image": post.seo_meta?.og_image ? [post.seo_meta.og_image] : [],
-    "datePublished": post.date,
-    "dateModified": post.modified,
-    "author": [{
-        "@type": "Organization",
-        "name": "Get Job Update",
-        "url": "https://getjobupdate.co.in"
-    }],
-    "publisher": {
-      "@type": "Organization",
-      "name": "Get Job Update",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://getjobupdate.co.in/icon.png"
-      }
-    },
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": `https://getjobupdate.co.in/${type}/${slug}`
-    }
-  });
-
-  // 2. BreadcrumbList Schema
-  schemas.push({
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://getjobupdate.co.in/" },
-      { "@type": "ListItem", "position": 2, "name": type.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()), "item": `https://getjobupdate.co.in/${type}` },
-      { "@type": "ListItem", "position": 3, "name": post.title.rendered.replace(/<[^>]*>?/gm, ''), "item": `https://getjobupdate.co.in/${type}/${slug}` }
-    ]
-  });
-
-  // 3. FAQPage Schema
-  if (faqs && faqs.length > 0) {
-    const faqEntities: any[] = [];
-    faqs.forEach((group: any) => {
-      if (group.parsed) {
-        group.parsed.forEach((faq: any) => {
-          if (faq.q && faq.a) {
-            const cleanQ = faq.q.replace(/<[^>]*>?/gm, '').trim();
-            const cleanA = faq.a.replace(/<[^>]*>?/gm, '').trim();
-            if (cleanQ && cleanA) {
-              faqEntities.push({
-                "@type": "Question",
-                "name": cleanQ,
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": cleanA
-                }
-              });
-            }
-          }
-        });
-      }
-    });
-    if (faqEntities.length > 0) {
-      schemas.push({
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": faqEntities
-      });
-    }
-  }
-
-  // 4. HowTo Schema
-  if (howtos && howtos.length > 0) {
-    const mainHowto = howtos[0];
-    if (mainHowto.parsed && mainHowto.parsed.length > 0) {
-      schemas.push({
-        "@context": "https://schema.org",
-        "@type": "HowTo",
-        "name": mainHowto.title || `How to apply for ${post.title.rendered.replace(/<[^>]*>?/gm, '')}`,
-        "step": mainHowto.parsed.map((step: any, idx: number) => ({
-          "@type": "HowToStep",
-          "name": step.title ? step.title.replace(/<[^>]*>?/gm, '') : `Step ${idx + 1}`,
-          "text": step.desc ? step.desc.replace(/<[^>]*>?/gm, '') : ''
-        }))
-      });
-    }
-  }
-
-  // 5. JobPosting Schema (Only for Jobs)
-  if (post.type === 'aziz_job') {
+  let schemas: any[] = [];
+  if (post.schemas && typeof post.schemas === 'object') {
+    schemas = Object.values(post.schemas);
+  } else {
     schemas.push({
       "@context": "https://schema.org",
-      "@type": "JobPosting",
-      "title": post.title.rendered.replace(/<[^>]*>?/gm, ''),
-      "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]*>?/gm, ''),
-      "datePosted": post.date,
-      "validThrough": (() => {
-         if (!meta.aziz_apply_end) return new Date(new Date(post.date).getTime() + 30*24*60*60*1000).toISOString();
-         const d = new Date(cleanText(meta.aziz_apply_end));
-         return isNaN(d.getTime()) ? new Date(new Date(post.date).getTime() + 30*24*60*60*1000).toISOString() : d.toISOString();
-      })(),
-      "employmentType": meta.job_type ? (meta.job_type.toUpperCase().includes('PART') ? 'PART_TIME' : 'FULL_TIME') : "FULL_TIME",
-      "hiringOrganization": {
-        "@type": "Organization",
-        "name": cleanText(meta.aziz_department) || "Government Organization",
-        "sameAs": "https://getjobupdate.co.in"
-      },
-      "jobLocation": {
-        "@type": "Place",
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "IN"
-        }
-      },
-      "baseSalary": {
-        "@type": "MonetaryAmount",
-        "currency": "INR",
-        "value": {
-          "@type": "QuantitativeValue",
-          "value": cleanText(meta.aziz_salary) || "Not Disclosed",
-          "unitText": "MONTH"
-        }
-      }
-    });
-  }
-
-  // 6. Course Schema (Only for Careers)
-  if (post.type === 'aziz_career') {
-    schemas.push({
-      "@context": "https://schema.org",
-      "@type": "Course",
-      "name": cleanText(meta.aziz_course_name) || post.title.rendered.replace(/<[^>]*>?/gm, ''),
-      "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]*>?/gm, ''),
-      "provider": {
-        "@type": "Organization",
-        "name": "Get Job Update",
-        "sameAs": "https://getjobupdate.co.in"
-      }
-    });
-  }
-
-  // 7. GovernmentService Schema (Only for Yojana)
-  if (post.type === 'aziz_yojana') {
-    schemas.push({
-      "@context": "https://schema.org",
-      "@type": "GovernmentService",
-      "name": post.title.rendered.replace(/<[^>]*>?/gm, ''),
-      "provider": {
-        "@type": "GovernmentOrganization",
-        "name": cleanText(meta.aziz_department) || "Government of India"
-      }
-    });
-  }
-
-  // 8. Product Schema (Only for Affiliate)
-  if (post.type === 'aziz_affiliate') {
-    schemas.push({
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "name": post.title.rendered.replace(/<[^>]*>?/gm, ''),
-      "description": post.seo_meta?.description || post.title.rendered.replace(/<[^>]*>?/gm, ''),
-      "brand": {
-        "@type": "Brand",
-        "name": "Trusted Brand"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "reviewCount": "124"
-      },
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "INR",
-        "price": cleanText(meta.price) || "0",
-        "availability": "https://schema.org/InStock"
-      }
+      "@type": "Article",
+      "headline": post.seo_meta?.title || post.title.rendered.replace(/<[^>]*>?/gm, ''),
+      "image": post.seo_meta?.og_image ? [post.seo_meta.og_image] : [],
+      "datePublished": post.date,
+      "dateModified": post.modified,
+      "author": [{
+          "@type": "Person",
+          "name": "Get Job Update",
+      }]
     });
   }
 
