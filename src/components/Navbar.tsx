@@ -65,16 +65,8 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Navigation & Dropdowns (Hidden on mobile) */}
-            <div className="hidden lg:flex items-center gap-6 ml-8 flex-1">
-              <Link href="/" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Home</Link>
-              
-              <Link href="/jobs" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Latest Jobs</Link>
-              <Link href="/results" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Results</Link>
-
-              <Link href="/admit-cards" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Admit Card</Link>
-              <Link href="/sarkari-yojana" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Yojana</Link>
-            </div>
+              {/* Desktop Navigation removed for cleaner hero design */}
+              <div className="hidden lg:flex flex-1"></div>
 
             {/* Right Trust Badges (Hidden on mobile) */}
             <div className="hidden xl:flex items-center gap-8">
