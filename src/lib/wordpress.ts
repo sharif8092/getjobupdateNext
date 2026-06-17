@@ -644,7 +644,7 @@ export async function getPostsByState(stateSlug: string, count = 30): Promise<Wo
     const idString = stateIds.join(',');
     
     const allPosts: WordPressPost[] = [];
-    const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit'];
+    const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_syllabus', 'aziz_scholarship', 'aziz_exam', 'aziz_answerkey', 'aziz_yojana', 'aziz_career', 'post', 'aziz_privatejob', 'aziz_wfh'];
     
     for (const type of targetTypes) {
       try {
@@ -706,7 +706,7 @@ export async function getPostsByCategory(categorySlug: string, count = 30): Prom
     
     const catId = terms[0].id;
     const allPosts: WordPressPost[] = [];
-    const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_syllabus', 'aziz_scholarship', 'aziz_exam'];
+    const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_syllabus', 'aziz_scholarship', 'aziz_exam', 'aziz_answerkey', 'aziz_yojana', 'aziz_career', 'post', 'aziz_privatejob', 'aziz_wfh'];
     
     for (const type of targetTypes) {
       try {
@@ -754,7 +754,7 @@ export async function getPostsByQualification(qualName: string, count = 30): Pro
 // Global search across CPTs
 export async function searchPosts(query: string, count = 10): Promise<WordPressPost[]> {
   const allPosts: WordPressPost[] = [];
-  const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_yojana'];
+  const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_yojana', 'aziz_syllabus', 'aziz_scholarship', 'aziz_exam', 'aziz_answerkey', 'aziz_career', 'post', 'aziz_privatejob', 'aziz_wfh'];
   let apiSuccess = false;
   
   for (const type of targetTypes) {
@@ -886,7 +886,7 @@ export function processContentAndHeadings(html: string, postTitle: string = ''):
 }
 
 export async function getTotalPostCount(): Promise<number> {
-  const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_yojana'];
+  const targetTypes = ['aziz_job', 'aziz_result', 'aziz_admit', 'aziz_yojana', 'aziz_syllabus', 'aziz_scholarship', 'aziz_exam', 'aziz_answerkey', 'aziz_career', 'post', 'aziz_privatejob', 'aziz_wfh'];
   let total = 0;
   
   await Promise.all(targetTypes.map(async (type) => {
