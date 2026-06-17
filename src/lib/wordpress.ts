@@ -220,6 +220,8 @@ export const POST_TYPE_MAP: Record<string, string> = {
   aziz_scholarship: 'scholarships',
   aziz_career: 'careers',
   aziz_affiliate: 'products',
+  aziz_privatejob: 'private-jobs',
+  aziz_wfh: 'work-from-home',
   post: 'blog',
 };
 
@@ -234,6 +236,8 @@ export const REVERSE_POST_TYPE_MAP: Record<string, string> = {
   scholarships: 'aziz_scholarship',
   careers: 'aziz_career',
   products: 'aziz_affiliate',
+  'private-jobs': 'aziz_privatejob',
+  'work-from-home': 'aziz_wfh',
   blog: 'post',
 };
 
@@ -522,6 +526,8 @@ export const CATEGORIES_LIST = [
   { name: 'Scholarship', slug: 'scholarships', color: 'orange', type: 'aziz_scholarship', emoji: '💰' },
   { name: 'Exams / Admissions', slug: 'exams', color: 'purple', type: 'aziz_exam', emoji: '📝' },
   { name: 'Careers', slug: 'careers', color: 'pink', type: 'aziz_career', emoji: '🎓' },
+  { name: 'Private Job', slug: 'private-jobs', color: 'blue', type: 'aziz_privatejob', emoji: '🏢' },
+  { name: 'Work from Home', slug: 'work-from-home', color: 'cyan', type: 'aziz_wfh', emoji: '💻' },
 ];
 
 // Helper to make fetch calls to WordPress REST API
