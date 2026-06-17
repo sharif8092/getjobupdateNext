@@ -151,6 +151,27 @@ export default async function ArchivePage({ params, searchParams }: ArchiveProps
             {/* Right Main Content */}
             <div className="space-y-6">
               
+              {/* Subcategories / Quick Filters */}
+              {type === 'jobs' && (
+                <div className="flex flex-wrap gap-2">
+                  <Link href="/category/ssc" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-orange-500 hover:text-orange-600 transition-all shadow-sm hover:shadow-md">SSC Jobs</Link>
+                  <Link href="/category/bank" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-orange-500 hover:text-orange-600 transition-all shadow-sm hover:shadow-md">Bank Jobs</Link>
+                  <Link href="/category/railway" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-orange-500 hover:text-orange-600 transition-all shadow-sm hover:shadow-md">Railway Jobs</Link>
+                  <Link href="/category/defense" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-orange-500 hover:text-orange-600 transition-all shadow-sm hover:shadow-md">Defense Jobs</Link>
+                  <Link href="/category/upsc" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-orange-500 hover:text-orange-600 transition-all shadow-sm hover:shadow-md">UPSC / PSC</Link>
+                  <Link href="/category/police" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-orange-500 hover:text-orange-600 transition-all shadow-sm hover:shadow-md">Police / Paramilitary</Link>
+                </div>
+              )}
+
+              {type === 'results' && (
+                <div className="flex flex-wrap gap-2">
+                  <Link href="/category/10th-result" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-sm hover:shadow-md">10th Board Result</Link>
+                  <Link href="/category/12th-result" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-sm hover:shadow-md">12th Board Result</Link>
+                  <Link href="/category/university-result" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-sm hover:shadow-md">University Results</Link>
+                  <Link href="/category/competitive-exam-result" className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-sm hover:shadow-md">Competitive Exams</Link>
+                </div>
+              )}
+
               {/* Toolbar */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <p className="text-sm font-medium text-slate-600">
