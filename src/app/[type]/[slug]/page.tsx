@@ -661,9 +661,9 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               </>
             )}
 
-            {(post.type === 'aziz_job' || post.type === 'post') && (() => {
-              const isPrivateJob = postCategory?.slug === 'private-job';
-              const isWfhJob = postCategory?.slug === 'work-from-home';
+            {(post.type === 'aziz_job' || post.type === 'post' || post.type === 'aziz_privatejob' || post.type === 'aziz_wfh') && (() => {
+              const isPrivateJob = postCategory?.slug === 'private-job' || post.type === 'aziz_privatejob';
+              const isWfhJob = postCategory?.slug === 'work-from-home' || post.type === 'aziz_wfh';
               const isCorporate = isPrivateJob || isWfhJob;
               
               const orgLabel = isCorporate ? '🏢 Company Name' : '🏢 Department';
@@ -742,7 +742,7 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
             )}
             
             {/* Fallback for other unmapped types */}
-            {(!['aziz_admit', 'aziz_result', 'aziz_answerkey', 'aziz_yojana', 'aziz_syllabus', 'aziz_job', 'aziz_career', 'post'].includes(post.type)) && (
+            {(!['aziz_admit', 'aziz_result', 'aziz_answerkey', 'aziz_yojana', 'aziz_syllabus', 'aziz_job', 'aziz_career', 'post', 'aziz_privatejob', 'aziz_wfh'].includes(post.type)) && (
               <>
                 <div className="flex flex-col min-w-0">
                   <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
