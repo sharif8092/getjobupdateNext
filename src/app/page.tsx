@@ -194,7 +194,7 @@ async function SidebarFeed() {
     answerkeys = await getPosts('aziz_answerkey', 4);
   } catch (err) { console.error('Failed to fetch sidebar posts', err); }
 
-  const latestNotifications = [...jobs, ...results, ...admits, ...yojanas, ...careers]
+  const latestNotifications = [...jobs, ...results, ...admits, ...yojanas, ...careers, ...privateJobs, ...wfhJobs]
     .map(p => ({ ...p, routePrefix: POST_TYPE_MAP[p.type] || 'blog' }))
     .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
     .slice(0, 6);

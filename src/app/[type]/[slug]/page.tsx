@@ -508,17 +508,25 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
           {/* Breadcrumb */}
-          <Breadcrumbs items={[
-            { name: type.replace(/-/g,' ').replace(/\b\w/g, (c: string) => c.toUpperCase()), url: `/${type}` },
-            ...(postCategory ? [{ name: postCategory.name, url: `/category/${postCategory.slug}` }] : []),
-            { name: post.title.rendered.replace(/<[^>]*>?/gm, ''), url: `/${type}/${slug}` }
-          ]} />
+          {(() => {
+            let catUrl = '';
+            if (postCategory) {
+              catUrl = postCategory.slug === 'private-job' ? '/private-jobs' : (postCategory.slug === 'work-from-home' ? '/work-from-home' : `/category/${postCategory.slug}`);
+            }
+            return (
+              <Breadcrumbs items={[
+                { name: type.replace(/-/g,' ').replace(/\b\w/g, (c: string) => c.toUpperCase()), url: `/${type}` },
+                ...(postCategory ? [{ name: postCategory.name, url: catUrl }] : []),
+                { name: post.title.rendered.replace(/<[^>]*>?/gm, ''), url: `/${type}/${slug}` }
+              ]} />
+            );
+          })()}
 
           {/* Highlight Badge, Verification & Language Switcher */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
             <div className="flex flex-wrap items-center gap-3">
               {postCategory && (
-                <Link href={`/category/${postCategory.slug}`} className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-black text-indigo-700 bg-indigo-50 border border-indigo-100 uppercase tracking-widest hover:bg-indigo-100 transition-colors">
+                <Link href={postCategory.slug === 'private-job' ? '/private-jobs' : (postCategory.slug === 'work-from-home' ? '/work-from-home' : `/category/${postCategory.slug}`)} className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-black text-indigo-700 bg-indigo-50 border border-indigo-100 uppercase tracking-widest hover:bg-indigo-100 transition-colors">
                   📁 {postCategory.name}
                 </Link>
               )}
