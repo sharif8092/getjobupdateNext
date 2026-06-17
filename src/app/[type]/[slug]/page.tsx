@@ -661,14 +661,24 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
               </>
             )}
 
-            {(post.type === 'aziz_job' || post.type === 'post') && (
+            {(post.type === 'aziz_job' || post.type === 'post') && (() => {
+              const isPrivateJob = postCategory?.slug === 'private-job';
+              const isWfhJob = postCategory?.slug === 'work-from-home';
+              const isCorporate = isPrivateJob || isWfhJob;
+              
+              const orgLabel = isCorporate ? '🏢 Company Name' : '🏢 Department';
+              const vacancyLabel = isCorporate ? '📋 Role / Vacancy' : '📋 Vacancy';
+              const typeLabel = isWfhJob ? '🏠 Work Mode' : '⚡ Job Type';
+              const defaultJobType = isWfhJob ? '100% Remote / WFH' : (isPrivateJob ? 'Private / Corporate' : 'Permanent / Govt');
+
+              return (
               <>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">🏢 Department</span>
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">{orgLabel}</span>
                   <span className="text-white font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_department)}>{cleanText(meta.aziz_department) || '-'}</span>
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">📋 Vacancy</span>
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">{vacancyLabel}</span>
                   <span className="text-orange-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_total_posts)}>{cleanText(meta.aziz_total_posts) || '-'}</span>
                 </div>
                 <div className="flex flex-col min-w-0">
@@ -680,8 +690,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                   <span className="text-emerald-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.aziz_salary)}>{cleanText(meta.aziz_salary) || '-'}</span>
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">⚡ Job Type</span>
-                  <span className="text-indigo-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.job_type)}>{cleanText(meta.job_type) || 'Permanent / Govt'}</span>
+                  <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">{typeLabel}</span>
+                  <span className="text-indigo-400 font-black text-sm break-words leading-snug line-clamp-3" title={cleanText(meta.job_type)}>{cleanText(meta.job_type) || defaultJobType}</span>
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1.5 shrink-0">💻 App Mode</span>
@@ -699,7 +709,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
                   })()}
                 </div>
               </>
-            )}
+              );
+            })()}
 
             {post.type === 'aziz_career' && (
               <>

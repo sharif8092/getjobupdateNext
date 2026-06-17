@@ -69,39 +69,8 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-6 ml-8 flex-1">
               <Link href="/" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Home</Link>
               
-              {/* Dropdown 1 */}
-              <div className="relative group py-6">
-                <Link href="/jobs" className="flex items-center gap-1 text-[13px] font-bold text-slate-300 group-hover:text-orange-500 transition-colors uppercase tracking-wider">
-                  Latest Jobs
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                </Link>
-                <div className="absolute top-full left-0 w-56 bg-white rounded-xl shadow-xl border border-slate-200 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all translate-y-2 group-hover:translate-y-0 z-50">
-                  <div className="p-2 flex flex-col">
-                    <Link href="/category/ssc" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors font-bold">SSC Jobs</Link>
-                    <Link href="/category/bank" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors font-bold">Bank Jobs</Link>
-                    <Link href="/category/railway" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors font-bold">Railway Jobs</Link>
-                    <Link href="/category/defense" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors font-bold">Defense Jobs</Link>
-                    <Link href="/category/upsc" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors font-bold">UPSC / PSC</Link>
-                    <Link href="/category/police" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors font-bold">Police / Paramilitary</Link>
-                  </div>
-                </div>
-              </div>
-
-              {/* Dropdown 2 */}
-              <div className="relative group py-6">
-                <Link href="/results" className="flex items-center gap-1 text-[13px] font-bold text-slate-300 group-hover:text-orange-500 transition-colors uppercase tracking-wider">
-                  Results
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                </Link>
-                <div className="absolute top-full left-0 w-48 bg-white rounded-xl shadow-xl border border-slate-200 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all translate-y-2 group-hover:translate-y-0 z-50">
-                  <div className="p-2 flex flex-col">
-                    <Link href="/category/10th-result" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-colors font-bold">10th Board Result</Link>
-                    <Link href="/category/12th-result" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-colors font-bold">12th Board Result</Link>
-                    <Link href="/category/university-result" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-colors font-bold">University Results</Link>
-                    <Link href="/category/competitive-exam-result" className="px-4 py-2.5 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-colors font-bold">Competitive Exams</Link>
-                  </div>
-                </div>
-              </div>
+              <Link href="/jobs" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Latest Jobs</Link>
+              <Link href="/results" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Results</Link>
 
               <Link href="/admit-cards" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Admit Card</Link>
               <Link href="/sarkari-yojana" className="text-[13px] font-bold text-slate-300 hover:text-orange-500 transition-colors uppercase tracking-wider">Yojana</Link>
