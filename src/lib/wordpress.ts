@@ -669,6 +669,27 @@ export async function getPostsByState(stateSlug: string, count = 30): Promise<Wo
   }
 }
 
+export async function getCategory(slug: string): Promise<WordPressTerm | null> {
+  try {
+    const terms = await fetchWP<WordPressTerm[]>(`/wp-json/wp/v2/job_category?slug=${slug}`);
+    if (terms && terms.length > 0) return terms[0];
+    return null;
+  } catch (err) {
+    console.warn(`Failed fetching category ${slug}`, err);
+    return null;
+  }
+}
+
+export async function getCategoryById(id: number): Promise<WordPressTerm | null> {
+  try {
+    const term = await fetchWP<WordPressTerm>(`/wp-json/wp/v2/job_category/${id}`);
+    return term || null;
+  } catch (err) {
+    console.warn(`Failed fetching category by id ${id}`, err);
+    return null;
+  }
+}
+
 // Fetch all posts matching a category taxonomy term slug
 export async function getPostsByCategory(categorySlug: string, count = 30): Promise<WordPressPost[]> {
   try {

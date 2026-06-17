@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts, getAffiliateSettings, getDeadlineStatus } from '@/lib/wordpress';
+import { getPostBySlug, REVERSE_POST_TYPE_MAP, processContentAndHeadings, getPosts, getAffiliateSettings, getDeadlineStatus, getCategoryById, WordPressTerm } from '@/lib/wordpress';
 import FAQAccordion from '@/components/FAQAccordion';
 import SyllabusTracker from '@/components/SyllabusTracker';
 import AffiliateSlot from '@/components/AffiliateSlot';
@@ -82,6 +82,12 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   ]);
 
   const globalAmazonId = affiliateSettings?.amazon_id || '';
+
+  // Fetch category for breadcrumbs and badges
+  let postCategory: WordPressTerm | null = null;
+  if (post.job_category && post.job_category.length > 0) {
+    postCategory = await getCategoryById(post.job_category[0]);
+  }
 
   const meta = post.custom_meta || {};
   
@@ -504,12 +510,18 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           {/* Breadcrumb */}
           <Breadcrumbs items={[
             { name: type.replace(/-/g,' ').replace(/\b\w/g, (c: string) => c.toUpperCase()), url: `/${type}` },
+            ...(postCategory ? [{ name: postCategory.name, url: `/category/${postCategory.slug}` }] : []),
             { name: post.title.rendered.replace(/<[^>]*>?/gm, ''), url: `/${type}/${slug}` }
           ]} />
 
           {/* Highlight Badge, Verification & Language Switcher */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
             <div className="flex flex-wrap items-center gap-3">
+              {postCategory && (
+                <Link href={`/category/${postCategory.slug}`} className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-black text-indigo-700 bg-indigo-50 border border-indigo-100 uppercase tracking-widest hover:bg-indigo-100 transition-colors">
+                  📁 {postCategory.name}
+                </Link>
+              )}
               <span className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-black text-white uppercase tracking-widest shadow-lg ${isResult ? 'bg-green-600 shadow-green-600/30' : 'bg-blue-600 shadow-blue-600/30'}`}>
                 {meta.highlight_text || (isResult ? 'RESULT DECLARED' : (meta.aziz_badge_type || type.replace(/-/g,' ')))}
               </span>
