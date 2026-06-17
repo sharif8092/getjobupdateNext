@@ -1,0 +1,17 @@
+# Get Job Update
+
+Get Job Update is India's trusted portal for the latest Sarkari Naukri (Government Jobs), Free Job Alerts, Results, Admit Cards, and Syllabus. We cover major recruitment boards including SSC, UPSC, Railway (RRB), Banking (IBPS), and State level exams.
+
+## Content Available
+- **Latest Govt Jobs:** Daily updates on new vacancies and online application links.
+- **Sarkari Results:** Fast and reliable updates on exam results and merit lists.
+- **Admit Cards:** Direct download links for hall tickets.
+- **Syllabus & Exam Pattern:** Detailed exam preparation material.
+
+## Important Links
+- Home: https://getjobupdate.co.in/
+- Jobs: https://getjobupdate.co.in/job
+- Results: https://getjobupdate.co.in/result
+- Admit Cards: https://getjobupdate.co.in/admit-card
+
+All data is verified from official notifications.
